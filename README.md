@@ -3,5 +3,5 @@ Lime & Rose Reporting Tool
 
 ### External Libraries
 Tidak disertakan sekali
-1. TCPDF
-1. DHTMLX
+* TCPDF
+* DHTMLX
