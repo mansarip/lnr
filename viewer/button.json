@@ -1,0 +1,12 @@
+[
+	{"id":"btnOutput", "type":"buttonSelect", "text":"Output", "img":"../img/icons/report.png", "options":[
+			{"id":"btnHTML", "type":"button", "text":"Html", "img":"../img/icons/document-hf.png"},
+			{"id":"btnPDF", "type":"button", "text":"Pdf", "img":"../img/icons/document-pdf-text.png"},
+			{"id":"btnCsv", "type":"button", "text":"Csv", "img":"../img/icons/document-excel-csv.png"},
+		]
+	},
+	{"id":"separatorB", "type":"separator"},
+	{"id":"btnDownload", "type":"button", "text":"Download", "img":"../img/icons/arrow-stop-270.png"},
+	{"id":"separatorA", "type":"separator"},
+	{"id":"btnDirectLink", "type":"button", "text":"Get Direct Link", "img":"../img/icons/chain.png"}
+]

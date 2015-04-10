@@ -1,0 +1,464 @@
+<?php
+
+/**
+ * Convert json string kepada .lnre
+ * Luqman B. Shariffudin (luqman.shariffudin@nc.com.my)
+ */
+
+include('../php/class.lnre.php');
+
+// source string
+$sourceString = '
+{
+	"general":{
+		"name":"Laporan Hohoho",
+		"author":"Luqman"
+	},
+	"data":{
+		"connection":{
+			"Conn1":{
+				"type":"mysql",
+				"host":"localhost",
+				"user":"root",
+				"pass":"",
+				"port":null,
+				"sid":null,
+				"serviceName":null,
+				"socket":null,
+				"active":true
+			}
+		},
+		"query":{
+			"Q1":{
+				"sql":"SELECT * FROM test.peribadi order by NEGERI, JANTINA, NAMA",
+				"connection":"Conn1",
+				"active":true,
+				"main":true,
+				"group":{
+					"GROUP_NEGERI":{
+						"column":{
+							"NEGERI":{
+								"dataType":"string"
+							}
+						}
+					},
+					"GROUP_JANTINA":{
+						"column":{
+							"JANTINA":{
+								"dataType":"string"
+							}
+						}
+					},
+					"GROUP_BUTIRAN":{
+						"column":{
+							"NAMA":{
+								"dataType":"string"
+							},
+							"ID":{
+								"dataType":"string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"parameter":{
+			"menuid":{
+				"dataType":"number",
+				"method":"GET",
+				"defaultValue":null
+			}
+		},
+		"businessLogic":{}
+	},
+	"layout":{
+		"general":{
+			"unit":"mm",
+			"format":"A4",
+			"orientation":"L",
+			"margin":{
+				"top":5,
+				"bottom":20,
+				"left":5,
+				"right":5,
+				"footer":5
+			}
+		},
+		"band":{
+			"reportHeader":{
+				"element":[
+					{
+						"type":"label",
+						"uniqueName":"LBL001",
+						"width":30,
+						"height":30,
+						"zIndex":1,
+						"posY" : 0,
+						"posX" : 0,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"TESTINNNNGGGG....."
+					},
+					{
+						"type":"label",
+						"uniqueName":"LBL002",
+						"width":0,
+						"height":30,
+						"zIndex":1,
+						"posY" : 3,
+						"posX" : 30,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"TESTINNNNGGGG....."
+					}
+				]
+			},
+			"pageHeader":{
+				"element":[
+					{
+						"type":"label",
+						"uniqueName":"LBL003",
+						"width":0,
+						"height":14,
+						"zIndex":1,
+						"posY" : 0,
+						"posX" : 0,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"PAGE HEADER"
+					}
+				]
+			},
+			"header":{
+				"element":[
+					{
+						"type":"label",
+						"uniqueName":"LBL006",
+						"width":0,
+						"height":8,
+						"zIndex":1,
+						"posY" : 0,
+						"posX" : 0,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"NEGERI"
+					}
+				]
+			},
+			"group1Header":{
+				"element":[
+					{
+						"type":"label",
+						"uniqueName":"LBL006",
+						"width":0,
+						"height":8,
+						"zIndex":1,
+						"posY" : 0,
+						"posX" : 0,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"GROUP JANTINA"
+					}
+				]
+			},
+			"group2Header":{
+				"element":[
+					{
+						"type":"label",
+						"uniqueName":"LBL006",
+						"width":0,
+						"height":8,
+						"zIndex":1,
+						"posY" : 0,
+						"posX" : 0,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"NAMA + ID"
+					}
+				]
+			},
+			"detail":{},
+			"group2Footer":{},
+			"group1Footer":{
+				"element":[
+					{
+						"type":"label",
+						"uniqueName":"LBL006",
+						"width":0,
+						"height":8,
+						"zIndex":1,
+						"posY" : 0,
+						"posX" : 0,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"TOTAL DALAM JANTINA"
+					}
+				]
+			},
+			"footer":{
+				"element":[
+					{
+						"type":"label",
+						"uniqueName":"LBL006",
+						"width":0,
+						"height":8,
+						"zIndex":1,
+						"posY" : 0,
+						"posX" : 0,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"TOTAL DALAM NEGERI"
+					}
+				]
+			},
+			"pageFooter":{
+				"element":[
+					{
+						"type":"label",
+						"uniqueName":"LBL005",
+						"width":0,
+						"height":5,
+						"zIndex":1,
+						"posY" : 0,
+						"posX" : 0,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"Mukasurat X/X"
+					}
+				]
+			},
+			"reportFooter":{
+				"element":[
+					{
+						"type":"label",
+						"uniqueName":"LBL009",
+						"width":0,
+						"height":5,
+						"zIndex":1,
+						"posY" : 0,
+						"posX" : 0,
+						"backgroundColor":"",
+						"borderStyleTop":"",
+						"borderWidthTop":0,
+						"borderColorTop":"",
+						"borderStyleBottom":"",
+						"borderWidthBottom":0,
+						"borderColorBottom":"",
+						"borderStyleLeft":"",
+						"borderWidthLeft":0,
+						"borderColorLeft":"",
+						"borderStyleRight":"",
+						"borderWidthRight":0,
+						"borderColorRight":"",
+						"fontSize":10,
+						"fontFamily":"Helvetica",
+						"fontStyleBold":false,
+						"fontStyleItalic":false,
+						"fontStyleUnderline":false,
+						"textAlign":"",
+						"verticalAlign":"",
+						"textColor":"",
+						"verticalElasticity":"",
+						"horizontalElasticity":"",
+						"text":"REPORT FOOTER"
+					}
+				]
+			}
+		}
+	}
+}';
+
+
+LNRE::Create($sourceString, '../publish/', 'hohoho');
+
+
+?>
