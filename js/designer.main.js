@@ -11,7 +11,10 @@ $(function(){
 		// user interface initialization
 		designer.InitUI();
 
-		designer.OpenParameterWindow();
+		// event registration
+		designer.TreeStructureRegisterEvent();
+
+		designer.OpenConnectionWindow();
 	});
 
 });

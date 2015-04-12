@@ -75,7 +75,8 @@ function Designer() {
 			general : this.details.default.general,
 			band : this.details.default.element,
 			margin : this.details.default.margin,
-			parameter : {} // declare as object
+			parameter : {}, // declare as object
+			connection : {}
 		};
 
 		// report (default structure)
@@ -147,10 +148,6 @@ function Designer() {
 
 		// aktifkan tab
 		this.tabbar.cellA.cells('structure').setActive();
-		// this.tabbar.cellA.cells('data').setActive();
-
-		// attach toolbar pada cell
-		// this.elementToolbar = this.layout.cells('b').attachToolbar();
 		
 		// attach toolbar dan status bar pada main layout
 		this.toolbar = this.layout.attachToolbar();
@@ -184,13 +181,14 @@ function Designer() {
 			{id:11, type:"button", text:"Preferences", img:"gear.png"},
 			{id:12, type:"separator"},
 
-			// parameter
-			{id:8, type:"button", text:"Parameter", img:"paper-plane.png"},
-			{id:9, type:"separator"},
-
-			// grouping
-			{id:5, type:"button", text:"Group", img:"category-group.png"},
-			{id:6, type:"separator"},
+			// data management
+			{id:13, type:"buttonSelect", text:"Data", img:"databases.png", renderSelect:"disabled", options : [
+				{id:6, type:"button", text:"Connection", img:"lightning.png"},
+				{id:9, type:"button", text:"Source", img:"database-network.png"},
+				{id:8, type:"button", text:"Parameter", img:"paper-plane.png"},
+				{id:5, type:"button", text:"Group", img:"category-group.png"}
+			]},
+			{id:14, type:"separator"},
 
 			// viewing & publishing
 			{id:10, type:"button", text:"Preview", img:"magnifier.png"},
@@ -211,7 +209,326 @@ function Designer() {
 			else if (id === '8') {
 				designer.OpenParameterWindow();
 			}
+			// connection window
+			else if (id === '6') {
+				designer.OpenConnectionWindow();
+			}
+		});
+	};
 
+	Designer.prototype.OpenConnectionWindow = function() {
+		var mode = null;
+		var editName = null;
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var connectionWin = windows.createWindow({
+		    id:"connection",
+		    width:550,
+		    height:430,
+		    center:true,
+		    modal:true,
+		    resize:false
+		});
+		connectionWin.button('minmax').hide();
+		connectionWin.button('park').hide();
+		connectionWin.setText('Connection');
+
+		var statusBar = connectionWin.attachStatusBar();
+
+		var toolbar = connectionWin.attachToolbar();
+		var layout = connectionWin.attachLayout({ pattern:'2U' });
+
+		layout.cells('a').hideHeader();
+		layout.cells('b').hideHeader();
+
+		layout.cells('a').setWidth(130);
+
+		var button = [
+			// general
+			{id:1, type:"button", text:"Add New", img:"lightning--plus.png"},
+			{id:2, type:"separator"},
+			{id:3, type:"button", text:"Remove", img:"cross.png"}
+		];
+
+		toolbar.setIconsPath(this.fugueIconPath);
+		toolbar.loadStruct(button);
+
+		// left side
+		var tree = layout.cells('a').attachTree();
+		tree.setImagesPath(this.dhtmlxImagePath +'dhxtree_skyblue/');
+		tree.setIconsPath(this.fugueIconPath);
+		tree.loadJSONObject({id:0, item:[]}); //root id 0
+
+		// right side
+		var noConnectionAvailable = '<div id="connectionWinMessage"><p>No connection available.</p></div>';
+		var noConnectionSelected = '<div id="connectionWinMessage"><p>No connection selected.</p></div>';
+
+		// jika tiada connection
+		if ($.isEmptyObject(designer.details.app.connection)) {
+			layout.cells('b').attachHTMLString(noConnectionAvailable);
+		} else {
+			layout.cells('b').attachHTMLString(noConnectionSelected);
+		}
+
+		// closing button
+		var closingButton = '\n\
+		<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
+			<input type="button" class="test" style="padding:6px 35px" value="Test"/>\n\
+			<input type="button" class="save" style="padding:6px 35px" value="Save"/>\n\
+			<input type="button" class="reset" value="Reset"/>\n\
+		</div>';
+
+		// event : toolbar onclick
+		toolbar.attachEvent('onClick', function(id){
+
+			// add new connection
+			if (id === '1') {
+				mode = 'add';
+				var addNewConnection = '\n\
+				<table border="0" class="windowForm" id="connectionAddNew">\n\
+				<colgroup style="width:120px"/>\n\
+				<colgroup style="width:10px"/>\n\
+				<colgroup/>\n\
+				<tr>\n\
+					<td colspan="3"><b>Add New Connection</b></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Connection Name</td>\n\
+					<td>:</td>\n\
+					<td><input type="text" class="connectionName fullwidth" data-key="name" value="" autofocus="autofocus"/></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Type</td>\n\
+					<td>:</td>\n\
+					<td>\n\
+						<select class="type" data-key="type">\n\
+							<option value="mysql">MySQL</option>\n\
+						</select>\n\
+					</td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Host</td>\n\
+					<td>:</td>\n\
+					<td><input type="text" class="host fullwidth" data-key="host" value=""/></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Username</td>\n\
+					<td>:</td>\n\
+					<td><input type="text" class="username fullwidth" data-key="user" value=""/></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Password</td>\n\
+					<td>:</td>\n\
+					<td><input type="password" class="password fullwidth" data-key="pass" value=""/></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Port</td>\n\
+					<td>:</td>\n\
+					<td><input type="number" class="port" data-key="port" value=""/></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>SID</td>\n\
+					<td>:</td>\n\
+					<td><input type="text" class="sid fullwidth" data-key="sid" value=""/></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Service Name</td>\n\
+					<td>:</td>\n\
+					<td><input type="text" class="serviceName fullwidth" data-key="serviceName" value=""/></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Socket</td>\n\
+					<td>:</td>\n\
+					<td><input type="text" class="socket fullwidth" data-key="socket" value=""/></td>\n\
+				</tr>\n\
+				</table>\n\
+				';
+
+				layout.cells('b').attachHTMLString(addNewConnection + closingButton);
+			}
+
+			// remove connection
+			else if (id === '3') {
+				statusBar.setText('Confirm remove connection "'+ tree.getSelectedItemId() +'"? &nbsp;&nbsp;<a href="javascript:void(0)" id="anchorRemoveConnectionOK">OK</a> &nbsp;&nbsp; <a href="javascript:void(0)" id="anchorRemoveConnectionCancel">Cancel</a>');
+				layout.cells('a').progressOn();
+				layout.cells('b').progressOn();
+			}
+
+		});
+
+	 	// event register
+	 	$('body').on('click', '#anchorRemoveConnectionOK', function(){
+	 		console.log('aaa');
+	 		/*layout.cells('a').progressOff();
+	 		layout.cells('b').progressOff();
+	 		tree.deleteItem(tree.getSelectedItemId(), false);*/
+	 	});
+
+
+	 	// test button
+		$(layout.base).on('click', '.buttonPlaceholder input.test', function(){
+			alert('belum lagi!');
+		});
+
+	 	// reset button
+		$(layout.base).on('click', '.buttonPlaceholder input.reset', function(){
+			var connectionForm = (mode === 'add') ? $('#connectionAddNew') : $('#connectionEdit');
+			connectionForm.find('input, select').each(function(){
+				$(this).val('');
+			});
+			connectionForm.find('input.name').focus();
+		});
+
+	 	// save button
+		$(layout.base).on('click', '.buttonPlaceholder input.save', function(){
+			statusBar.setText('');
+
+			var connectionForm = (mode === 'add') ? $('#connectionAddNew') : $('#connectionEdit');
+			var detail = {};
+			
+			connectionForm.find('input, select').each(function(){
+				var key = $(this).attr('data-key');
+				var value = $(this).val();
+				detail[key] = value;
+			});
+
+			// validate
+			if (detail.name === '') {
+				statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Unable to save : Empty connection name');
+				return false;
+			}
+			if (detail.type === '') {
+				statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Unable to save : Invalid connection type');
+				return false;
+			}
+
+			// add mode
+			if (mode === 'add') {
+				// jika nama dah ada
+				if (designer.details.app.connection[detail.name] !== undefined) {
+					statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Unable to save : Connection name already exist');
+					return false;
+				}
+
+				// add new connection #setter
+				designer.details.app.connection[detail.name] = detail;
+
+				// tambah pada tree
+				tree.insertNewItem(0, detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
+
+				// reset right side
+				layout.cells('b').attachHTMLString(noConnectionSelected);
+
+				// reset mode
+				mode = null;
+			}
+
+			// edit mode
+			else if (mode === 'edit') {
+
+				// jika nama lama tidak sama dengan nama baru
+				if (editName !== detail.name) {
+
+					// nama dah wujud
+					if (designer.details.app.connection[detail.name] !== undefined) {
+						statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Unable to save : Connection name already exist');
+						return false;
+					}
+
+					// update tree
+					tree.changeItemId(editName, detail.name);
+					tree.setItemText(detail.name, detail.name);
+				}
+
+				// remove yang lama
+				delete designer.details.app.connection[editName];
+
+				// add new connection #setter
+				designer.details.app.connection[detail.name] = detail;
+
+				// clear tree
+				tree.clearSelection();
+
+				// reset right side
+				layout.cells('b').attachHTMLString(noConnectionSelected);
+
+				// reset mode
+				mode = null;
+				editName = null;
+			}
+		});
+
+		// tree connection click
+		tree.attachEvent('onClick', function(id){
+			mode = 'edit';
+			editName = id;
+
+			// display detail #getter
+			var editConnection = '\n\
+			<table border="0" class="windowForm" id="connectionEdit">\n\
+			<colgroup style="width:120px"/>\n\
+			<colgroup style="width:10px"/>\n\
+			<colgroup/>\n\
+			<tr>\n\
+				<td colspan="3"><b>Edit Connection Details</b></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Connection Name</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="connectionName fullwidth" data-key="name" value="'+ designer.details.app.connection[id].name +'" autofocus/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Type</td>\n\
+				<td>:</td>\n\
+				<td>\n\
+					<select class="type" data-key="type">\n\
+						<option value="mysql">MySQL</option>\n\
+					</select>\n\
+				</td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Host</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="host fullwidth" data-key="host" value="'+ designer.details.app.connection[id].host +'"/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Username</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="username fullwidth" data-key="user" value="'+ designer.details.app.connection[id].user +'"/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Password</td>\n\
+				<td>:</td>\n\
+				<td><input type="password" class="password fullwidth" data-key="pass" value="'+ designer.details.app.connection[id].pass +'"/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Port</td>\n\
+				<td>:</td>\n\
+				<td><input type="number" class="port" data-key="port" value="'+ designer.details.app.connection[id].port +'"/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>SID</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="sid fullwidth" data-key="sid" value="'+ designer.details.app.connection[id].sid +'"/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Service Name</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="serviceName fullwidth" data-key="serviceName" value="'+ designer.details.app.connection[id].serviceName +'"/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Socket</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="socket fullwidth" data-key="socket" value="'+ designer.details.app.connection[id].socket +'"/></td>\n\
+			</tr>\n\
+			</table>\n\
+			';
+
+			layout.cells('b').attachHTMLString(editConnection + closingButton);
+
+			// select dropdown (type)
+			$(layout.base).find('select.type').val(designer.details.app.connection[id].type);
 		});
 	};
 
@@ -571,6 +888,7 @@ function Designer() {
 		// close window button
 		$(tabbar.base).find('input.close').click(function(){
 			preferences.close();
+			windows.unload();
 		});
 
 		// tag : preferences #setter
@@ -599,6 +917,7 @@ function Designer() {
 			designer.details.app.margin.footer = (isNaN(margin.footer)) ? 0 : margin.footer;
 
 			preferences.close();
+			windows.unload();
 		});
 	};
 
@@ -679,6 +998,50 @@ function Designer() {
 	Designer.prototype.GoBackHome = function() {
 		window.location.href = '../?error=permission&page=designer';
 	};
+
+	// event : tree structure click
+	Designer.prototype.TreeStructureRegisterEvent = function() {
+
+		// structure
+		this.tree.structure.attachEvent('onClick', function(id){
+			// prevent bubble up
+			event.stopPropagation();
+
+			// clear yang lain
+			designer.tree.data.clearSelection();
+			designer.tree.element.clearSelection();
+		});
+
+		// data
+		this.tree.data.attachEvent('onClick', function(id){
+			// prevent bubble up
+			event.stopPropagation();
+
+			// clear yang lain
+			designer.tree.structure.clearSelection();
+			designer.tree.element.clearSelection();
+		});
+
+		// tree
+		this.tree.element.attachEvent('onClick', function(id){
+			// prevent bubble up
+			event.stopPropagation();
+
+			// clear yang lain
+			designer.tree.structure.clearSelection();
+			designer.tree.data.clearSelection();
+		});
+	};
+
+	// event : body click
+	$('body').on('click', function(){
+
+		// clear selection tree		
+		designer.tree.structure.clearSelection();
+		designer.tree.data.clearSelection();
+		designer.tree.element.clearSelection();
+
+	});
 
 	// event : remove parameter from list
 	$('body').on('click', '#anchorRemoveParameterOK', function(){
