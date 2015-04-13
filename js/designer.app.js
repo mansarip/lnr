@@ -254,17 +254,31 @@ function Designer() {
 		toolbar.setIconsPath(this.fugueIconPath);
 		toolbar.loadStruct(button);
 
+		// load connection from details (jika ada)
+		var savedConnection = [];
+		if (!$.isEmptyObject(designer.details.app.connection)) {
+			for (var key in designer.details.app.connection) {
+				savedConnection.push({
+					id:key,
+					text:key,
+					im0:'document.png',
+					im1:'document.png',
+					im2:'document.png'
+				});
+			}
+		}
+
 		// left side
 		var tree = layout.cells('a').attachTree();
 		tree.setImagesPath(this.dhtmlxImagePath +'dhxtree_skyblue/');
 		tree.setIconsPath(this.fugueIconPath);
-		tree.loadJSONObject({id:0, item:[]}); //root id 0
+		tree.loadJSONObject({id:0, item: savedConnection }); //root id 0
 
 		// right side
 		var noConnectionAvailable = '<div id="connectionWinMessage"><p>No connection available.</p></div>';
 		var noConnectionSelected = '<div id="connectionWinMessage"><p>No connection selected.</p></div>';
 
-		// jika tiada connection
+		// jika tiada connectionWin
 		if ($.isEmptyObject(designer.details.app.connection)) {
 			layout.cells('b').attachHTMLString(noConnectionAvailable);
 		} else {
@@ -358,11 +372,31 @@ function Designer() {
 		});
 
 	 	// event register
+	 	// remove connection OK
 	 	$('body').on('click', '#anchorRemoveConnectionOK', function(){
-	 		console.log('aaa');
-	 		/*layout.cells('a').progressOff();
+	 		var connName = tree.getSelectedItemId();
+
+	 		layout.cells('a').progressOff();
 	 		layout.cells('b').progressOff();
-	 		tree.deleteItem(tree.getSelectedItemId(), false);*/
+
+	 		tree.deleteItem(connName, false);
+	 		statusBar.setText('');
+
+	 		// remove from details #setter
+	 		delete designer.details.app.connection[connName];
+
+	 		if ($.isEmptyObject(designer.details.app.connection)) {
+	 			layout.cells('b').attachHTMLString(noConnectionAvailable);
+	 		} else {
+	 			layout.cells('b').attachHTMLString(noConnectionSelected);
+	 		}
+	 	});
+
+	 	// remove connection cancel
+	 	$('body').on('click', '#anchorRemoveConnectionCancel', function(){
+	 		layout.cells('a').progressOff();
+	 		layout.cells('b').progressOff();
+	 		statusBar.setText('');
 	 	});
 
 
@@ -384,6 +418,7 @@ function Designer() {
 		$(layout.base).on('click', '.buttonPlaceholder input.save', function(){
 			statusBar.setText('');
 
+			var message = '';
 			var connectionForm = (mode === 'add') ? $('#connectionAddNew') : $('#connectionEdit');
 			var detail = {};
 			
@@ -422,6 +457,8 @@ function Designer() {
 
 				// reset mode
 				mode = null;
+
+				message = 'Connection is successfully added';
 			}
 
 			// edit mode
@@ -456,13 +493,25 @@ function Designer() {
 				// reset mode
 				mode = null;
 				editName = null;
+
+				message = 'Connection details saved';
 			}
+
+			// papar mesej
+			statusBar.setText(message);
+
+			// padam mesej
+			setTimeout(function(){
+				statusBar.setText('');
+			}, 2000);
 		});
 
 		// tree connection click
 		tree.attachEvent('onClick', function(id){
 			mode = 'edit';
 			editName = id;
+
+			statusBar.setText('');
 
 			// display detail #getter
 			var editConnection = '\n\
