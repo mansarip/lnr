@@ -46,6 +46,12 @@ function Designer() {
 				"paper":"A4",
 				"orientation":"P"
 			},
+			bandWidth : { //*notes : 1mm = 3px
+				"A5" : {"P": 444, "L": 630},
+				"A4" : {"P": 630, "L": 891},
+				"A3" : {"P": 891, "L": 1260},
+				"Letter" : {"P": 648, "L": 1068}
+			},
 			band : {
 				"Report Header" : {},
 				"Page Header" : {},
@@ -945,6 +951,9 @@ function Designer() {
 		<colgroup style="width:10px"/>\n\
 		<colgroup/>\n\
 		<tr>\n\
+			<td colspan="3">Unit in millimeter (mm)</td>\n\
+		</tr>\n\
+		<tr>\n\
 			<td>Top</td>\n\
 			<td>:</td>\n\
 			<td><input type="number" min="0" class="margin top" value="'+ this.details.app.margin.top +'"/></td>\n\
@@ -1016,21 +1025,20 @@ function Designer() {
 	};
 
 	Designer.prototype.InitWorkspace = function() {
-		// init bands
 		var workspace = $('<div id="workspace"></div>');
+		var bandWidth = designer.details.default.bandWidth[designer.details.app.format.paper][designer.details.app.format.orientation];
+		
+		// margin
+		$('<div class="marginArea top" style="height:'+ (designer.details.app.margin.top * 3) +'px; width:'+ bandWidth +'px;"></div>').appendTo(workspace);
 
-		/*var band = new Band({title : 'Report Header'});
-		band.elem.appendTo(workspace);*/
-
+		// init bands
 		for (var key in this.details.app.band) {
 			var band = new Band({title : key});
 			band.elem.appendTo(workspace);
 		}
 
-		/*for (var key in this.details.app.band) {
-			var band = new Band({title : key});
-			band.elem.appendTo(workspace);
-		}*/
+		// margin
+		$('<div class="marginArea bottom" style="height:'+ (designer.details.app.margin.bottom * 3) +'px; width:'+ bandWidth +'px;"></div>').appendTo(workspace);
 
 		this.layout.cells('b').attachObject(workspace[0]);
 	};
