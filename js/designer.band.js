@@ -8,7 +8,8 @@ function Band(source) {
 	Band.prototype.Init = function() {
 		this.title = source.title;
 		var title = '<div class="title"><p>'+ this.title +'</p></div>';
-		var area = '<div class="area" style="height:'+ this.height +'px; width:'+ this.width +'px;"></div>';
+		//var area = '<div class="area" style="height:'+ this.height +'px; width:'+ this.width +'px;"></div>';
+		var area = '<div class="area"></div>';
 		this.elem = $('<div class="band">'+ title + area +'</div>');
 	};
 

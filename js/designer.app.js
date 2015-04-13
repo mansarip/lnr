@@ -42,6 +42,10 @@ function Designer() {
 				"reportTitle" : "Untitled",
 				"author" : ""
 			},
+			format :{
+				"paper":"A4",
+				"orientation":"P"
+			},
 			band : {
 				"Report Header" : {},
 				"Page Header" : {},
@@ -73,7 +77,9 @@ function Designer() {
 		// copy values dari default structure
 		this.details.app = {
 			general : this.details.default.general,
-			band : this.details.default.element,
+			format : this.details.default.format,
+			element : this.details.default.element,
+			band : this.details.default.band,
 			margin : this.details.default.margin,
 			parameter : {}, // declare as object
 			connection : {}
@@ -864,6 +870,7 @@ function Designer() {
 		var tabbar = preferences.attachTabbar({
 			tabs : [
 				{id:1, text:"General", active:true},
+				{id:3, text:"Format"},
 				{id:2, text:"Margins"}
 			]
 		});
@@ -897,6 +904,39 @@ function Designer() {
 		';
 
 		tabbar.tabs(1).attachHTMLString(generalContent + closingButton);
+
+		// format tab
+		var formatContent = '\n\
+		<table border="0" class="windowForm" id="preferencesFormat">\n\
+		<colgroup style="width:100px"/>\n\
+		<colgroup style="width:10px"/>\n\
+		<colgroup/>\n\
+		<tr>\n\
+			<td>Paper</td>\n\
+			<td>:</td>\n\
+			<td>\n\
+				<select class="paper">\n\
+					<option '+ (this.details.app.format.paper === 'A5' ? 'selected="selected" ' : '' ) +' value="A5">A5</option>\n\
+					<option '+ (this.details.app.format.paper === 'A4' ? 'selected="selected" ' : '' ) +' value="A4">A4</option>\n\
+					<option '+ (this.details.app.format.paper === 'A3' ? 'selected="selected" ' : '' ) +' value="A3">A3</option>\n\
+					<option '+ (this.details.app.format.paper === 'Letter' ? 'selected="selected" ' : '' ) +' value="Letter">Letter</option>\n\
+				</select>\n\
+			</td>\n\
+		</tr>\n\
+		<tr>\n\
+			<td>Orientation</td>\n\
+			<td>:</td>\n\
+			<td>\n\
+				<select class="orientation">\n\
+					<option '+ (this.details.app.format.orientation === 'P' ? 'selected="selected" ' : '' ) +' value="P">Portrait</option>\n\
+					<option '+ (this.details.app.format.orientation === 'L' ? 'selected="selected" ' : '' ) +' value="L">Landscape</option>\n\
+				</select>\n\
+			</td>\n\
+		</tr>\n\
+		</table>\n\
+		';
+
+		tabbar.tabs(3).attachHTMLString(formatContent + closingButton);
 
 		// margin tab
 		var generalContent = '\n\
@@ -942,13 +982,16 @@ function Designer() {
 
 		// tag : preferences #setter
 
-		// save and close window button
+		// save then close window button
 		$(tabbar.base).find('input.save').click(function(){
 
 			var preferencesGeneral = $('#preferencesGeneral');
+			var preferencesFormat = $('#preferencesFormat');
 			var preferencesMargin = $('#preferencesMargin');
 			var reportTitle = preferencesGeneral.find('input.reportTitle').val();
 			var author = preferencesGeneral.find('input.authorName').val();
+			var reportPaper = preferencesFormat.find('select.paper').val();
+			var reportOrietation = preferencesFormat.find('select.orientation').val();
 			var margin = {
 				top    : Number(preferencesMargin.find('input.margin.top').val()),
 				left   : Number(preferencesMargin.find('input.margin.left').val()),
@@ -959,6 +1002,8 @@ function Designer() {
 
 			designer.details.app.general.reportTitle = reportTitle;
 			designer.details.app.general.author = author;
+			designer.details.app.format.paper = reportPaper;
+			designer.details.app.format.orientation = reportOrietation;
 			designer.details.app.margin.top = (isNaN(margin.top)) ? 0 : margin.top;
 			designer.details.app.margin.left = (isNaN(margin.left)) ? 0 : margin.left;
 			designer.details.app.margin.right = (isNaN(margin.right)) ? 0 : margin.right;
@@ -974,6 +1019,14 @@ function Designer() {
 		// init bands
 		var workspace = $('<div id="workspace"></div>');
 
+		/*var band = new Band({title : 'Report Header'});
+		band.elem.appendTo(workspace);*/
+
+		for (var key in this.details.app.band) {
+			var band = new Band({title : key});
+			band.elem.appendTo(workspace);
+		}
+
 		/*for (var key in this.details.app.band) {
 			var band = new Band({title : key});
 			band.elem.appendTo(workspace);
@@ -986,15 +1039,15 @@ function Designer() {
 		// dapatkan sumber dari details default
 		var elements = [];
 		var elementId = 2;
-		for (var key in this.details.default.element) {
-			elements.push({ id:elementId++, text:key, im0:this.details.default.element[key].icon });
+		for (var key in this.details.app.element) {
+			elements.push({ id:elementId++, text:key, im0:this.details.app.element[key].icon });
 		}
 
 		// build up tree
 		var defaultTree = {
 			id:0,
 			item:elements
-		};		
+		};
 
 		this.tree.element = this.layout.cells('c').attachTree();
 		this.tree.element.setImagesPath(this.dhtmlxImagePath +'dhxtree_skyblue/');

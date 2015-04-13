@@ -14,36 +14,7 @@ body{
 #workspace{
 	overflow-y: scroll;
 	background-color: #C4C4C4;
-	padding-bottom: 50px;
-}
-#workspace .band{
-	margin: 0;
-	padding: 0;
-	position: relative;
-}
-#workspace .band .title{
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	width: 60px;
-	font-size: 10px;
-	overflow: hidden;
-	text-align: center;
-	background-color: #FFF3E0;
-	border-bottom: 1px solid #D4C396;
-}
-#workspace .band .title p{
-	width: 80%;
-	margin: 0 auto;
-}
-#workspace .band .area{
-	margin-left: 60px;
-	padding: 0;
-	background-color: #fff;
-	border-left: 1px solid #AEAEAE;
-	border-bottom: 1px solid #AEAEAE;
-	box-shadow: 3px 0px 5px #8E8E8E;
+	padding-bottom: 30px;
 }
 table.windowForm{
 	font-family: 'Montserrat', sans-serif;
@@ -61,6 +32,25 @@ table.windowForm td input{
 }
 table.windowForm td input.fullwidth{
 	width: 90%;
+}
+#workspace .band{
+	width: 630px;
+	margin: 0 auto;
+	box-shadow: 0px 0px 1px #929292;
+}
+#workspace .band .title p{
+	margin: 0;
+	font-size: 10px;
+	font-family: 'Montserrat';
+	padding: 2px;
+	background-color: #EEE;
+	border-left: 1px solid #9E9E9E;
+	border-right: 1px solid #9E9E9E;
+}
+#workspace .band .area{
+	border: 1px solid #AAA;
+	background-color: white;
+	height: 100px;
 }
 .buttonPlaceholder{
 	position: absolute;
