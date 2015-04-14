@@ -1,6 +1,12 @@
 body{
 	margin: 0;
 	height: 100%;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 #app,
 #workspace{
@@ -14,7 +20,7 @@ body{
 #workspace{
 	overflow-y: scroll;
 	background-color: #C4C4C4;
-	padding-bottom: 30px;
+	padding-bottom: 20px;
 }
 table.windowForm{
 	font-family: 'Montserrat', sans-serif;
@@ -33,13 +39,8 @@ table.windowForm td input{
 table.windowForm td input.fullwidth{
 	width: 90%;
 }
-#workspace .marginArea{
-	border-left: 1px solid #9E9E9E;
-	border-right: 1px solid #9E9E9E;
-}
-#workspace .marginArea,
 #workspace .band{
-	margin: 0 auto;
+	/*margin: 0 auto;*/
 	box-shadow: 0px 0px 1px #929292;
 	position: relative;
 	background-color: white;
@@ -58,13 +59,15 @@ table.windowForm td input.fullwidth{
 	border: 1px solid #AAA;
 	background-color: #fff;
 	height: 100px;
+	position: relative;
 }
-#workspace .band .guide{
+#workspace .band .area.hoverDrop{
+	background-color: #FFF5E0;
+	border: 2px dashed #CEAE6B;
+}
+#workspace .area .element{
 	position: absolute;
-	width: 1px;
-	top: 0;
-	bottom: 0;
-	background-color: #45F0FF;
+	box-sizing: border-box;
 }
 .buttonPlaceholder{
 	position: absolute;
@@ -110,10 +113,11 @@ table.windowForm td input.fullwidth{
 	font-size: 11px;
 	text-align: center;
 }
-/*#parameterContainer{
-	position: absolute;
-	top: 0;
-	bottom: 60px;
-	left: 0;
-	right: 0;
-}*/
+.ui-resizable-n{ top:0; height:2px; background-color:red;}
+.ui-resizable-e{ right:0; width:2px; background-color:red;}
+.ui-resizable-s{ bottom:0; height:2px; background-color:red;}
+.ui-resizable-w{ left:0; width:2px; background-color:red;}
+.ui-resizable-ne{ width:4px; height: 4px; right:0; top:0; background-color:blue;}
+.ui-resizable-nw{ width:4px; height: 4px; left:0; top:0; background-color:blue;}
+.ui-resizable-se{ width:4px; height: 4px; right:0; bottom:0; background-color:blue;}
+.ui-resizable-sw{ width:4px; height: 4px; left:0; bottom:0; background-color:blue;}

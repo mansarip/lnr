@@ -11,6 +11,9 @@ $(function(){
 		// user interface initialization
 		designer.InitUI();
 
+		// drag drop interaction init
+		designer.InitDragDrop();
+
 		// event registration
 		designer.TreeStructureRegisterEvent();
 	});

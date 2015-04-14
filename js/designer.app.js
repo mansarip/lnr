@@ -153,6 +153,8 @@ function Designer() {
 		this.layout.cells('a').setWidth(230);
 		this.layout.cells('c').setWidth(230);
 
+		this.layout.cells('b').hideArrow();
+
 		// add tabbar pada cell a
 		this.tabbar.cellA = this.layout.cells('a').attachTabbar();
 		this.tabbar.cellA.addTab('structure','Structure');
@@ -1001,6 +1003,7 @@ function Designer() {
 			var author = preferencesGeneral.find('input.authorName').val();
 			var reportPaper = preferencesFormat.find('select.paper').val();
 			var reportOrietation = preferencesFormat.find('select.orientation').val();
+			var bandSize = designer.details.default.bandWidth[reportPaper][reportOrietation];
 			var margin = {
 				top    : Number(preferencesMargin.find('input.margin.top').val()),
 				left   : Number(preferencesMargin.find('input.margin.left').val()),
@@ -1008,6 +1011,9 @@ function Designer() {
 				bottom : Number(preferencesMargin.find('input.margin.bottom').val()),
 				footer : Number(preferencesMargin.find('input.margin.footer').val())
 			}
+
+			// band size
+			$('#workspace .band').width(bandSize);
 
 			designer.details.app.general.reportTitle = reportTitle;
 			designer.details.app.general.author = author;
@@ -1032,6 +1038,7 @@ function Designer() {
 		for (var key in this.details.app.band) {
 			var band = new Band({title : key});
 			band.elem.appendTo(workspace);
+			band.ApplyResize();
 		}
 
 		this.layout.cells('b').attachObject(workspace[0]);
@@ -1097,6 +1104,58 @@ function Designer() {
 		this.tree.structure.loadJSONObject(defaultTree, function(){
 			designer.tree.structure.openItem(1);
 		});
+	};
+
+	Designer.prototype.InitDragDrop = function(){
+
+		// tree element
+		$(this.tree.element.parentObject).find('.standartTreeRow').draggable({
+			appendTo:'#app',
+			helper : 'clone',
+			zIndex : 100
+		});
+
+		// band droppable
+		$('#workspace .band .area').droppable({
+			accept : '.standartTreeRow',
+			hoverClass : 'hoverDrop',
+			drop : function(event, ui){
+				designer.DrawElement(event, ui);
+			}
+		});
+
+	};
+
+	Designer.prototype.DrawElement = function(event, ui){
+		var type = $(ui.helper).text().toLowerCase();
+		var targetArea = $(event.target);
+		var clone = $(ui.helper).clone();
+		var bandName = targetArea.closest('.band').attr('data-name');
+
+		// dapatkan proper position
+		targetArea.append(clone);
+		var posX = clone.position().left - targetArea.offset().left;
+		var posY = clone.position().top - targetArea.offset().top;
+		clone.remove();
+		
+		if (type === 'label') {
+			var label = new Label();
+			label.SetPosition(posX, posY);
+			label.Draw(targetArea);
+			label.ApplyDrag();
+			label.ApplyResize();
+		}
+
+		// update band min height
+		/*console.log(this.details.app.band['Report Header']);
+		if (this.details.app.band[bandName].minHeight === null) {
+			console.log('aaa');
+		}*/
+
+		// console.log(label.elem.position().top + label.elem.innerHeight());
+
+		// udpate min height band area
+		//targetArea.resizable('option', 'minHeight', 150);
 	};
 
 	Designer.prototype.GoBackHome = function() {
