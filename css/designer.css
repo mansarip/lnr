@@ -113,11 +113,23 @@ table.windowForm td input.fullwidth{
 	font-size: 11px;
 	text-align: center;
 }
-.ui-resizable-n{ top:0; height:2px; background-color:red;}
-.ui-resizable-e{ right:0; width:2px; background-color:red;}
-.ui-resizable-s{ bottom:0; height:2px; background-color:red;}
-.ui-resizable-w{ left:0; width:2px; background-color:red;}
-.ui-resizable-ne{ width:4px; height: 4px; right:0; top:0; background-color:blue;}
-.ui-resizable-nw{ width:4px; height: 4px; left:0; top:0; background-color:blue;}
-.ui-resizable-se{ width:4px; height: 4px; right:0; bottom:0; background-color:blue;}
-.ui-resizable-sw{ width:4px; height: 4px; left:0; bottom:0; background-color:blue;}
+
+/*overwrite jqueryui handle styles*/
+.element .ui-resizable-n{ top:0; height:2px;}
+.element .ui-resizable-e{ right:0; width:2px;}
+.element .ui-resizable-s{ bottom:0; height:2px;}
+.element .ui-resizable-w{ left:0; width:2px;}
+.element .ui-resizable-ne{ width:4px; height: 4px; right:0; top:0;}
+.element .ui-resizable-nw{ width:4px; height: 4px; left:0; top:0;}
+.element .ui-resizable-se{ width:4px; height: 4px; right:0; bottom:0;}
+.element .ui-resizable-sw{ width:4px; height: 4px; left:0; bottom:0;}
+
+/*selected element handles*/
+.element.selected .ui-resizable-n{background-color:red;}
+.element.selected .ui-resizable-e{background-color:red;}
+.element.selected .ui-resizable-s{background-color:red;}
+.element.selected .ui-resizable-w{background-color:red;}
+.element.selected .ui-resizable-ne{background-color:blue;}
+.element.selected .ui-resizable-nw{background-color:blue;}
+.element.selected .ui-resizable-se{background-color:blue;}
+.element.selected .ui-resizable-sw{background-color:blue;}

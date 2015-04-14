@@ -19,6 +19,7 @@ function Designer() {
 	};
 	this.parameterListGrid;
 	this.parameterStatusBarBottom;
+	this.currentSelectedElement = null;
 
 	Designer.prototype.CheckLogin = function(proceedFunc) {
 		var request = $.ajax({
@@ -1146,6 +1147,7 @@ function Designer() {
 			label.Draw(targetArea);
 			label.ApplyDrag();
 			label.ApplyResize();
+			label.Select();
 		}
 
 		// update band min height
@@ -1202,13 +1204,16 @@ function Designer() {
 	};
 
 	// event : body click
-	$('body').on('click', function(){
-
+	$('body').on('click', function(event){
 		// clear selection tree		
 		designer.tree.structure.clearSelection();
 		designer.tree.data.clearSelection();
 		designer.tree.element.clearSelection();
 
+		// clear selection element
+		if (designer.currentSelectedElement !== null) {
+			designer.currentSelectedElement.Deselect();
+		}
 	});
 
 	// event : remove parameter from list

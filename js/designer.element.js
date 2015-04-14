@@ -13,9 +13,33 @@ function Label() {
 	Label.prototype.Draw = function(area){
 		this.elem = $('<div class="element label" style="'+ this.style +'"></div>');
 		this.elem.appendTo(area);
+
+		// events
+		var self = this;
+
+		this.elem.on('mousedown', function(event){
+			event.stopPropagation();
+			self.Select();
+		});
+
+		this.elem.on('click', function(event){
+			event.stopPropagation();
+			self.elem.trigger('mousedown');
+		});
+	};
+
+	Label.prototype.Select = function() {
+		designer.currentSelectedElement = this;
+		this.elem.addClass('selected');
+	};
+
+	Label.prototype.Deselect = function() {
+		designer.currentSelectedElement = null;
+		this.elem.removeClass('selected');
 	};
 
 	Label.prototype.ApplyDrag = function(){
+		var self = this;
 		var parent = this.elem.closest('.area');
 		this.elem.draggable({
 			containment:parent,
@@ -23,6 +47,7 @@ function Label() {
 				var bandName = $(this).closest('.band').attr('data-name');
 				var band = designer.details.app.band[bandName];
 				designer.UpdateBandMinHeight(band);
+				 $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
 			}
 		});
 	};
@@ -36,6 +61,7 @@ function Label() {
 				var bandName = ui.element.closest('.band').attr('data-name');
 				var band = designer.details.app.band[bandName];
 				designer.UpdateBandMinHeight(band);
+				 $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
 			}
 		});
 	};
