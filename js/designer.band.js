@@ -7,13 +7,9 @@ function Band(source) {
 
 	Band.prototype.Init = function() {
 		this.title = source.title;
-		var guide = '\n\
-			<div class="guide left" style="left:'+ (designer.details.app.margin.left * 3) +'px"></div>\n\
-			<div class="guide right" style="right:'+ (designer.details.app.margin.right * 3) +'px"></div>\n\
-			';
 		var title = '<div class="title"><p>'+ this.title +'</p></div>';
 		var area = '<div class="area"></div>';
-		this.elem = $('<div class="band" data-name="'+ this.title +'" style="width:'+ this.width +'px">'+ guide + title + area +'</div>');
+		this.elem = $('<div class="band" data-name="'+ this.title +'" style="width:'+ this.width +'px">'+ title + area +'</div>');
 	};
 
 	this.Init();

@@ -1027,18 +1027,12 @@ function Designer() {
 	Designer.prototype.InitWorkspace = function() {
 		var workspace = $('<div id="workspace"></div>');
 		var bandWidth = designer.details.default.bandWidth[designer.details.app.format.paper][designer.details.app.format.orientation];
-		
-		// margin
-		$('<div class="marginArea top" style="height:'+ (designer.details.app.margin.top * 3) +'px; width:'+ bandWidth +'px;"></div>').appendTo(workspace);
 
 		// init bands
 		for (var key in this.details.app.band) {
 			var band = new Band({title : key});
 			band.elem.appendTo(workspace);
 		}
-
-		// margin
-		$('<div class="marginArea bottom" style="height:'+ (designer.details.app.margin.bottom * 3) +'px; width:'+ bandWidth +'px;"></div>').appendTo(workspace);
 
 		this.layout.cells('b').attachObject(workspace[0]);
 	};
