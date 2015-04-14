@@ -1039,6 +1039,7 @@ function Designer() {
 			var band = new Band({title : key});
 			band.elem.appendTo(workspace);
 			band.ApplyResize();
+			this.details.app.band[key] = band;
 		}
 
 		this.layout.cells('b').attachObject(workspace[0]);
@@ -1131,6 +1132,7 @@ function Designer() {
 		var targetArea = $(event.target);
 		var clone = $(ui.helper).clone();
 		var bandName = targetArea.closest('.band').attr('data-name');
+		var band = this.details.app.band[bandName];
 
 		// dapatkan proper position
 		targetArea.append(clone);
@@ -1147,15 +1149,18 @@ function Designer() {
 		}
 
 		// update band min height
-		/*console.log(this.details.app.band['Report Header']);
-		if (this.details.app.band[bandName].minHeight === null) {
-			console.log('aaa');
-		}*/
+		this.UpdateBandMinHeight(band);
+	};
 
-		// console.log(label.elem.position().top + label.elem.innerHeight());
+	Designer.prototype.UpdateBandMinHeight = function(band) {
+		var heightCollection = [];
+		band.elem.find('.element').each(function(){
+			var posY2 = $(this).position().top + $(this).outerHeight();
+			heightCollection.push(posY2);
+		});
 
-		// udpate min height band area
-		//targetArea.resizable('option', 'minHeight', 150);
+		band.minHeight = Math.max.apply(null, heightCollection);
+		band.elem.find('.area').resizable('option', 'minHeight', band.minHeight);
 	};
 
 	Designer.prototype.GoBackHome = function() {

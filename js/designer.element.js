@@ -18,7 +18,12 @@ function Label() {
 	Label.prototype.ApplyDrag = function(){
 		var parent = this.elem.closest('.area');
 		this.elem.draggable({
-			containment:parent
+			containment:parent,
+			stop:function(event, ui){
+				var bandName = $(this).closest('.band').attr('data-name');
+				var band = designer.details.app.band[bandName];
+				designer.UpdateBandMinHeight(band);
+			}
 		});
 	};
 
@@ -26,7 +31,12 @@ function Label() {
 		var parent = this.elem.closest('.area');
 		this.elem.resizable({
 			containment:parent,
-			handles:'all'
+			handles:'all',
+			stop:function(event, ui){
+				var bandName = ui.element.closest('.band').attr('data-name');
+				var band = designer.details.app.band[bandName];
+				designer.UpdateBandMinHeight(band);
+			}
 		});
 	};
 }
