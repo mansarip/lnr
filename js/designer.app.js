@@ -89,7 +89,8 @@ function Designer() {
 			band : this.details.default.band,
 			margin : this.details.default.margin,
 			parameter : {}, // declare as object
-			connection : {}
+			connection : {},
+			dataSource : {}
 		};
 
 		// report (default structure)
@@ -210,6 +211,10 @@ function Designer() {
 			if (id === '1') {
 
 			}
+			// source window
+			else if (id === '9') {
+				designer.OpenDataSourceWindow();
+			}
 			// preferences window
 			else if (id === '11') {
 				designer.OpenPreferencesWindow();
@@ -251,8 +256,6 @@ function Designer() {
 		connectionWin.button('park').hide();
 		connectionWin.setText('Connection');
 
-		var statusBar = connectionWin.attachStatusBar();
-
 		var toolbar = connectionWin.attachToolbar();
 		var layout = connectionWin.attachLayout({ pattern:'2U' });
 
@@ -270,6 +273,7 @@ function Designer() {
 
 		toolbar.setIconsPath(this.fugueIconPath);
 		toolbar.loadStruct(button);
+		toolbar.hideItem(3);
 
 		// load connection from details (jika ada)
 		var savedConnection = [];
@@ -315,6 +319,10 @@ function Designer() {
 
 			// add new connection
 			if (id === '1') {
+				// clear tree selection
+				tree.clearSelection();
+				toolbar.hideItem(3);
+
 				mode = 'add';
 				var addNewConnection = '\n\
 				<table border="0" class="windowForm" id="connectionAddNew">\n\
@@ -381,41 +389,36 @@ function Designer() {
 
 			// remove connection
 			else if (id === '3') {
-				statusBar.setText('Confirm remove connection "'+ tree.getSelectedItemId() +'"? &nbsp;&nbsp;<a href="javascript:void(0)" id="anchorRemoveConnectionOK">OK</a> &nbsp;&nbsp; <a href="javascript:void(0)" id="anchorRemoveConnectionCancel">Cancel</a>');
-				layout.cells('a').progressOn();
-				layout.cells('b').progressOn();
+				dhtmlx.confirm({
+					title: "Remove",
+					type:"confirm-info",
+					text: "<img src='../img/icons/exclamation.png'/><br/>Remove this connection?",
+					callback: function(answer) {
+						if (answer === true) {
+							var connName = tree.getSelectedItemId();
+
+							layout.cells('a').progressOff();
+							layout.cells('b').progressOff();
+
+							tree.deleteItem(connName, false);
+
+							// remove from details #setter
+							delete designer.details.app.connection[connName];
+
+							if ($.isEmptyObject(designer.details.app.connection)) {
+								layout.cells('b').attachHTMLString(noConnectionAvailable);
+							} else {
+								layout.cells('b').attachHTMLString(noConnectionSelected);
+							}
+
+							// hide button remove
+							toolbar.hideItem(3);
+						}
+					}
+				});
 			}
 
 		});
-
-	 	// event register
-	 	// remove connection OK
-	 	$('body').on('click', '#anchorRemoveConnectionOK', function(){
-	 		var connName = tree.getSelectedItemId();
-
-	 		layout.cells('a').progressOff();
-	 		layout.cells('b').progressOff();
-
-	 		tree.deleteItem(connName, false);
-	 		statusBar.setText('');
-
-	 		// remove from details #setter
-	 		delete designer.details.app.connection[connName];
-
-	 		if ($.isEmptyObject(designer.details.app.connection)) {
-	 			layout.cells('b').attachHTMLString(noConnectionAvailable);
-	 		} else {
-	 			layout.cells('b').attachHTMLString(noConnectionSelected);
-	 		}
-	 	});
-
-	 	// remove connection cancel
-	 	$('body').on('click', '#anchorRemoveConnectionCancel', function(){
-	 		layout.cells('a').progressOff();
-	 		layout.cells('b').progressOff();
-	 		statusBar.setText('');
-	 	});
-
 
 	 	// test button
 		$(layout.base).on('click', '.buttonPlaceholder input.test', function(){
@@ -434,17 +437,17 @@ function Designer() {
 			if (detail.host === '') {
 				connectionWin.progressOff();
 				dhtmlx.alert({
-					title:'Failure',
+					title:'Error',
 					type:"alert-info",
-					text:'Invalid host'
+					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Invalid host'
 				});
 
 			} else if (detail.user === '') {
 				connectionWin.progressOff();
 				dhtmlx.alert({
-					title:'Failure',
+					title:'Error',
 					type:"alert-info",
-					text:'Invalid user'
+					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Invalid user'
 				});
 
 			} else {
@@ -467,8 +470,9 @@ function Designer() {
 					dhtmlx.alert({
 						title:'Unexpected Error',
 						type:"alert-error",
-						text:'Failed to connect server'
+						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Failed to connect server'
 					});
+					return false;
 				});
 			}
 		});
@@ -484,8 +488,6 @@ function Designer() {
 
 	 	// save button
 		$(layout.base).on('click', '.buttonPlaceholder input.save', function(){
-			statusBar.setText('');
-
 			var message = '';
 			var connectionForm = (mode === 'add') ? $('#connectionAddNew') : $('#connectionEdit');
 			var detail = {};
@@ -498,11 +500,19 @@ function Designer() {
 
 			// validate
 			if (detail.name === '') {
-				statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Unable to save : Empty connection name');
+				dhtmlx.alert({
+					title:'Error',
+					type:"alert-info",
+					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Empty connection name'
+				});
 				return false;
 			}
 			if (detail.type === '') {
-				statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Unable to save : Invalid connection type');
+				dhtmlx.alert({
+					title:'Error',
+					type:"alert-info",
+					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Invalid connection type'
+				});
 				return false;
 			}
 
@@ -510,7 +520,11 @@ function Designer() {
 			if (mode === 'add') {
 				// jika nama dah ada
 				if (designer.details.app.connection[detail.name] !== undefined) {
-					statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Unable to save : Connection name already exist');
+					dhtmlx.alert({
+						title:'Error',
+						type:"alert-info",
+						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Connection name already exist'
+					});
 					return false;
 				}
 
@@ -526,7 +540,7 @@ function Designer() {
 				// reset mode
 				mode = null;
 
-				message = 'Connection is successfully added';
+				message = 'Connection has been successfully added.';
 			}
 
 			// edit mode
@@ -537,7 +551,11 @@ function Designer() {
 
 					// nama dah wujud
 					if (designer.details.app.connection[detail.name] !== undefined) {
-						statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Unable to save : Connection name already exist');
+						dhtmlx.alert({
+							title:'Error',
+							type:"alert-info",
+							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Connection name already exist'
+						});
 						return false;
 					}
 
@@ -566,12 +584,10 @@ function Designer() {
 			}
 
 			// papar mesej
-			statusBar.setText(message);
-
-			// padam mesej
-			setTimeout(function(){
-				statusBar.setText('');
-			}, 2000);
+			dhtmlx.message({
+				text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>'+ message +'</td></tr></table>',
+				expire:2000
+			});
 		});
 
 		// tree connection click
@@ -579,7 +595,8 @@ function Designer() {
 			mode = 'edit';
 			editName = id;
 
-			statusBar.setText('');
+			// show remove button
+			toolbar.showItem(3);
 
 			// display detail #getter
 			var editConnection = '\n\
@@ -1081,6 +1098,252 @@ function Designer() {
 
 			preferences.close();
 			windows.unload();
+		});
+	};
+
+	Designer.prototype.OpenDataSourceWindow = function() {
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var dataSourceWin = windows.createWindow({
+		    id:"dataSource",
+		    width:550,
+		    height:430,
+		    center:true,
+		    modal:true,
+		    resize:false
+		});
+		dataSourceWin.button('minmax').hide();
+		dataSourceWin.button('park').hide();
+		dataSourceWin.setText('Data Source');
+
+		var statusBar = dataSourceWin.attachStatusBar();
+
+		var toolbar = dataSourceWin.attachToolbar();
+		var layout = dataSourceWin.attachLayout({ pattern:'2U' });
+
+		layout.cells('a').hideHeader();
+		layout.cells('b').hideHeader();
+
+		layout.cells('a').setWidth(130);
+
+		var button = [
+			// general
+			{id:1, type:"button", text:"Add New", img:"database--plus.png"},
+			{id:2, type:"separator"},
+			{id:3, type:"button", text:"Remove", img:"cross.png"}
+		];
+
+		toolbar.setIconsPath(this.fugueIconPath);
+		toolbar.loadStruct(button);
+		toolbar.hideItem(3); // hide remove button
+
+		// load data source from details (jika ada)
+		var savedDataSource = [];
+		if (!$.isEmptyObject(designer.details.app.dataSource)) {
+			for (var key in designer.details.app.dataSource) {
+				savedDataSource.push({
+					id:key,
+					text:key,
+					im0:'document.png',
+					im1:'document.png',
+					im2:'document.png'
+				});
+			}
+		}
+
+		// left side
+		var tree = layout.cells('a').attachTree();
+		tree.setImagesPath(this.dhtmlxImagePath +'dhxtree_skyblue/');
+		tree.setIconsPath(this.fugueIconPath);
+		tree.loadJSONObject({id:0, item: savedDataSource }); //root id 0
+
+		// right side
+		var noDataSourceAvailable = '<div id="connectionWinMessage"><p>No data source available.</p></div>';
+		var noDataSourceSelected = '<div id="connectionWinMessage"><p>No data source selected.</p></div>';
+
+		// jika tiada data source
+		if ($.isEmptyObject(designer.details.app.dataSource)) {
+			layout.cells('b').attachHTMLString(noDataSourceAvailable);
+		} else {
+			layout.cells('b').attachHTMLString(noDataSourceSelected);
+		}
+
+		// closing button
+		var closingButton = '\n\
+		<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
+			<input type="button" class="preview" style="padding:6px 35px" value="Preview"/>\n\
+			<input type="button" class="save" style="padding:6px 35px" value="Save"/>\n\
+		</div>';
+
+		// connection drop down
+		var connectionDropDown = '';
+		for (var key in designer.details.app.connection) {
+			connectionDropDown += '<option value="'+ key +'">'+ key +'</option>';
+		}
+
+		// event : toolbar onclick
+		toolbar.attachEvent('onClick', function(id){
+
+			// add new data source
+			if (id === '1') {
+				mode = 'add';
+				var addNewDataSource = '\n\
+				<table border="0" class="windowForm" id="dataSourceAddNew">\n\
+				<colgroup style="width:120px"/>\n\
+				<colgroup style="width:10px"/>\n\
+				<colgroup/>\n\
+				<tr>\n\
+					<td colspan="3"><b>Add New Data Source</b></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Type</td>\n\
+					<td>:</td>\n\
+					<td>\n\
+						<select class="type" data-key="type">\n\
+							<option value="database">Database</option>\n\
+						</select>\n\
+					</td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Connection</td>\n\
+					<td>:</td>\n\
+					<td>\n\
+						<select class="connection" data-key="connection">\n\
+							'+ connectionDropDown +'\n\
+						</select>\n\
+					</td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Data Source Name</td>\n\
+					<td>:</td>\n\
+					<td><input type="text" class="name fullwidth" data-key="name" value=""/></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td>Query</td>\n\
+					<td></td>\n\
+					<td></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none"></textarea></td>\n\
+				</tr>\n\
+				<tr>\n\
+					<td><small>Max Preview Records</small></td>\n\
+					<td>:</td>\n\
+					<td><input type="number" class="maxpreview" data-key="maxpreview" value="100"/></td>\n\
+				</tr>\n\
+				</table>\n\
+				';
+
+				layout.cells('b').attachHTMLString(addNewDataSource + closingButton);
+			}
+
+			// remove data source
+			else if (id === '3') {
+				/*statusBar.setText('Confirm remove connection "'+ tree.getSelectedItemId() +'"? &nbsp;&nbsp;<a href="javascript:void(0)" id="anchorRemoveConnectionOK">OK</a> &nbsp;&nbsp; <a href="javascript:void(0)" id="anchorRemoveConnectionCancel">Cancel</a>');
+				layout.cells('a').progressOn();
+				layout.cells('b').progressOn();*/
+			}
+
+		});
+
+	 	// event register
+	 	// remove connection OK
+	 	$('body').on('click', '#anchorRemoveConnectionOK', function(){
+	 		var connName = tree.getSelectedItemId();
+
+	 		layout.cells('a').progressOff();
+	 		layout.cells('b').progressOff();
+
+	 		tree.deleteItem(connName, false);
+	 		statusBar.setText('');
+
+	 		// remove from details #setter
+	 		delete designer.details.app.connection[connName];
+
+	 		if ($.isEmptyObject(designer.details.app.connection)) {
+	 			layout.cells('b').attachHTMLString(noConnectionAvailable);
+	 		} else {
+	 			layout.cells('b').attachHTMLString(noConnectionSelected);
+	 		}
+	 	});
+
+	 	// remove connection cancel
+	 	$('body').on('click', '#anchorRemoveConnectionCancel', function(){
+	 		layout.cells('a').progressOff();
+	 		layout.cells('b').progressOff();
+	 		statusBar.setText('');
+	 	});
+
+
+	 	// preview button
+		$(layout.base).on('click', '.buttonPlaceholder input.preview', function(){
+			alert('preview!');
+		});
+
+	 	// save button
+		$(layout.base).on('click', '.buttonPlaceholder input.save', function(){
+			var form = $('#dataSourceAddNew');
+			var detail = {};
+
+			form.find('input, select, textarea').each(function(){
+				var key = $(this).attr('data-key');
+				var value = $(this).val();
+				detail[key] = value;
+			});
+
+			//validate
+			if (detail.connection === '' || detail.connection === null) {
+				dhtmlx.alert({
+					title:'Error',
+					type:"alert-info",
+					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Invalid connection selected. Make sure you<br/>already have at least one connection to select.</p>'
+				});
+				return false;
+			}
+
+			if (detail.name === '') {
+				dhtmlx.alert({
+					title:'Error',
+					type:"alert-info",
+					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Empty data source name!</p>'
+				});
+				return false;
+			}
+
+			if (designer.details.app.dataSource[detail.name] !== undefined) {
+				dhtmlx.alert({
+					title:'Error',
+					type:"alert-info",
+					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Data source with name "'+ detail.name +'" already exist.</p>'
+				});
+				return false;
+			}
+
+			//update tree
+			tree.insertNewItem(0, detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
+
+			//update details #setter
+			designer.details.app.dataSource[detail.name] = detail;
+
+			//clear right side
+			layout.cells('b').attachHTMLString(noDataSourceSelected);
+
+			//clear tree selection
+			tree.clearSelection();
+
+			// display message
+			dhtmlx.message({
+				text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source has been successfully saved!</td></tr></table>',
+				expire:2000
+			});
+		});
+
+		// tree connection click
+		tree.attachEvent('onClick', function(id){
+			console.log(id);
+			//display remove button
+			//display edit form
 		});
 	};
 

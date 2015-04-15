@@ -24,7 +24,7 @@ body{
 }
 table.windowForm{
 	font-family: 'Montserrat', sans-serif;
-	font-size: 12px;
+	font-size: 11px;
 	width: 93%;
 	margin: 5px auto;
 	border-collapse: collapse;
@@ -133,3 +133,7 @@ table.windowForm td input.fullwidth{
 .element.selected .ui-resizable-nw{background-color:#333;}
 .element.selected .ui-resizable-se{background-color:#333;}
 .element.selected .ui-resizable-sw{background-color:#333;}
+
+.dhtmlx_popup_text{
+	line-height: 16px;
+}
