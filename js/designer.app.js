@@ -205,6 +205,10 @@ function Designer() {
 			]},
 			{id:14, type:"separator"},
 
+			// layout
+			{id:15, type:"button", text:"Refresh", img:"magnifier.png"},
+			{id:16, type:"separator"},
+
 			// viewing & publishing
 			{id:10, type:"button", text:"Preview", img:"magnifier.png"},
 			{id:7, type:"button", text:"Publish", img:"globe--arrow.png"}
@@ -227,6 +231,10 @@ function Designer() {
 			// connection window
 			else if (id === '6') {
 				designer.OpenConnectionWindow();
+			}
+			// preview
+			else if (id === '10') {
+				designer.Preview();
 			}
 		});
 	};
@@ -1176,6 +1184,11 @@ function Designer() {
 		if (this.currentSelectedElement !== null) {
 			this.currentSelectedElement.Deselect();
 		}
+	};
+
+	Designer.prototype.Preview = function() {
+		// create form on the fly
+		//var form = $('<form></form>');
 	};
 
 	// event : tree structure click
