@@ -5,6 +5,7 @@ function Band(source) {
 	this.width = designer.details.default.bandWidth[designer.details.app.format.paper][designer.details.app.format.orientation];
 	this.title = source.title;
 	this.minHeight = null;
+	this.treeStructureId;
 
 	Band.prototype.Init = function() {
 		this.title = source.title;
@@ -17,6 +18,10 @@ function Band(source) {
 		this.elem.find('.area').resizable({
 			handles:'s'
 		});
+	};
+
+	Band.prototype.RegisterTreeId = function(id){
+		this.treeStructureId = id;
 	};
 
 	this.Init();

@@ -5,6 +5,8 @@ function Label() {
 	this.name = 'Label'; // tak unique (user boleh rename)
 	this.style = 'border:1px solid #333; width:'+ this.width +'px; height:'+ this.height +'px;';
 	this.elem = null;
+	this.id = null;
+	this.parentBand;
 
 	Label.prototype.SetPosition = function(x, y){
 		this.style += 'top:'+ y +'px; left:'+ x +'px;';
@@ -12,13 +14,18 @@ function Label() {
 
 	Label.prototype.Draw = function(area){
 		this.elem = $('<div class="element label" style="'+ this.style +'"></div>');
+		this.elem.uniqueId();
 		this.elem.appendTo(area);
+
+		// id
+		this.id = this.elem.attr('id');
 
 		// events
 		var self = this;
 
 		this.elem.on('mousedown', function(event){
 			event.stopPropagation();
+			designer.DeselectCurrentElement();
 			self.Select();
 		});
 
@@ -30,12 +37,27 @@ function Label() {
 
 	Label.prototype.Select = function() {
 		designer.currentSelectedElement = this;
+		designer.tree.structure.selectItem(this.id);
 		this.elem.addClass('selected');
 	};
 
 	Label.prototype.Deselect = function() {
 		designer.currentSelectedElement = null;
 		this.elem.removeClass('selected');
+	};
+
+	Label.prototype.RegisterTree = function(){
+		var self = this;
+		var treeParentId = this.parentBand.treeStructureId;
+		var treeChildId = this.id;
+		var treeText = 'Label';
+
+		designer.tree.structure.insertNewChild(treeParentId, treeChildId, treeText, function(id){
+			event.stopPropagation();
+			self.Select();
+		}, 'ui-label.png');
+
+		designer.tree.structure.selectItem(treeChildId, false);
 	};
 
 	Label.prototype.ApplyDrag = function(){

@@ -125,11 +125,11 @@ table.windowForm td input.fullwidth{
 .element .ui-resizable-sw{ width:4px; height: 4px; left:0; bottom:0;}
 
 /*selected element handles*/
-.element.selected .ui-resizable-n{background-color:red;}
-.element.selected .ui-resizable-e{background-color:red;}
-.element.selected .ui-resizable-s{background-color:red;}
-.element.selected .ui-resizable-w{background-color:red;}
-.element.selected .ui-resizable-ne{background-color:blue;}
-.element.selected .ui-resizable-nw{background-color:blue;}
-.element.selected .ui-resizable-se{background-color:blue;}
-.element.selected .ui-resizable-sw{background-color:blue;}
+.element.selected .ui-resizable-n{background-color:#FFBA2C;}
+.element.selected .ui-resizable-e{background-color:#FFBA2C;}
+.element.selected .ui-resizable-s{background-color:#FFBA2C;}
+.element.selected .ui-resizable-w{background-color:#FFBA2C;}
+.element.selected .ui-resizable-ne{background-color:#333;}
+.element.selected .ui-resizable-nw{background-color:#333;}
+.element.selected .ui-resizable-se{background-color:#333;}
+.element.selected .ui-resizable-sw{background-color:#333;}

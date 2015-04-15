@@ -54,13 +54,13 @@ function Designer() {
 				"Letter" : {"P": 648, "L": 1068}
 			},
 			band : {
-				"Report Header" : {},
-				"Page Header" : {},
-				"Header" : {},
-				"Detail" : {},
-				"Footer" : {},
-				"Page Footer" : {},
-				"Report Footer" : {}
+				"Report Header" : { "treeId":2 },
+				"Page Header" : { "treeId":3 },
+				"Header" : { "treeId":4 },
+				"Detail" : { "treeId":5 },
+				"Footer" : { "treeId":6 },
+				"Page Footer" : { "treeId":7 },
+				"Report Footer" : { "treeId":8 }
 			},
 			element : {
 				"Label" : {"icon":"ui-label.png"},
@@ -1039,6 +1039,7 @@ function Designer() {
 		for (var key in this.details.app.band) {
 			var band = new Band({title : key});
 			band.elem.appendTo(workspace);
+			band.RegisterTreeId(this.details.app.band[key].treeId);
 			band.ApplyResize();
 			this.details.app.band[key] = band;
 		}
@@ -1087,9 +1088,8 @@ function Designer() {
 	Designer.prototype.InitStructureTree = function() {
 		// build tree based on details
 		var bands = [];
-		var bandId = 2;
 		for (var key in this.details.default.band) {
-			bands.push({ id:bandId++, text:key, im0:"zone.png" });
+			bands.push({ id:this.details.default.band[key].treeId , text:key, im0:"zone.png", im1:"zone.png", im2:"zone.png" });
 		}
 
 		// build main tree
@@ -1122,6 +1122,7 @@ function Designer() {
 			accept : '.standartTreeRow',
 			hoverClass : 'hoverDrop',
 			drop : function(event, ui){
+				designer.DeselectCurrentElement();
 				designer.DrawElement(event, ui);
 			}
 		});
@@ -1143,10 +1144,12 @@ function Designer() {
 		
 		if (type === 'label') {
 			var label = new Label();
+			label.parentBand = band;
 			label.SetPosition(posX, posY);
 			label.Draw(targetArea);
 			label.ApplyDrag();
 			label.ApplyResize();
+			label.RegisterTree();
 			label.Select();
 		}
 
@@ -1169,6 +1172,12 @@ function Designer() {
 		window.location.href = '../?error=permission&page=designer';
 	};
 
+	Designer.prototype.DeselectCurrentElement = function() {
+		if (this.currentSelectedElement !== null) {
+			this.currentSelectedElement.Deselect();
+		}
+	};
+
 	// event : tree structure click
 	Designer.prototype.TreeStructureRegisterEvent = function() {
 
@@ -1176,6 +1185,8 @@ function Designer() {
 		this.tree.structure.attachEvent('onClick', function(id){
 			// prevent bubble up
 			event.stopPropagation();
+
+			designer.DeselectCurrentElement();
 
 			// clear yang lain
 			designer.tree.data.clearSelection();
@@ -1194,9 +1205,6 @@ function Designer() {
 
 		// tree
 		this.tree.element.attachEvent('onClick', function(id){
-			// prevent bubble up
-			event.stopPropagation();
-
 			// clear yang lain
 			designer.tree.structure.clearSelection();
 			designer.tree.data.clearSelection();
@@ -1211,9 +1219,7 @@ function Designer() {
 		designer.tree.element.clearSelection();
 
 		// clear selection element
-		if (designer.currentSelectedElement !== null) {
-			designer.currentSelectedElement.Deselect();
-		}
+		designer.DeselectCurrentElement();
 	});
 
 	// event : remove parameter from list
