@@ -112,26 +112,12 @@ function Designer() {
 			},
 			layout:{
 				general:{
-					unit:"mm",
-					format:"A4",
-					orientation:"L",
-					margin:{
-						top:5,
-						bottom:20,
-						left:5,
-						right:5,
-						footer:5
-					}
+					unit:"",
+					format:"",
+					orientation:"",
+					margin:{}
 				},
-				band:{
-					reportHeader:{ element:[] },
-					pageHeader:{ element:[] },
-					header:{ element:[] },
-					detail:{ element:[] },
-					footer:{ element:[] },
-					pageFooter:{ element:[] },
-					reportFooter:{ element:[] }
-				}
+				band:{}
 			}
 		};
 	};
@@ -206,7 +192,7 @@ function Designer() {
 			{id:14, type:"separator"},
 
 			// layout
-			{id:15, type:"button", text:"Refresh", img:"magnifier.png"},
+			{id:15, type:"button", text:"Refresh", img:"arrow-circle-045-left.png"},
 			{id:16, type:"separator"},
 
 			// viewing & publishing
@@ -231,6 +217,10 @@ function Designer() {
 			// connection window
 			else if (id === '6') {
 				designer.OpenConnectionWindow();
+			}
+			// refresh
+			else if (id === '15') {
+				designer.Refresh();
 			}
 			// preview
 			else if (id === '10') {
@@ -1159,6 +1149,8 @@ function Designer() {
 			label.ApplyResize();
 			label.RegisterTree();
 			label.Select();
+			label.AttachToParent();
+			label.UpdatePosition();
 		}
 
 		// update band min height
@@ -1186,9 +1178,77 @@ function Designer() {
 		}
 	};
 
+	Designer.prototype.Refresh = function() {
+		this.layout.cells('a').setWidth(230);
+		this.layout.cells('c').setWidth(230);
+	};
+
 	Designer.prototype.Preview = function() {
-		// create form on the fly
-		//var form = $('<form></form>');
+		// preview window
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var parameterWin = windows.createWindow({
+		    id:"preview",
+		    width:550,
+		    height:430,
+		    center:true,
+		    modal:true
+		});
+		parameterWin.button('minmax').hide();
+		parameterWin.button('park').hide();
+		parameterWin.setText('Preview');
+		//parameterWin.maximize();
+
+		// generate report details
+		this.GenerateReportDetails();
+
+		parameterWin.attachURL('preview.php', null, {data:JSON.stringify(this.details.report) });
+	};
+
+	Designer.prototype.GenerateReportDetails = function() {
+		// general
+		this.details.report.general.name = this.details.app.general.reportTitle;
+		this.details.report.general.author = this.details.app.general.author;
+
+		// layout > general
+		this.details.report.layout.general.unit = 'mm';
+		this.details.report.layout.general.format = designer.details.app.format.paper;
+		this.details.report.layout.general.orientation = designer.details.app.format.orientation;
+		this.details.report.layout.general.margin = $.extend(true, {}, designer.details.app.margin);
+
+		// layout > band
+		// susunannya mengikut apa yang ada pada workspace
+		$('#workspace .band').each(function(){
+			var bandName = $(this).attr('data-name');
+			var band = designer.details.app.band[bandName];
+
+			// rename kepada nama yang viewer boleh baca
+			bandName = bandName.replace(/\s/g, '');
+			bandName = bandName.charAt(0).toLowerCase() + bandName.slice(1);
+			
+			// declare
+			designer.details.report.layout.band[bandName] = {
+				element:[]
+			};
+
+			for (var i=0; i<band.element.length; i++) {
+				var element = $.extend({}, band.element[i]);
+
+				// convert px to unit (pdf)
+				element.width = element.width / 3;
+				element.height = element.height / 3;
+				element.posX = element.posX / 3;
+				element.posY = element.posY / 3;
+
+				// remove key yang tak perlu
+				delete element.style;
+				delete element.elem;
+				delete element.parentBand;
+
+				designer.details.report.layout.band[bandName].element.push(element);
+			}
+		});
 	};
 
 	// event : tree structure click

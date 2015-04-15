@@ -6,11 +6,17 @@ function Band(source) {
 	this.title = source.title;
 	this.minHeight = null;
 	this.treeStructureId;
+	this.element = []; // koleksi children
 
 	Band.prototype.Init = function() {
-		this.title = source.title;
 		var title = '<div class="title"><p>'+ this.title +'</p></div>';
 		var area = '<div class="area"></div>';
+
+		// width tolak margin
+		this.width -= (designer.details.app.margin.left * 3);
+		this.width -= (designer.details.app.margin.right * 3);
+
+		this.title = source.title;
 		this.elem = $('<div class="band" data-name="'+ this.title +'" style="width:'+ this.width +'px">'+ title + area +'</div>');
 	};
 

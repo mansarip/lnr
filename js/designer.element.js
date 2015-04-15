@@ -7,6 +7,35 @@ function Label() {
 	this.elem = null;
 	this.id = null;
 	this.parentBand;
+	this.type = "label";
+	this.uniqueName = "";
+	this.zIndex = 0;
+	this.posY = 0; //px
+	this.posX = 0; //px
+	this.backgroundColor = "";
+	this.borderStyleTop = "";
+	this.borderWidthTop = 0;
+	this.borderColorTop = "";
+	this.borderStyleBottom = "";
+	this.borderWidthBottom = 0;
+	this.borderColorBottom = "";
+	this.borderStyleLeft = "";
+	this.borderWidthLeft = 0;
+	this.borderColorLeft = "";
+	this.borderStyleRight = "";
+	this.borderWidthRight = 0;
+	this.borderColorRight = "";
+	this.fontSize = 10;
+	this.fontFamily = "";
+	this.fontStyleBold = false;
+	this.fontStyleItalic = false;
+	this.fontStyleUnderline = false;
+	this.textAlign = "";
+	this.verticalAlign = "";
+	this.textColor = "";
+	this.verticalElasticity = "";
+	this.horizontalElasticity = "";
+	this.text = "TEST";
 
 	Label.prototype.SetPosition = function(x, y){
 		this.style += 'top:'+ y +'px; left:'+ x +'px;';
@@ -60,6 +89,16 @@ function Label() {
 		designer.tree.structure.selectItem(treeChildId, false);
 	};
 
+	Label.prototype.UpdatePosition = function() {
+		this.posY = this.elem.position().top;
+		this.posX = this.elem.position().left;
+	};
+
+	Label.prototype.UpdateSize = function() {
+		this.width = this.elem.width();
+		this.height = this.elem.height();
+	};
+
 	Label.prototype.ApplyDrag = function(){
 		var self = this;
 		var parent = this.elem.closest('.area');
@@ -69,12 +108,14 @@ function Label() {
 				var bandName = $(this).closest('.band').attr('data-name');
 				var band = designer.details.app.band[bandName];
 				designer.UpdateBandMinHeight(band);
+				self.UpdatePosition();
 				 $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
 			}
 		});
 	};
 
 	Label.prototype.ApplyResize = function(){
+		var self = this;
 		var parent = this.elem.closest('.area');
 		this.elem.resizable({
 			containment:parent,
@@ -83,8 +124,13 @@ function Label() {
 				var bandName = ui.element.closest('.band').attr('data-name');
 				var band = designer.details.app.band[bandName];
 				designer.UpdateBandMinHeight(band);
+				self.UpdateSize();
 				 $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
 			}
 		});
+	};
+
+	Label.prototype.AttachToParent = function(){
+		this.parentBand.element.push(this);
 	};
 }
