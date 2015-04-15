@@ -206,8 +206,12 @@ function Designer() {
 		// event register
 		this.toolbar.attachEvent('onClick', function(id){
 
+			// new
+			if (id === '1') {
+
+			}
 			// preferences window
-			if (id === '11') {
+			else if (id === '11') {
 				designer.OpenPreferencesWindow();
 			}
 			// parameter window
@@ -415,7 +419,58 @@ function Designer() {
 
 	 	// test button
 		$(layout.base).on('click', '.buttonPlaceholder input.test', function(){
-			alert('belum lagi!');
+
+			var connectionForm = (mode === 'add') ? $('#connectionAddNew') : $('#connectionEdit');
+			var detail = {};
+
+			connectionForm.find('input, select').each(function(){
+				var key = $(this).attr('data-key');
+				var value = $(this).val();
+				detail[key] = value;
+			});
+
+			connectionWin.progressOn();
+
+			if (detail.host === '') {
+				connectionWin.progressOff();
+				dhtmlx.alert({
+					title:'Failure',
+					type:"alert-info",
+					text:'Invalid host'
+				});
+
+			} else if (detail.user === '') {
+				connectionWin.progressOff();
+				dhtmlx.alert({
+					title:'Failure',
+					type:"alert-info",
+					text:'Invalid user'
+				});
+
+			} else {
+				$.ajax({
+					url:designer.phpPath + 'designer.testconnection.php',
+					type:'post',
+					data:detail,
+					dataType:'json'
+				})
+				.done(function(response){
+					connectionWin.progressOff();
+					dhtmlx.alert({
+						title:(response.status === 0 ? 'Failure' : 'Success'),
+						type:"alert-info",
+						text:(response.status === 0 ? response.message : 'Successfully connected!')
+					});
+				})
+				.fail(function(){
+					connectionWin.progressOff();
+					dhtmlx.alert({
+						title:'Unexpected Error',
+						type:"alert-error",
+						text:'Failed to connect server'
+					});
+				});
+			}
 		});
 
 	 	// reset button

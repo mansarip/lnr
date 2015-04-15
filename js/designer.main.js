@@ -16,6 +16,8 @@ $(function(){
 
 		// event registration
 		designer.TreeStructureRegisterEvent();
+
+		designer.OpenConnectionWindow();
 	});
 
 });
