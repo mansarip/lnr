@@ -24,3 +24,4 @@ Tidak disertakan sekali
 15. Simpan history untuk tujuan undo redo
 16. Selectable element guna mouse
 17. Selectable element guna shift + click
+18. Wizard function : predefined report design
