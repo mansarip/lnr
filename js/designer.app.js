@@ -238,7 +238,7 @@ function Designer() {
 		});
 	};
 
-	Designer.prototype.OpenConnectionWindow = function() {
+	Designer.prototype.OpenConnectionWindow = function(selectItemId) {
 		var mode = null;
 		var editName = null;
 		var windows = new dhtmlXWindows();
@@ -400,6 +400,7 @@ function Designer() {
 							layout.cells('a').progressOff();
 							layout.cells('b').progressOff();
 
+							designer.tree.data.deleteItem('4:::'+connName, false);
 							tree.deleteItem(connName, false);
 
 							// remove from details #setter
@@ -535,6 +536,7 @@ function Designer() {
 
 				// tambah pada tree
 				tree.insertNewItem(0, detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
+				designer.tree.data.insertNewItem(4, '4:::' + detail.name, detail.name, null, 'document.png', 'document.png', 'document.png'); // letak prefix parent id
 
 				// reset right side
 				layout.cells('b').attachHTMLString(noConnectionSelected);
@@ -564,6 +566,9 @@ function Designer() {
 					// update tree
 					tree.changeItemId(editName, detail.name);
 					tree.setItemText(detail.name, detail.name);
+
+					designer.tree.data.changeItemId('4:::' + editName, '4:::' + detail.name);
+					designer.tree.data.setItemText('4:::' + detail.name, detail.name);
 				}
 
 				// remove yang lama
@@ -666,6 +671,13 @@ function Designer() {
 			// select dropdown (type)
 			$(layout.base).find('select.type').val(designer.details.app.connection[id].type);
 		});
+
+		// open window, terus buka detail connection
+		if (selectItemId !== undefined) {
+			selectItemId = selectItemId.split(':::');
+			selectItemId = selectItemId[1];
+			tree.selectItem(selectItemId, true);
+		}
 	};
 
 	Designer.prototype.OpenParameterWindow = function() {
@@ -1130,7 +1142,7 @@ function Designer() {
 		});
 	};
 
-	Designer.prototype.OpenDataSourceWindow = function() {
+	Designer.prototype.OpenDataSourceWindow = function(selectItemId) {
 		var editName = null;
 		var mode = null;
 		var windows = new dhtmlXWindows();
@@ -1285,6 +1297,7 @@ function Designer() {
 						if (answer === true) {
 							var dataSourceName = tree.getSelectedItemId();
 
+							designer.tree.data.deleteItem('1:::'+dataSourceName, false);
 							tree.deleteItem(dataSourceName, false);
 
 							// remove from details #setter
@@ -1409,6 +1422,7 @@ function Designer() {
 
 				//update tree
 				tree.insertNewItem(0, detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
+				designer.tree.data.insertNewItem(1, '1:::' + detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
 
 				//update details #setter
 				designer.details.app.dataSource[detail.name] = detail;
@@ -1444,6 +1458,9 @@ function Designer() {
 					// update tree
 					tree.changeItemId(editName, detail.name);
 					tree.setItemText(detail.name, detail.name);
+
+					designer.tree.data.changeItemId('1:::' + editName, '1:::' + detail.name);
+					designer.tree.data.setItemText('1:::' + detail.name, detail.name);
 				}
 
 				// remove yang lama
@@ -1537,6 +1554,13 @@ function Designer() {
 			// checkbox
 			$(layout.base).find('input.main').prop('checked', designer.details.app.dataSource[id].main);
 		});
+
+		// automatic show details if any
+		if (selectItemId !== undefined) {
+			selectItemId = selectItemId.split(':::');
+			selectItemId = selectItemId[1];
+			tree.selectItem(selectItemId, true);
+		}
 	};
 
 	Designer.prototype.PreviewRecords = function(detail) {
@@ -1599,6 +1623,7 @@ function Designer() {
 		var defaultTree = {
 			id:0,
 			item:[
+				{id:4, text:"Connection", im0:"lightning.png", im1:"lightning.png", im2:"lightning.png"},
 				{id:1, text:"Data Source", im0:"database-network.png", im1:"database-network.png", im2:"database-network.png"},
 				{id:2, text:"User Parameter", im0:"paper-plane.png", im1:"paper-plane.png", im2:"paper-plane.png"},
 				{id:3, text:"System Parameter", im0:"monitor-window-flow.png", im1:"monitor-window-flow.png", im2:"monitor-window-flow.png"},
@@ -1820,6 +1845,28 @@ function Designer() {
 			event.stopPropagation();
 
 			// clear yang lain
+			designer.tree.structure.clearSelection();
+			designer.tree.element.clearSelection();
+		});
+
+		this.tree.data.attachEvent('onDblClick', function(id){
+			// prevent bubble up
+			event.stopPropagation();
+
+			// dapatkan id parent
+			var parentId = designer.tree.data.getParentId(id);
+
+			// connection
+			if (parentId === 4) {
+				designer.OpenConnectionWindow(id);
+			}
+			// data source
+			else if (parentId === 1) {
+				designer.OpenDataSourceWindow(id);
+			}
+
+			// clear selection
+			designer.tree.data.clearSelection();
 			designer.tree.structure.clearSelection();
 			designer.tree.element.clearSelection();
 		});
