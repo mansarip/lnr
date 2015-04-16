@@ -881,6 +881,9 @@ function Designer() {
 				dataType : paramDataType,
 				sourceType : paramSourceType
 			}
+
+			// update tree data
+			designer.tree.data.insertNewItem(2, '2:::' + paramName, paramName, null, 'document.png', 'document.png', 'document.png');
 		});
 
 		// parameter edit #setter
@@ -897,6 +900,10 @@ function Designer() {
 					if (designer.details.app.parameter[newValue] === undefined) {
 						// change row id
 						designer.parameterListGrid.changeRowId(rowId, newValue);
+
+						// update tree data
+						designer.tree.data.changeItemId('2:::' + rowId, '2:::' + newValue);
+						designer.tree.data.setItemText('2:::' + newValue, newValue);
 
 						// update details
 						designer.details.app.parameter[newValue] = $.extend(true, {}, designer.details.app.parameter[rowId]);
@@ -961,6 +968,9 @@ function Designer() {
 					// tag : parameter remove #setter
 					var paramName = designer.parameterListGrid.getSelectedRowId();
 					delete designer.details.app.parameter[paramName];
+
+					// update tree data
+					designer.tree.data.deleteItem('2:::' + paramName);
 
 					// delete row
 					designer.parameterListGrid.deleteSelectedRows();
@@ -1863,6 +1873,10 @@ function Designer() {
 			// data source
 			else if (parentId === 1) {
 				designer.OpenDataSourceWindow(id);
+			}
+			// user parameter
+			else if (parentId === 2) {
+				designer.OpenParameterWindow();
 			}
 
 			// clear selection
