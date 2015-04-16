@@ -1893,6 +1893,74 @@ function Designer() {
 		});
 	};
 
+	Designer.prototype.KeyboardBinding = function(){
+		Mousetrap.bind('up', function(){
+			
+			// gerakkan element dalam workspace (atas)
+			if (designer.currentSelectedElement !== null) {
+				event.preventDefault();
+				var newTop = designer.currentSelectedElement.elem.position().top - 1;
+				if (newTop >= 0) {
+					designer.currentSelectedElement.elem.css('top', newTop + 'px');
+					designer.currentSelectedElement.posY -= 1; // #setter
+				}
+			}
+
+		});
+
+		Mousetrap.bind('down', function(){
+			
+			// gerakkan element dalam workspace (bawah)
+			if (designer.currentSelectedElement !== null) {
+				event.preventDefault();
+				var bandAreaHeight = designer.currentSelectedElement.parentBand.elem.find('.area').innerHeight();
+				var elementCurrentTop = designer.currentSelectedElement.elem.position().top;
+				var elementHeight = designer.currentSelectedElement.elem.outerHeight();
+				var elementPosY2 = elementCurrentTop + elementHeight;
+				var newTop = designer.currentSelectedElement.elem.position().top + 1;
+
+				if (elementPosY2 < bandAreaHeight) {
+					designer.currentSelectedElement.elem.css('top', newTop + 'px');
+					designer.currentSelectedElement.posY += 1; // #setter
+				}
+			}
+
+		});
+
+		Mousetrap.bind('left', function(){
+			
+			// gerakkan element dalam workspace (kiri)
+			if (designer.currentSelectedElement !== null) {
+				event.preventDefault();
+				var newLeft = designer.currentSelectedElement.elem.position().left - 1;
+				if (newLeft >= 0) {
+					designer.currentSelectedElement.elem.css('left', newLeft + 'px');
+					designer.currentSelectedElement.posX -= 1; // #setter
+				}
+			}
+
+		});
+
+		Mousetrap.bind('right', function(){
+			
+			// gerakkan element dalam workspace (kanan)
+			if (designer.currentSelectedElement !== null) {
+				event.preventDefault();
+				var bandAreaWidth = designer.currentSelectedElement.parentBand.elem.find('.area').innerWidth();
+				var elementCurrentLeft = designer.currentSelectedElement.elem.position().left;
+				var elementWidth = designer.currentSelectedElement.elem.outerWidth();
+				var elementPosX2 = elementCurrentLeft + elementWidth;
+				var newLeft = designer.currentSelectedElement.elem.position().left + 1;
+
+				if (elementPosX2 < bandAreaWidth) {
+					designer.currentSelectedElement.elem.css('left', newLeft + 'px');
+					designer.currentSelectedElement.posX += 1; // #setter
+				}
+			}
+
+		});
+	};
+
 	// event : body click
 	$('body').on('click', function(event){
 		// clear selection tree		

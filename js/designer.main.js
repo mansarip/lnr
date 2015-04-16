@@ -16,6 +16,9 @@ $(function(){
 
 		// event registration
 		designer.TreeStructureRegisterEvent();
+
+		// keyboard binding
+		designer.KeyboardBinding();
 	});
 
 });
