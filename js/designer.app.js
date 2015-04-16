@@ -1252,6 +1252,11 @@ function Designer() {
 					<td><input type="text" class="name fullwidth" data-key="name" value=""/></td>\n\
 				</tr>\n\
 				<tr>\n\
+					<td>Main Query</td>\n\
+					<td>:</td>\n\
+					<td><input type="checkbox" class="main" data-key="main"/></td>\n\
+				</tr>\n\
+				<tr>\n\
 					<td>Query</td>\n\
 					<td></td>\n\
 					<td></td>\n\
@@ -1362,6 +1367,14 @@ function Designer() {
 				var value = $(this).val();
 				detail[key] = value;
 			});
+
+			// reset main status pada setiap data source kepada false
+			for (var key in designer.details.app.dataSource) {
+				designer.details.app.dataSource[key].main = false;
+			}
+
+			// checkbox main
+			detail.main = form.find('input.main').prop('checked');
 
 			//validate
 			if (detail.connection === '' || detail.connection === null) {
@@ -1496,6 +1509,11 @@ function Designer() {
 				<td><input type="text" class="name fullwidth" data-key="name" value="'+ designer.details.app.dataSource[id].name +'"/></td>\n\
 			</tr>\n\
 			<tr>\n\
+				<td>Main Query</td>\n\
+				<td>:</td>\n\
+				<td><input type="checkbox" class="main" data-key="main"/></td>\n\
+			</tr>\n\
+			<tr>\n\
 				<td>Query</td>\n\
 				<td></td>\n\
 				<td></td>\n\
@@ -1515,6 +1533,9 @@ function Designer() {
 
 			// select dropdown (connection)
 			$(layout.base).find('select.connection').val(designer.details.app.dataSource[id].connection);
+
+			// checkbox
+			$(layout.base).find('input.main').prop('checked', designer.details.app.dataSource[id].main);
 		});
 	};
 
@@ -1719,6 +1740,24 @@ function Designer() {
 		// general
 		this.details.report.general.name = this.details.app.general.reportTitle;
 		this.details.report.general.author = this.details.app.general.author;
+
+		// data > connection
+		for (var connName in this.details.app.connection) {
+			this.details.report.data.connection[connName] = $.extend(true, {}, this.details.app.connection[connName]);
+			this.details.report.data.connection[connName].active = true;
+		}
+
+		// data > query
+		for (var dataSourceName in this.details.app.dataSource) {
+			if (this.details.app.dataSource[dataSourceName].type === 'database') {
+				this.details.report.data.query[dataSourceName] = {
+					sql : this.details.app.dataSource[dataSourceName].query,
+					connection : this.details.app.dataSource[dataSourceName].connection,
+					active : true,
+					main : this.details.app.dataSource[dataSourceName].main
+				};
+			}
+		}
 
 		// layout > general
 		this.details.report.layout.general.unit = 'mm';
