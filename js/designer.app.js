@@ -441,6 +441,7 @@ function Designer() {
 					type:"alert-info",
 					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Invalid host'
 				});
+				return false;
 
 			} else if (detail.user === '') {
 				connectionWin.progressOff();
@@ -449,6 +450,7 @@ function Designer() {
 					type:"alert-info",
 					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Invalid user'
 				});
+				return false;
 
 			} else {
 				$.ajax({
@@ -818,17 +820,29 @@ function Designer() {
 			// validation
 			// jika param name kosong
 			if (paramName == '') {
-				statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Empty parameter name');
+				dhtmlx.alert({
+					title:'Error',
+					type:"alert-info",
+					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Empty parameter name'
+				});
 				return false;
 			}
 			// jika param name dah ada
 			else if (designer.details.app.parameter[paramName] !== undefined) {
-				statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Parameter name already exists');
+				dhtmlx.alert({
+					title:'Error',
+					type:"alert-info",
+					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Parameter name is already exist'
+				});
 				return false;
 			}
 			// jika data type number, tapi default value bukan number
 			else if (paramDataType === 'number' && isNaN(Number(paramDefaultValue))) {
-				statusBar.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Default value is not a number');
+				dhtmlx.alert({
+					title:'Error',
+					type:"alert-info",
+					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Default value is not a number'
+				});
 				return false;
 			}
 			else if (paramDataType === 'number' && paramDefaultValue === '') {
@@ -882,13 +896,11 @@ function Designer() {
 						designer.parameterListGrid.cellById(rowId, cellIndex).setValue(rowId);
 
 						// papar error
-						designer.parameterStatusBarBottom.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Parameter name already exists');
-
-						// clear error
-						setTimeout(function(){
-							designer.parameterStatusBarBottom.setText('');
-						}, 2000);
-
+						dhtmlx.alert({
+							title:'Error',
+							type:"alert-info",
+							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Parameter name is already exist'
+						});
 						return false;
 					}
 
@@ -902,11 +914,12 @@ function Designer() {
 						
 						var oldValue = designer.details.app.parameter[rowId].defaultValue;
 						designer.parameterListGrid.cellById(rowId, cellIndex).setValue(oldValue);
-						designer.parameterStatusBarBottom.setText('<img style="float:left; margin:3px" src="../img/icons/exclamation-red-frame.png"/> Invalid value (Not a number)');
-						setTimeout(function(){
-							designer.parameterStatusBarBottom.setText('');
-						}, 3000);
 
+						dhtmlx.alert({
+							title:'Error',
+							type:"alert-info",
+							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Default value is not a number'
+						});
 						return false;
 					}
 
@@ -927,7 +940,23 @@ function Designer() {
 	};
 
 	Designer.prototype.PromptRemoveParameter = function() {
-		this.parameterStatusBarBottom.setText('Confirm remove parameter "'+ this.parameterListGrid.getSelectedRowId() +'"? &nbsp;&nbsp;<a href="javascript:void(0)" id="anchorRemoveParameterOK">OK</a> &nbsp;&nbsp; <a href="javascript:void(0)" id="anchorRemoveParameterCancel">Cancel</a>');
+		dhtmlx.confirm({
+			title:'Remove',
+			type:'alert-info',
+			text:"<img src='../img/icons/exclamation.png'/><br/>Confirm remove parameter?",
+			callback:function(answer){
+				if (answer === true) {
+					// tag : parameter remove #setter
+					var paramName = designer.parameterListGrid.getSelectedRowId();
+					delete designer.details.app.parameter[paramName];
+
+					// delete row
+					designer.parameterListGrid.deleteSelectedRows();
+					designer.parameterListGrid.clearSelection();
+					designer.parameterStatusBarBottom.setText('');
+				}
+			}
+		});
 	};
 
 	Designer.prototype.OpenPreferencesWindow = function() {
@@ -1773,23 +1802,5 @@ function Designer() {
 
 		// clear selection element
 		designer.DeselectCurrentElement();
-	});
-
-	// event : remove parameter from list
-	$('body').on('click', '#anchorRemoveParameterOK', function(){
-		// tag : parameter remove #setter
-		var paramName = designer.parameterListGrid.getSelectedRowId();
-		delete designer.details.app.parameter[paramName];
-
-		// delete row
-		designer.parameterListGrid.deleteSelectedRows();
-		designer.parameterListGrid.clearSelection();
-		designer.parameterStatusBarBottom.setText('');
-	});
-
-	// event : cancel remove parameter
-	$('body').on('click', '#anchorRemoveParameterCancel', function(){
-		designer.parameterListGrid.clearSelection();
-		designer.parameterStatusBarBottom.setText('');
 	});
 }
