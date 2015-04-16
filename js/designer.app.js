@@ -198,7 +198,11 @@ function Designer() {
 
 			// viewing & publishing
 			{id:10, type:"button", text:"Preview", img:"magnifier.png"},
-			{id:7, type:"button", text:"Publish", img:"globe--arrow.png"}
+			{id:7, type:"button", text:"Publish", img:"globe--arrow.png"},
+			{id:17, type:"separator"},
+
+			// logout
+			{id:18, type:"button", text:"", img:"door-open-out.png"},
 		];
 
 		this.toolbar.setIconsPath(this.fugueIconPath);
@@ -234,6 +238,10 @@ function Designer() {
 			// preview
 			else if (id === '10') {
 				designer.Preview();
+			}
+			// logout
+			else if (id === '18') {
+				designer.Logout();
 			}
 		});
 	};
@@ -1890,6 +1898,33 @@ function Designer() {
 			// clear yang lain
 			designer.tree.structure.clearSelection();
 			designer.tree.data.clearSelection();
+		});
+	};
+
+	Designer.prototype.Logout = function(){
+		var phpPath = this.phpPath;
+		dhtmlx.confirm({
+			title : 'Logout',
+			type : 'alert-info',
+			text : 'Are you sure you want to logout?',
+			callback : function(answer){
+				if (answer === true) {
+					// destroy session
+					$.ajax({
+						url:phpPath + 'designer.destroysession.php'
+					})
+					.done(function(){
+						window.location.href = '../';
+					})
+					.fail(function(){
+						dhtmlx.alert({
+							title : 'Error',
+							type : 'alert-info',
+							text : 'Unable to destroy session (unreachable).<br/>Logout failed.'
+						});
+					});
+				}
+			}
 		});
 	};
 

@@ -15,8 +15,8 @@ Tidak disertakan sekali
 6. Publish function : generate .lnre dan simpan dalam publish folder
 7. Letak logo L&R mana2
 8. ~~Install mousetrap.js~~
-9. Move element guna keyboard
-10. Logout button, kembali pada home
+9. ~~Move element guna keyboard~~
+10. ~~Logout button, kembali pada home~~
 11. New function : refresh window
 12. Buat object untuk setiap element
 13. Buat properties untuk setiap element
