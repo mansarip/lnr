@@ -14,7 +14,7 @@ Tidak disertakan sekali
 5. Open function : baca .lnre dan apply pada application
 6. Publish function : generate .lnre dan simpan dalam publish folder
 7. Letak logo L&R mana2
-8. Keyboard binding, install mousetrap.js
+8. ~~Install mousetrap.js~~
 9. Move element guna keyboard
 10. Logout button, kembali pada home
 11. New function : refresh window
