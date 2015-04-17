@@ -19,6 +19,23 @@ $(function(){
 
 		// keyboard binding
 		designer.KeyboardBinding();
+
+
+		// test script
+		/*designer.details.app.connection['test'] = {
+			host: "localhost",
+			name: "testconnection",
+			pass: "",
+			port: "",
+			serviceName: "",
+			sid: "",
+			socket: "",
+			type: "mysql",
+			user: "root"
+		}
+		designer.OpenDataSourceWindow();*/
+
+
 	});
 
 });

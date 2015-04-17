@@ -1188,7 +1188,7 @@ function Designer() {
 
 		var button = [
 			// general
-			{id:1, type:"button", text:"Add New", img:"database--plus.png"},
+			{id:1, type:"button", text:"Add New", img:"database--plus.png", imgdis:"database--plus.png"},
 			{id:2, type:"separator"},
 			{id:3, type:"button", text:"Remove", img:"cross.png"}
 		];
@@ -1438,23 +1438,75 @@ function Designer() {
 					return false;
 				}
 
-				//update tree
-				tree.insertNewItem(0, detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
-				designer.tree.data.insertNewItem(1, '1:::' + detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
+				// preparing
+				toolbar.disableItem(1);
+				layout.cells('a').progressOn();
+				layout.cells('b').progressOn();
 
-				//update details #setter
-				designer.details.app.dataSource[detail.name] = detail;
+				$.ajax({
+					url:designer.phpPath + 'designer.fetchcolumn.php',
+					type:'post',
+					data:{
+						detail : JSON.stringify(detail),
+						connection : JSON.stringify(designer.details.app.connection[detail.connection])
+					},
+					dataType:'json'
+				})
+				.done(function(response){
+					if (response.status === 0) {
+						dhtmlx.alert({
+							title:'Error',
+							type:"alert-info",
+							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
+						});
+					} else {
+						//update tree
+						tree.insertNewItem(0, detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
+						designer.tree.data.insertNewItem(1, '1:::' + detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
 
-				//clear right side
-				layout.cells('b').attachHTMLString(noDataSourceSelected);
+						//update details #setter
+						designer.details.app.dataSource[detail.name] = detail;
 
-				//clear tree selection
-				tree.clearSelection();
+						// jika data source tiada group, tambah root group
+						if (designer.details.app.dataSource[detail.name].group === undefined) {
+							designer.details.app.dataSource[detail.name].group = {"ROOT_GROUP":{ "column":{} }};
 
-				// display message
-				dhtmlx.message({
-					text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source has been successfully saved!</td></tr></table>',
-					expire:2000
+							for (var c=0; c<response.length; c++) {
+								var columnName = response[c].name;
+								var columnType = response[c].dataType;
+								designer.details.app.dataSource[detail.name].group['ROOT_GROUP'].column[columnName] = { dataType:columnType };
+							}
+						}
+
+						//clear right side
+						layout.cells('b').attachHTMLString(noDataSourceSelected);
+
+						//clear tree selection
+						tree.clearSelection();
+
+						// display message
+						dhtmlx.message({
+							text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source has been successfully saved!</td></tr></table>',
+							expire:2000
+						});
+					}
+
+					// reset
+					toolbar.enableItem(1);
+					layout.cells('a').progressOff();
+					layout.cells('b').progressOff();
+				})
+				.fail(function(){
+					dhtmlx.alert({
+						title:'Error',
+						type:"alert-info",
+						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Fetching failure!'
+					});
+
+					// reset
+					toolbar.enableItem(1);
+					layout.cells('a').progressOff();
+					layout.cells('b').progressOff();
 				});
 			}
 			// edit mode hoho
