@@ -373,6 +373,11 @@ function Designer() {
 					<td><input type="password" class="password fullwidth" data-key="pass" value=""/></td>\n\
 				</tr>\n\
 				<tr>\n\
+					<td>Database Name</td>\n\
+					<td>:</td>\n\
+					<td><input type="text" class="host fullwidth" data-key="dbname" value=""/></td>\n\
+				</tr>\n\
+				<tr>\n\
 					<td>Port</td>\n\
 					<td>:</td>\n\
 					<td><input type="number" class="port" data-key="port" value=""/></td>\n\
@@ -653,6 +658,11 @@ function Designer() {
 				<td>Password</td>\n\
 				<td>:</td>\n\
 				<td><input type="password" class="password fullwidth" data-key="pass" value="'+ designer.details.app.connection[id].pass +'"/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Database Name</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="host fullwidth" data-key="dbname" value="'+ designer.details.app.connection[id].dbname +'"/></td>\n\
 			</tr>\n\
 			<tr>\n\
 				<td>Port</td>\n\

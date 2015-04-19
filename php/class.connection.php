@@ -25,7 +25,7 @@ class Connection
 				if ($this->port == '') $this->port = null;
 
 				// init connection
-				$this->conn = mysqli_connect($this->host, $this->user, $this->pass, $this->dbname, $this->port, $this->socket);
+				$this->conn = @mysqli_connect($this->host, $this->user, $this->pass, $this->dbname, $this->port, $this->socket);
 
 				if (mysqli_connect_errno()) {
 					die('<b>MySQL Unable to connect</b> : (' . mysqli_connect_errno() .') '. mysqli_connect_error());
@@ -47,7 +47,6 @@ class Connection
 	 * untuk test connection
 	 */
 	public function TestConnect() {
-		error_reporting(0);
 
 		if ($this->type == 'mysql') {
 			

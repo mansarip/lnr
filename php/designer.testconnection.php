@@ -15,7 +15,8 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 		'serviceName' => $_POST['serviceName'],
 		'sid'         => $_POST['sid'],
 		'socket'      => $_POST['socket'],
-		'type'        => $_POST['type']
+		'type'        => $_POST['type'],
+		'dbname'      => $_POST['dbname']
 	);
 
 	$conn = new Connection($detail);
