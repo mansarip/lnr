@@ -22,7 +22,7 @@ $(function(){
 
 
 		// test script
-		/*designer.details.app.connection['test'] = {
+		designer.details.app.connection['test'] = {
 			host: "localhost",
 			name: "testconnection",
 			pass: "",
@@ -33,7 +33,7 @@ $(function(){
 			type: "mysql",
 			user: "root"
 		}
-		designer.OpenDataSourceWindow();*/
+		designer.OpenDataSourceWindow();
 
 
 	});

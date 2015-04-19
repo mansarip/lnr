@@ -20,6 +20,7 @@ function Designer() {
 	this.parameterListGrid;
 	this.parameterStatusBarBottom;
 	this.currentSelectedElement = null;
+	this.currentWindowOpen = null;
 
 	Designer.prototype.CheckLogin = function(proceedFunc) {
 		var request = $.ajax({
@@ -263,6 +264,8 @@ function Designer() {
 		connectionWin.button('minmax').hide();
 		connectionWin.button('park').hide();
 		connectionWin.setText('Connection');
+
+		this.currentWindowOpen = connectionWin;
 
 		var toolbar = connectionWin.attachToolbar();
 		var layout = connectionWin.attachLayout({ pattern:'2U' });
@@ -704,6 +707,8 @@ function Designer() {
 		parameterWin.button('park').hide();
 		parameterWin.setText('Parameter');
 
+		this.currentWindowOpen = parameterWin;
+
 		var layout = parameterWin.attachLayout({
 						pattern : '2E'
 					});
@@ -1005,6 +1010,8 @@ function Designer() {
 		preferences.button('park').hide();
 		preferences.setText('Preferences');
 
+		this.currentWindowOpen = preferences;
+
 		var tabbar = preferences.attachTabbar({
 			tabs : [
 				{id:1, text:"General", active:true},
@@ -1178,6 +1185,8 @@ function Designer() {
 		dataSourceWin.button('park').hide();
 		dataSourceWin.setText('Data Source');
 
+		this.currentWindowOpen = dataSourceWin;
+
 		var toolbar = dataSourceWin.attachToolbar();
 		var layout = dataSourceWin.attachLayout({ pattern:'2U' });
 
@@ -1279,7 +1288,7 @@ function Designer() {
 				<tr>\n\
 					<td>Data Source Name</td>\n\
 					<td>:</td>\n\
-					<td><input type="text" class="name fullwidth" data-key="name" value=""/></td>\n\
+					<td><input type="text" class="name fullwidth" data-key="name" value="hoho"/></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td>Main Query</td>\n\
@@ -1292,7 +1301,7 @@ function Designer() {
 					<td></td>\n\
 				</tr>\n\
 				<tr>\n\
-					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;"></textarea></td>\n\
+					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;">select * from test.peribadi</textarea></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td><small>Max Preview Records</small></td>\n\
@@ -1426,6 +1435,15 @@ function Designer() {
 				return false;
 			}
 
+			if (detail.query === '') {
+				dhtmlx.alert({
+					title:'Error',
+					type:"alert-info",
+					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Empty query!</p>'
+				});
+				return false;
+			}
+
 			// add mode *datasource
 			if (mode === 'add') {
 				// jika nama dah ada
@@ -1459,6 +1477,13 @@ function Designer() {
 							type:"alert-info",
 							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
 						});
+
+						// reset
+						toolbar.enableItem(1);
+						layout.cells('a').progressOff();
+						layout.cells('b').progressOff();
+						return false;
+
 					} else {
 						//update tree
 						tree.insertNewItem(0, detail.name, detail.name, null, 'document.png', 'document.png', 'document.png');
@@ -1495,6 +1520,9 @@ function Designer() {
 					toolbar.enableItem(1);
 					layout.cells('a').progressOff();
 					layout.cells('b').progressOff();
+
+					mode = null;
+					editName = null;
 				})
 				.fail(function(){
 					dhtmlx.alert({
@@ -1533,26 +1561,183 @@ function Designer() {
 					designer.tree.data.setItemText('1:::' + detail.name, detail.name);
 				}
 
-				// remove yang lama
-				delete designer.details.app.dataSource[editName];
+				// simpan group object yang lama
+				var groupObject;
+				if (designer.details.app.dataSource[detail.name].group !== undefined) {
+					groupObject = $.extend(true, {}, designer.details.app.dataSource[detail.name].group);
+				}
 
-				// add new connection #setter
-				designer.details.app.dataSource[detail.name] = detail;
+				// query compare
+				var newQuery = detail.query;
+				var oldQuery = designer.details.app.dataSource[editName].query;
 
-				// clear tree
-				tree.clearSelection();
+				// jika query masih sama dengan yang lama
+				if (newQuery === oldQuery) {
 
-				// reset right side
-				layout.cells('b').attachHTMLString(noDataSourceSelected);
+					// remove yang lama
+					delete designer.details.app.dataSource[editName];
 
-				dhtmlx.message({
-					text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source details saved.</td></tr></table>',
-					expire:2000
-				});
+					// add new connection #setter
+					designer.details.app.dataSource[detail.name] = detail;
+
+					// masukkan balik group object
+					designer.details.app.dataSource[detail.name].group = groupObject;
+
+					// clear tree
+					tree.clearSelection();
+
+					// reset right side
+					layout.cells('b').attachHTMLString(noDataSourceSelected);
+
+					dhtmlx.message({
+						text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source details saved.</td></tr></table>',
+						expire:2000
+					});
+
+					// reset
+					toolbar.enableItem(1);
+					layout.cells('a').progressOff();
+					layout.cells('b').progressOff();
+
+					mode = null;
+					editName = null;
+				}
+				// jika query dah berubah
+				else {
+					$.ajax({
+						url:designer.phpPath + 'designer.fetchcolumn.php',
+						type:'post',
+						data:{
+							detail : JSON.stringify(detail),
+							connection : JSON.stringify(designer.details.app.connection[detail.connection])
+						},
+						dataType:'json'
+					})
+					.done(function(response){
+						if (response.status === 0) {
+							dhtmlx.alert({
+								title:'Error',
+								type:"alert-info",
+								text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
+							});
+							return false;
+						} else {
+							// remove yang lama
+							delete designer.details.app.dataSource[editName];
+
+							// add new connection #setter
+							designer.details.app.dataSource[detail.name] = detail;
+
+							var totalGroup = Object.keys(groupObject).length;
+
+							// jika group ada satu sahaja
+							if (totalGroup === 1) {
+								for (var key in groupObject) {
+									groupObject[key].column = {}; // emptykan column
+
+									for (var c=0; c<response.length; c++) {
+										var columnName = response[c].name;
+										var columnType = response[c].dataType;
+										groupObject[key].column[columnName] = { dataType:columnType };
+									}
+								}
+
+								// masukkan balik group object
+								designer.details.app.dataSource[detail.name].group = groupObject;
+							}
+							// jika ada banyak group
+							else if (totalGroup > 1) {
+								
+								// loop setiap group > column dan tambah prefix
+								for (var groupName in groupObject) {
+									for (var columnName in groupObject[groupName].column) {
+										groupObject[groupName].column['old:::' + columnName] = $.extend(true, {}, groupObject[groupName].column[columnName]);
+										delete groupObject[groupName].column[columnName];
+									}
+								}
+
+								// loop setiap column yang baru difetch
+								for (var c=0; c<response.length; c++) {
+									var columnName = response[c].name;
+									var tempColumnName = 'old:::' + columnName;
+									var columnType = response[c].dataType;
+
+									// loop group
+									for (var groupName in groupObject) {
+
+										// jika temp column name ada dalam group
+										if (groupObject[groupName].column[tempColumnName] !== undefined) {
+											delete groupObject[groupName].column[tempColumnName];
+											groupObject[groupName].column[columnName] = { dataType:columnType };
+
+											// dah berjaya masuk, buang dari senarai asal
+											delete response[c];
+										}
+									}
+								}
+
+								// loop setip group kembali
+								for (var groupName in groupObject) {
+									for (var columnName in groupObject[groupName].column) {
+										if (columnName.slice(0,6) === 'old:::') {
+											delete groupObject[groupName].column[columnName];
+										}
+									}
+
+									if ($.isEmptyObject(groupObject[groupName].column)) {
+										delete groupObject[groupName];
+									}
+								}
+
+								// loop sumber column, masukkan ke dalam satu group baru jika tiada yang berkaitan di atas
+								for (var c=0; c<response.length; c++) {
+									if (response[c] !== undefined) {
+
+										var columnName = response[c].name;
+										var columnType = response[c].dataType;
+
+										// jika group baru masih belum di create, create dulu
+										if (groupObject['NEW_GROUP'] === undefined) {
+											groupObject['NEW_GROUP'] = { column:{} };
+										}
+
+										groupObject['NEW_GROUP'].column[columnName] = { dataType:columnType }; 
+									}
+								}
+
+								// masukkan balik group object
+								designer.details.app.dataSource[detail.name].group = groupObject;
+							}
+
+							// clear tree
+							tree.clearSelection();
+
+							// reset right side
+							layout.cells('b').attachHTMLString(noDataSourceSelected);
+
+							dhtmlx.message({
+								text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source details saved.</td></tr></table>',
+								expire:2000
+							});
+
+							// reset
+							toolbar.enableItem(1);
+							layout.cells('a').progressOff();
+							layout.cells('b').progressOff();
+
+							mode = null;
+							editName = null;
+						}
+					})
+					.fail(function(){
+						dhtmlx.alert({
+							title:'Error',
+							type:"alert-info",
+							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Fetching failure!'
+						});
+					});
+				}
 			}
-
-			mode = null;
-			editName = null;
 		});
 
 		// tree connection click
@@ -1981,7 +2166,7 @@ function Designer() {
 	};
 
 	Designer.prototype.KeyboardBinding = function(){
-		Mousetrap.bind('up', function(){
+		Mousetrap.bind('up', function(event){
 			
 			// gerakkan element dalam workspace (atas)
 			if (designer.currentSelectedElement !== null) {
@@ -1995,7 +2180,7 @@ function Designer() {
 
 		});
 
-		Mousetrap.bind('down', function(){
+		Mousetrap.bind('down', function(event){
 			
 			// gerakkan element dalam workspace (bawah)
 			if (designer.currentSelectedElement !== null) {
@@ -2014,7 +2199,7 @@ function Designer() {
 
 		});
 
-		Mousetrap.bind('left', function(){
+		Mousetrap.bind('left', function(event){
 			
 			// gerakkan element dalam workspace (kiri)
 			if (designer.currentSelectedElement !== null) {
@@ -2028,7 +2213,7 @@ function Designer() {
 
 		});
 
-		Mousetrap.bind('right', function(){
+		Mousetrap.bind('right', function(event){
 			
 			// gerakkan element dalam workspace (kanan)
 			if (designer.currentSelectedElement !== null) {
@@ -2058,4 +2243,11 @@ function Designer() {
 		// clear selection element
 		designer.DeselectCurrentElement();
 	});
+
+	// Array Remove - By John Resig (MIT Licensed)
+	Designer.prototype.RemoveFromArray = function(array, from, to) {
+		var rest = array.slice((to || from) + 1 || array.length);
+		array.length = from < 0 ? array.length + from : from;
+		return array.push.apply(array, rest);
+	};
 }

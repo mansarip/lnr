@@ -25,6 +25,6 @@ Tidak disertakan sekali
 16. Selectable element guna mouse
 17. Selectable element guna shift + click
 18. Wizard function : predefined report design
-19. Tutup window dengan ctrl/cmd + w
+19. ~~Tutup window dengan ctrl/cmd + w~~ *NOT POSSIBLE SEBAB CHROME TAK BAGI OVERWRITE
 20. Copy, cut, paste element di workspace (termasuk keyboard bind)
 21. Max preview record, belum dapat baca dari input
