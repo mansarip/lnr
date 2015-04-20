@@ -21,7 +21,7 @@ $(function(){
 		designer.KeyboardBinding();
 
 		// test script
-		designer.details.app.connection['test'] = {
+		/*designer.details.app.connection['test'] = {
 			host: "localhost",
 			name: "testconnection",
 			pass: "",
@@ -58,7 +58,7 @@ $(function(){
 
 		designer.mainQuery = designer.details.app.dataSource.hoho;
 
-		designer.OpenGroupWindow();
+		designer.OpenGroupWindow();*/
 	});
 
 });

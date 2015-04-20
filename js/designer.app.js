@@ -245,6 +245,10 @@ function Designer() {
 			else if (id === '18') {
 				designer.Logout();
 			}
+			// group window
+			else if (id === '5') {
+				designer.OpenGroupWindow();
+			}
 		});
 	};
 
@@ -1488,11 +1492,136 @@ function Designer() {
 				}
 				// sort group
 				else if (id === '7') {
+					var groupList = '';
+					for (var groupName in designer.mainQuery.group) {
+						groupList += '<option value="'+ groupName +'">' + groupName + '</option>';
+					}
 
+					var sortGroup = '<div id="groupSort">\n\
+					<table border="0" class="windowForm">\n\
+						<tr>\n\
+							<td><b>Group Arrangement</b></td>\n\
+						</tr>\n\
+						<tr>\n\
+							<td>\n\
+							<select class="selection" size="10" style="width:100%">'+ groupList +'\n\
+							</select>\n\
+							</td>\n\
+						</tr>\n\
+						<tr>\n\
+							<td>\n\
+								<img class="arrow up" style="display:block; float:left; margin:0 5px; cursor:pointer" src="../img/icons/arrow-090.png"/>\n\
+								<img class="arrow down" style="display:block; float:left; margin:0 5px; cursor:pointer" src="../img/icons/arrow-270.png"/>\n\
+							</td>\n\
+						</tr>\n\
+					</table>\n\
+					';
+
+					// closing button
+					var closingButton = '\n\
+					<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
+						<input type="button" class="save" style="padding:6px 35px" value="Save"/>\n\
+						<input type="button" class="cancel" value="Cancel"/>\n\
+					</div></div>';
+
+					layout.cells('c').attachHTMLString(sortGroup + closingButton);
 				}
 			});
 
 			// event register
+			// arrow (sort)
+			$('body').on('click', '#groupSort img.arrow', function(){
+				var value = $('#groupSort .selection').val();
+				var elem = $('#groupSort .selection option[value="'+ value +'"]');
+				
+				if (value === null) {
+					return false;
+				}
+				else {
+					// up
+					if ($(this).hasClass('up')) {
+						elem.prev().insertAfter(elem);
+					}
+					// down
+					else {
+						elem.next().insertBefore(elem);
+					}
+				}
+			});
+
+			// cancel button (soft)
+			$('body').on('click', '#groupSort input.cancel', function(){
+				layout.cells('c').attachHTMLString('');
+
+				// show toolbars item
+				toolbar.showItem(1);
+				toolbar.showItem(2);
+				toolbar.showItem(5);
+				toolbar.showItem(6);
+				toolbar.showItem(7);
+
+				toolbar.enableItem(1);
+				toolbar.enableItem(3);
+				toolbar.enableItem(5);
+				toolbar.enableItem(7);
+			});
+
+			// save button (sort)
+			$('body').on('click', '#groupSort input.save', function(){
+				var temporaryObject = {};
+
+				$('#groupSort .selection option').each(function(){
+					var groupName = $(this).val();
+					temporaryObject[groupName] = $.extend(true, {}, designer.mainQuery.group[groupName]);
+				});
+
+				designer.mainQuery.group = $.extend(true, {}, temporaryObject);
+
+				// update tree sebelah
+				layout.cells('b').progressOn();
+				var groups = [];
+				for (var groupName in designer.mainQuery.group) {
+					var column = [];
+					for (var columnName in designer.mainQuery.group[groupName].column) {
+						column.push({
+							id:groupName + ':::' + columnName,
+							text:columnName,
+							im0:'document.png',
+							im1:'document.png',
+							im2:'document.png'
+						});
+					}
+
+					groups.push({
+						id:groupName,
+						text:groupName,
+						im0:'application-document.png',
+						im1:'application-document.png',
+						im2:'application-document.png',
+						item: column
+					});
+				}
+				tree.deleteChildItems(0, false);
+				tree.loadJSONObject({id:0, item: groups }, function(){
+					layout.cells('b').progressOff();
+					tree.openAllItems(0);
+				});
+
+				layout.cells('c').attachHTMLString('');
+
+				// show toolbars item
+				toolbar.showItem(1);
+				toolbar.showItem(2);
+				toolbar.showItem(5);
+				toolbar.showItem(6);
+				toolbar.showItem(7);
+
+				toolbar.enableItem(1);
+				toolbar.enableItem(3);
+				toolbar.enableItem(5);
+				toolbar.enableItem(7);
+			});
+
 			// save button (transfer)
 			$('body').on('click', '#groupTransfer input.save', function(){
 				// buang old group name
