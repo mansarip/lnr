@@ -1291,7 +1291,14 @@ function Designer() {
 					toolbar.hideItem(4);
 				}
 
+				toolbar.enableItem(1);
+				toolbar.enableItem(3);
+				toolbar.enableItem(5);
+				toolbar.enableItem(7);
+
 				$('#groupAddNew input.cancel').trigger('click');
+				$('#groupTransfer input.cancel').trigger('click');
+				layout.cells('c').attachHTMLString('');
 			});
 
 			// toolbar event
@@ -1488,7 +1495,80 @@ function Designer() {
 			});
 
 			// event register
-			// arrow
+			// arrow (transfer)
+			$('body').on('click', '#groupTransfer img.arrow', function(){
+				var groupNameSource = $('#groupTransfer select.sourceGroup').val();
+				var groupNameTarget = $('#groupTransfer select.targetGroup').val();
+
+				// jika transfer ke group yg sama
+				if (groupNameSource === groupNameTarget) {
+					dhtmlx.alert({
+						title:'Error',
+						style:'alert-info',
+						text:'Can\'t transfer to its own group!'
+					});
+				}
+				else {
+					var sourceSelection = $('#groupTransfer select.sourceSelection');
+					var targetSelection = $('#groupTransfer select.targetSelection');
+
+					// to target
+					if ($(this).hasClass('arrowToTarget')) {
+						var toBeMoved = sourceSelection.val();
+
+						if (toBeMoved !== null) {
+							for (var c=0; c<toBeMoved.length; c++) {
+								var columnName = toBeMoved[c];
+								sourceSelection.find('option[value="'+ columnName +'"]').appendTo(targetSelection);
+								designer.mainQuery.group[groupNameTarget].column[columnName] = $.extend(true, {}, designer.mainQuery.group[groupNameSource].column[columnName]);
+								designer.mainQuery.group[groupNameTarget].column[columnName].oldGroupName = groupNameSource; // simpan old group name, incase kalau tak jadi
+								delete designer.mainQuery.group[groupNameSource].column[columnName];
+							}
+						}
+
+					// to source
+					} else if ($(this).hasClass('arrowToSource')) {
+						var toBeMoved = targetSelection.val();
+
+						if (toBeMoved !== null) {
+							for (var c=0; c<toBeMoved.length; c++) {
+								var columnName = toBeMoved[c];
+								targetSelection.find('option[value="'+ columnName +'"]').appendTo(sourceSelection);
+								designer.mainQuery.group[groupNameSource].column[columnName] = $.extend(true, {}, designer.mainQuery.group[groupNameTarget].column[columnName]);
+								designer.mainQuery.group[groupNameSource].column[columnName].oldGroupName = groupNameTarget; // simpan old group name, incase kalau tak jadi
+								delete designer.mainQuery.group[groupNameTarget].column[columnName];
+							}
+						}
+					}
+				}
+			});
+
+			// cancel button (transfer)
+			$('body').on('click', '#groupTransfer input.cancel', function(){
+				// pulangkan balik ke group lama
+				for (var groupName in designer.mainQuery.group) {
+
+					for (var columnName in designer.mainQuery.group[groupName].column) {
+
+						// jika ada property oldGroupName
+						if (designer.mainQuery.group[groupName].column[columnName].oldGroupName !== undefined) {
+							var oldGroupName = designer.mainQuery.group[groupName].column[columnName].oldGroupName;
+							delete designer.mainQuery.group[groupName].column[columnName].oldGroupName; // buang property oldGroupName
+							designer.mainQuery.group[oldGroupName].column[columnName] = $.extend(true, {}, designer.mainQuery.group[groupName].column[columnName]);
+							delete designer.mainQuery.group[groupName].column[columnName];
+						}
+					}
+				}
+				
+				toolbar.enableItem(1);
+				toolbar.enableItem(3);
+				toolbar.enableItem(5);
+				toolbar.enableItem(7);
+
+				layout.cells('c').attachHTMLString('');
+			});
+
+			// arrow (add new group)
 			$('body').on('click', '#groupAddNew img.arrow', function(){
 				var groupName = $('#groupAddNew select.sourceGroup').val();
 				var sourceSelection = $('#groupAddNew select.sourceSelection');
