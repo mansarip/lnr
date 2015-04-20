@@ -1300,7 +1300,35 @@ function Designer() {
 
 				$('#groupAddNew input.cancel').trigger('click');
 				$('#groupTransfer input.cancel').trigger('click');
-				layout.cells('c').attachHTMLString('');
+
+				// papar detail group
+				if (tree.getLevel(tree.getSelectedItemId()) === 1) {
+					var detailGroup = '<div id="groupDetail"><table border="0" class="windowForm">\n\
+					<colgroup style="width:120px"/>\n\
+					<colgroup style="width:10px"/>\n\
+					<colgroup/>\n\
+					<tr>\n\
+						<td colspan="3"><b>Group Detail</b></td>\n\
+					</tr>\n\
+					<tr>\n\
+						<td>Group Name</td>\n\
+						<td>:</td>\n\
+						<td><input type="text" class="name fullwidth" data-key="name" value="'+ tree.getSelectedItemId() +'" autofocus="autofocus"/></td>\n\
+					</tr>\n\
+					</table>\n\
+					';
+
+					// closing button
+					var closingButton = '\n\
+					<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
+						<input type="button" class="save" style="padding:6px 35px" value="Save"/>\n\
+						<input type="button" class="cancel" value="Cancel"/>\n\
+					</div></div>';
+
+					layout.cells('c').attachHTMLString(detailGroup + closingButton);
+				} else {
+					layout.cells('c').attachHTMLString('');
+				}
 			});
 
 			// toolbar event
@@ -1529,6 +1557,55 @@ function Designer() {
 			});
 
 			// event register
+			// save button (detail)
+			$('body').on('click', '#groupDetail input.save', function(){
+				var oldGroupName = tree.getSelectedItemId();
+				var groupName = $('#groupDetail input.name').val();
+
+				if (groupName !== oldGroupName) {
+					// jika kosong
+					if (groupName === '') {
+						dhtmlx.alert({
+							title:'Error',
+							style:"alert-info",
+							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Empty group name!'
+						});
+						return false;
+					}
+
+					// jika nama dah ada
+					if (designer.mainQuery.group[groupName] !== undefined) {
+						dhtmlx.alert({
+							title:'Error',
+							style:"alert-info",
+							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Name already exist!'
+						});
+						return false;
+					}
+
+					// #setter
+					designer.mainQuery.group[groupName] = $.extend(true, {}, designer.mainQuery.group[oldGroupName]);
+					delete designer.mainQuery.group[oldGroupName];
+
+					// update tree
+					tree.changeItemId(oldGroupName, groupName);
+					tree.setItemText(groupName, groupName);
+				}
+
+				layout.cells('c').attachHTMLString('');
+				tree.clearSelection();
+				toolbar.hideItem(3);
+				toolbar.hideItem(4);
+			});
+
+			// cancel button (detail)
+			$('body').on('click', '#groupDetail input.cancel', function(){
+				layout.cells('c').attachHTMLString('');
+				tree.clearSelection();
+				toolbar.hideItem(3);
+				toolbar.hideItem(4);
+			});
+
 			// arrow (sort)
 			$('body').on('click', '#groupSort img.arrow', function(){
 				var value = $('#groupSort .selection').val();
@@ -1549,7 +1626,7 @@ function Designer() {
 				}
 			});
 
-			// cancel button (soft)
+			// cancel button (sort)
 			$('body').on('click', '#groupSort input.cancel', function(){
 				layout.cells('c').attachHTMLString('');
 
@@ -1891,138 +1968,6 @@ function Designer() {
 				toolbar.enableItem(5);
 				toolbar.enableItem(7);
 			});
-
-
-			/*var groups = [];
-			for (var groupName in designer.mainQuery.group) {
-				
-				var column = [];
-				for (var columnName in designer.mainQuery.group[groupName].column) {
-					column.push({
-						id:'column_GROUP:::'+ groupName + ':::' + columnName,
-						text:columnName,
-						im0:'document.png',
-						im1:'document.png',
-						im2:'document.png'
-					});
-				}
-
-				groups.push({
-					id:'GROUP:::'+ groupName,
-					text:groupName,
-					im0:'application-document.png',
-					im1:'application-document.png',
-					im2:'application-document.png',
-					item : column
-				});
-			}
-
-			var root = [{id:1, text:'Group', item: groups, im0:'application-document.png', im1:'application-document.png', im2:'application-document.png'}];
-
-			var tree = layout.cells('c').attachTree();
-			tree.setImagesPath(this.dhtmlxImagePath +'dhxtree_skyblue/');
-			tree.setIconsPath(this.fugueIconPath);
-			tree.enableDragAndDrop(true, false);
-			tree.setDragBehavior('complex');
-			tree.loadJSONObject({id:0, item:root}, function(){ tree.openAllItems(1); });
-
-			var oldParentIdBeforeDrag;
-
-			tree.attachEvent('onBeforeDrag', function(sId){
-				oldParentIdBeforeDrag = tree.getParentId(sId);
-				return true;
-			});
-
-			// tentukan apa yang tak boleh di drag
-			tree.attachEvent('onDragIn', function(sId, tId){
-				var sourceType;
-				var targetType;
-
-				console.log(tId);
-
-				if (sId === 1) return false;
-				if (sId.slice(0,8) === 'GROUP:::') { sourceType = 'group'; }
-				else if (sId.slice(0,15) === 'column_GROUP:::') { sourceType = 'column'; }
-
-				if (tId === 1) { targetType = 'root'; }
-				else if (tId.slice(0,15) === 'column_GROUP:::') { targetType = 'column'; }
-				else if (tId.slice(0,8) === 'GROUP:::') { targetType = 'group'; }
-
-				if (sourceType === 'group' && targetType === 'group') return false;
-				if (sourceType === 'group' && targetType === 'column') return false;
-				if (sourceType === 'column' && targetType === 'root') return false;
-				if (sourceType === 'column' && targetType === 'column') return false;
-
-				// console.log(sourceType);
-				// console.log(targetType);
-
-				return true;
-
-
-
-				var sourceType;
-				var targetType;
-
-				if      (sId.slice(0,8) === 'GROUP:::')         { sourceType = 'group'; }
-				else if (sId.slice(0,15) === 'column_GROUP:::') { sourceType = 'column'; }
-
-				if      (tId === 0) { targetType = 'root'; }
-				else if (tId.slice(0,15) === 'column_GROUP:::') { targetType = 'column'; }
-				else if (tId.slice(0,8) === 'GROUP:::')         { targetType = 'group'; }
-
-				if (sourceType === 'group' && targetType === 'group') return false;
-			});
-
-			tree.attachEvent('onDrop', function(sId, tId, id, sObject, tObject){
-				var sourceType;
-				var targetType;
-
-				if      (sId.slice(0,8) === 'GROUP:::')         { sourceType = 'group'; }
-				else if (sId.slice(0,15) === 'column_GROUP:::') { sourceType = 'column'; }
-
-				if      (tId === 0) { targetType = 'root'; }
-				else if (tId.slice(0,15) === 'column_GROUP:::') { targetType = 'column'; }
-				else if (tId.slice(0,8) === 'GROUP:::')         { targetType = 'group'; }
-
-				// tarik group, jatuh pada root (patut)
-				if (sourceType === 'group' && targetType === 'root') {
-					var groups = tree.getSubItems(tId).split(',');
-					var temporaryObject = {};
-					
-					for (var g=0; g<groups.length; g++) {
-						var groupName = groups[g].slice(8);
-						temporaryObject[groupName] = $.extend(true, {}, designer.mainQuery.group[groupName]);
-					}
-
-					designer.mainQuery.group = $.extend(true, {}, temporaryObject);
-				}
-				// tarik column, jatuh pada group (patut)
-				else if (sourceType === 'column' && targetType === 'group') {
-					var columns = tree.getSubItems(tId).split(',');
-					var temporaryObject = {};
-					var toBeSliced = 'column_' + tId + ':::';
-					var groupName = tId.slice(8);
-					var oldGroupName = oldParentIdBeforeDrag.slice(8);
-
-					var currentColumnName = sId.split(':::');
-					currentColumnName = currentColumnName[2];
-
-					for (var c=0; c<columns.length; c++) {
-						var columnName = columns[c].split(':::');
-						columnName = columnName[2];
-
-						if (currentColumnName === columnName) {
-							temporaryObject[columnName] = $.extend(true, {}, designer.mainQuery.group[oldGroupName].column[columnName]);
-						} else {
-							temporaryObject[columnName] = $.extend(true, {}, designer.mainQuery.group[groupName].column[columnName]);
-						}
-
-						delete designer.mainQuery.group[oldGroupName].column[columnName];
-					}
-
-					designer.mainQuery.group[groupName].column = $.extend(true, {}, temporaryObject);
-				}
-			});*/
 		}
 	};
 
