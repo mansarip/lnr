@@ -1235,8 +1235,6 @@ function Designer() {
 
 			layout.cells('a').attachHTMLString(info);
 
-			
-
 			var groups = [];
 			for (var groupName in this.mainQuery.group) {
 				var column = [];
@@ -1495,6 +1493,64 @@ function Designer() {
 			});
 
 			// event register
+			// save button (transfer)
+			$('body').on('click', '#groupTransfer input.save', function(){
+				// buang old group name
+				for (var groupName in designer.mainQuery.group) {
+					for (var columnName in designer.mainQuery.group[groupName].column) {
+
+						// jika ada property oldGroupName
+						if (designer.mainQuery.group[groupName].column[columnName].oldGroupName !== undefined) {
+							delete designer.mainQuery.group[groupName].column[columnName].oldGroupName; // buang property oldGroupName
+						}
+					}
+				}
+
+				// update tree sebelah
+				layout.cells('b').progressOn();
+				var groups = [];
+				for (var groupName in designer.mainQuery.group) {
+					var column = [];
+					for (var columnName in designer.mainQuery.group[groupName].column) {
+						column.push({
+							id:groupName + ':::' + columnName,
+							text:columnName,
+							im0:'document.png',
+							im1:'document.png',
+							im2:'document.png'
+						});
+					}
+
+					groups.push({
+						id:groupName,
+						text:groupName,
+						im0:'application-document.png',
+						im1:'application-document.png',
+						im2:'application-document.png',
+						item: column
+					});
+				}
+				tree.deleteChildItems(0, false);
+				tree.loadJSONObject({id:0, item: groups }, function(){
+					layout.cells('b').progressOff();
+					tree.openAllItems(0);
+				});
+
+				// show toolbars item
+				toolbar.showItem(1);
+				toolbar.showItem(2);
+				toolbar.showItem(5);
+				toolbar.showItem(6);
+				toolbar.showItem(7);
+
+				toolbar.enableItem(1);
+				toolbar.enableItem(3);
+				toolbar.enableItem(5);
+				toolbar.enableItem(7);
+
+				layout.cells('c').attachHTMLString('');
+			});
+
 			// arrow (transfer)
 			$('body').on('click', '#groupTransfer img.arrow', function(){
 				var groupNameSource = $('#groupTransfer select.sourceGroup').val();
