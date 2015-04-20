@@ -1,14 +1,22 @@
 <?php
 
-// test connect mysqli dengan user yang salah
+$link = mysqli_connect('127.0.0.1', '', '', '');
 
-$link = mysqli_connect('localhost', '', '', '');
-
+// kalau salah keluar error
 if (mysqli_connect_errno()) {
-	echo '<br/><br/>';
 	echo mysqli_connect_errno() . ' ' . mysqli_connect_error();
-} else {
-	echo 'EH?!';
 }
+
+$exe = mysqli_query($link, 'select * from corrad_2_13.flc_audit');
+
+if (!$exe) {
+	echo mysqli_error($link);
+}
+
+$result = mysqli_fetch_all($exe);
+
+echo '<pre>';
+print_r($result);
+echo '</pre>';
 
 ?>

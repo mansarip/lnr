@@ -19,6 +19,7 @@ function Designer() {
 	};
 	this.parameterListGrid;
 	this.parameterStatusBarBottom;
+	this.mainQuery = null;
 	this.currentSelectedElement = null;
 	this.currentWindowOpen = null;
 
@@ -455,7 +456,7 @@ function Designer() {
 				connectionWin.progressOff();
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Invalid host'
 				});
 				return false;
@@ -464,7 +465,7 @@ function Designer() {
 				connectionWin.progressOff();
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Invalid user'
 				});
 				return false;
@@ -480,7 +481,7 @@ function Designer() {
 					connectionWin.progressOff();
 					dhtmlx.alert({
 						title:(response.status === 0 ? 'Failure' : 'Success'),
-						type:"alert-info",
+						style:"alert-info",
 						text:(response.status === 0 ? response.message : 'Successfully connected!')
 					});
 				})
@@ -488,7 +489,7 @@ function Designer() {
 					connectionWin.progressOff();
 					dhtmlx.alert({
 						title:'Unexpected Error',
-						type:"alert-error",
+						style:"alert-error",
 						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Failed to connect server'
 					});
 					return false;
@@ -521,7 +522,7 @@ function Designer() {
 			if (detail.name === '') {
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Empty connection name'
 				});
 				return false;
@@ -529,7 +530,7 @@ function Designer() {
 			if (detail.type === '') {
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Invalid connection type'
 				});
 				return false;
@@ -541,7 +542,7 @@ function Designer() {
 				if (designer.details.app.connection[detail.name] !== undefined) {
 					dhtmlx.alert({
 						title:'Error',
-						type:"alert-info",
+						style:"alert-info",
 						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Connection name already exist'
 					});
 					return false;
@@ -573,7 +574,7 @@ function Designer() {
 					if (designer.details.app.connection[detail.name] !== undefined) {
 						dhtmlx.alert({
 							title:'Error',
-							type:"alert-info",
+							style:"alert-info",
 							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Connection name already exist'
 						});
 						return false;
@@ -857,7 +858,7 @@ function Designer() {
 			if (paramName == '') {
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Empty parameter name'
 				});
 				return false;
@@ -866,7 +867,7 @@ function Designer() {
 			else if (designer.details.app.parameter[paramName] !== undefined) {
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Parameter name is already exist'
 				});
 				return false;
@@ -875,7 +876,7 @@ function Designer() {
 			else if (paramDataType === 'number' && isNaN(Number(paramDefaultValue))) {
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Default value is not a number'
 				});
 				return false;
@@ -940,7 +941,7 @@ function Designer() {
 						// papar error
 						dhtmlx.alert({
 							title:'Error',
-							type:"alert-info",
+							style:"alert-info",
 							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Parameter name is already exist'
 						});
 						return false;
@@ -959,7 +960,7 @@ function Designer() {
 
 						dhtmlx.alert({
 							title:'Error',
-							type:"alert-info",
+							style:"alert-info",
 							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Default value is not a number'
 						});
 						return false;
@@ -1177,6 +1178,589 @@ function Designer() {
 		});
 	};
 
+	Designer.prototype.OpenGroupWindow = function(){
+		var mode = null;
+		var editName = null;
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var groupWin = windows.createWindow({
+		    id:"group",
+		    width:630,
+		    height:430,
+		    center:true,
+		    modal:true,
+		    resize:false
+		});
+		groupWin.button('minmax').hide();
+		groupWin.button('park').hide();
+		groupWin.setText('Group');
+
+		this.currentWindowOpen = groupWin;
+
+		if (this.mainQuery === null) {
+
+			groupWin.attachHTMLString('<p style="font-family: \'Montserrat\'; font-size: 11px; line-height: 18px; text-align: center;">Unable to proceed. No main data source detected.<br/>Make sure you have one main data source.<br/><br/><img src="../img/app_1.png"/></p>');
+
+		} else {
+			var layout = groupWin.attachLayout({
+				pattern:'3T'
+			});
+
+			layout.cells('a').hideHeader();
+			layout.cells('b').hideHeader();
+			layout.cells('c').hideHeader();
+
+			layout.cells('a').setHeight(55);
+			layout.cells('a').fixSize(true, true);
+
+			layout.cells('b').setWidth(170);
+
+			var info = '\n\
+			<table border="0" class="windowForm">\n\
+			<colgroup style="width:100px"/>\n\
+			<colgroup style="width:10px"/>\n\
+			<tr>\n\
+				<td>Connection</td>\n\
+				<td>:</td>\n\
+				<td><b>'+ this.mainQuery.connection +'</b></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Query</td>\n\
+				<td>:</td>\n\
+				<td><b>'+ this.mainQuery.name +'</b></td>\n\
+			</tr>\n\
+			</table>\n\
+			';
+
+			layout.cells('a').attachHTMLString(info);
+
+			
+
+			var groups = [];
+			for (var groupName in this.mainQuery.group) {
+				var column = [];
+				for (var columnName in this.mainQuery.group[groupName].column) {
+					column.push({
+						id:groupName + ':::' + columnName,
+						text:columnName,
+						im0:'document.png',
+						im1:'document.png',
+						im2:'document.png'
+					});
+				}
+
+				groups.push({
+					id:groupName,
+					text:groupName,
+					im0:'application-document.png',
+					im1:'application-document.png',
+					im2:'application-document.png',
+					item: column
+				});	
+			}
+
+			var tree = layout.cells('b').attachTree();
+			tree.setImagesPath(this.dhtmlxImagePath +'dhxtree_skyblue/');
+			tree.setIconsPath(this.fugueIconPath);
+			tree.loadJSONObject({id:0, item: groups }); //root id 0
+			tree.openAllItems(0);
+
+			var toolbar = layout.cells('c').attachToolbar();
+			var button = [
+				{id:1, type:"button", text:"New Group", img:"plus.png", imgdis:"plus.png"},
+				{id:2, type:"separator"},
+				{id:3, type:"button", text:"Remove", img:"cross.png", imgdis:"cross.png"},
+				{id:4, type:"separator"},
+				{id:5, type:"button", text:"Transfer", img:"arrow-circle-double-135.png", imgdis:"arrow-circle-double-135.png"},
+				{id:6, type:"separator"},
+				{id:7, type:"button", text:"Sort Group", img:"sort-quantity.png", imgdis:"sort-quantity.png"}
+			];
+			toolbar.setIconsPath(this.fugueIconPath);
+			toolbar.loadStruct(button);
+			toolbar.hideItem(3);
+			toolbar.hideItem(4);
+
+			// tree event
+			tree.attachEvent('onClick', function(id){
+				if (tree.getLevel(id) === 1){
+					toolbar.showItem(3);
+					toolbar.showItem(4);
+				} else {
+					toolbar.hideItem(3);
+					toolbar.hideItem(4);
+				}
+
+				$('#groupAddNew input.cancel').trigger('click');
+			});
+
+			// toolbar event
+			toolbar.attachEvent('onClick', function(id){
+				// hide button remove
+				if (id !== '3') {
+					toolbar.hideItem(3);
+					toolbar.hideItem(4);
+					tree.clearSelection();
+				}
+
+				// disable semua button
+				toolbar.disableItem(1);
+				toolbar.disableItem(3);
+				toolbar.disableItem(5);
+				toolbar.disableItem(7);
+
+				// add new group
+				if (id === '1') {
+
+					// drop down source group
+					var listOfGroup = '';
+					for (var groupName in designer.mainQuery.group) {
+						listOfGroup += '<option value="'+ groupName +'">'+ groupName +'</option>';	
+					}
+					listOfGroup += '<option value="___available___">-- Available --</option>';
+
+					// create temporary object untuk store value group baru
+					designer.mainQuery.group['___temporary___'] = { column:{} };
+
+					var newGroupForm = '<div id="groupAddNew"><table border="0" class="windowForm">\n\
+					<colgroup style="width:120px"/>\n\
+					<colgroup style="width:10px"/>\n\
+					<colgroup/>\n\
+					<tr>\n\
+						<td colspan="3"><b>Add New Group</b></td>\n\
+					</tr>\n\
+					<tr>\n\
+						<td>Group Name</td>\n\
+						<td>:</td>\n\
+						<td><input type="text" class="name fullwidth" data-key="name" value="" autofocus="autofocus"/></td>\n\
+					</tr>\n\
+					</table>\n\
+					<table border="0" class="windowForm">\n\
+					<colgroup style="width:45%"/>\n\
+					<colgroup style="width:10%; text-align:center;"/>\n\
+					<colgroup style="width:45%"/>\n\
+					<tr>\n\
+						<td>\n\
+							<p>\n\
+								<select class="sourceGroup">\n\
+									'+ listOfGroup +'\n\
+								</select>\n\
+							</p>\n\
+						</td>\n\
+						<td></td>\n\
+						<td><p>New Group Fields :</p></td>\n\
+					</tr>\n\
+					<tr>\n\
+						<td>\n\
+							<select class="sourceSelection" size="9" style="width:100%" multiple>\n\
+							</select>\n\
+						</td>\n\
+						<td>\n\
+							<img class="arrow arrowToTarget" style="display:block; margin:0 auto; cursor:pointer" src="../img/icons/arrow.png"/>\n\
+							<br/>\n\
+							<img class="arrow arrowToSource" style="display:block; margin:0 auto; cursor:pointer" src="../img/icons/arrow-180.png"/>\n\
+						</td>\n\
+						<td>\n\
+							<select class="targetSelection" size="9" style="width:100%" multiple>\n\
+							</select>\n\
+						</td>\n\
+					</tr>\n\
+					</table>\n\
+					';
+
+					// closing button
+					var closingButton = '\n\
+					<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
+						<input type="button" class="save" style="padding:6px 35px" value="Save"/>\n\
+						<input type="button" class="cancel" value="Cancel"/>\n\
+					</div></div>';
+
+					layout.cells('c').attachHTMLString(newGroupForm + closingButton);
+
+					// generate content untuk source selection
+					$('body').on('change', '#groupAddNew select.sourceGroup', function(){
+						var source = $(this).val();
+						var content = '';
+						
+						if (source === '___available___') {
+							
+						} else {
+							for (var columnName in designer.mainQuery.group[source].column) {
+								content += '<option value="'+ columnName +'">'+ columnName +'</option>';
+							}
+						}
+
+						$('#groupAddNew select.sourceSelection').html(content);
+					});
+
+					// buka list terus
+					$('#groupAddNew select.sourceGroup').trigger('change');
+				}
+				// remove
+				else if (id === '3') {
+
+				}
+				// transfer
+				else if (id === '5') {
+					// drop down group
+					var listOfGroup = '';
+					for (var groupName in designer.mainQuery.group) {
+						listOfGroup += '<option value="'+ groupName +'">'+ groupName +'</option>';	
+					}
+
+					var transferForm = '<div id="groupTransfer">\n\
+					<table border="0" class="windowForm">\n\
+					<colgroup style="width:45%"/>\n\
+					<colgroup style="width:10%; text-align:center;"/>\n\
+					<colgroup style="width:45%"/>\n\
+					<tr>\n\
+						<td colspan="3"><b>Transfer column between groups</b></td>\n\
+					</tr>\n\
+					<tr>\n\
+						<td>\n\
+							<p>\n\
+								<select class="sourceGroup">'+ listOfGroup +'\n\
+								</select>\n\
+							</p>\n\
+						</td>\n\
+						<td></td>\n\
+						<td>\n\
+							<p>\n\
+								<select class="targetGroup">'+ listOfGroup +'\n\
+								</select>\n\
+							</p>\n\
+						</td>\n\
+					</tr>\n\
+					<tr>\n\
+						<td>\n\
+							<select class="sourceSelection" size="9" style="width:100%" multiple>\n\
+							</select>\n\
+						</td>\n\
+						<td>\n\
+							<img class="arrow arrowToTarget" style="display:block; margin:0 auto; cursor:pointer" src="../img/icons/arrow.png"/>\n\
+							<br/>\n\
+							<img class="arrow arrowToSource" style="display:block; margin:0 auto; cursor:pointer" src="../img/icons/arrow-180.png"/>\n\
+						</td>\n\
+						<td>\n\
+							<select class="targetSelection" size="9" style="width:100%" multiple>\n\
+							</select>\n\
+						</td>\n\
+					</tr>\n\
+					</table>\n\
+					';
+
+					// closing button
+					var closingButton = '\n\
+					<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
+						<input type="button" class="save" style="padding:6px 35px" value="Save"/>\n\
+						<input type="button" class="cancel" value="Cancel"/>\n\
+					</div></div>';
+
+					layout.cells('c').attachHTMLString(transferForm + closingButton);
+
+					// generate content untuk source selection
+					$('body').on('change', '#groupTransfer select.sourceGroup, #groupTransfer select.targetGroup', function(){
+						var source = $(this).val();
+						var content = '';
+						
+						for (var columnName in designer.mainQuery.group[source].column) {
+							content += '<option value="'+ columnName +'">'+ columnName +'</option>';
+						}
+
+						// jika source
+						if ($(this).hasClass('sourceGroup')) {
+							$('#groupTransfer select.sourceSelection').html(content);
+						// jika target
+						} else {
+							$('#groupTransfer select.targetSelection').html(content);	
+						}
+						
+					});
+
+					// buka list terus
+					$('#groupTransfer select.sourceGroup').trigger('change');
+					$('#groupTransfer select.targetGroup').trigger('change');
+				}
+				// sort group
+				else if (id === '7') {
+
+				}
+			});
+
+			// event register
+			// arrow
+			$('body').on('click', '#groupAddNew img.arrow', function(){
+				var groupName = $('#groupAddNew select.sourceGroup').val();
+				var sourceSelection = $('#groupAddNew select.sourceSelection');
+				var targetSelection = $('#groupAddNew select.targetSelection');
+
+				// to target
+				if ($(this).hasClass('arrowToTarget')) {
+
+					var toBeMoved = sourceSelection.val();
+
+					if (toBeMoved !== null) {
+						for (var c=0; c<toBeMoved.length; c++) {
+							var columnName = toBeMoved[c];
+							sourceSelection.find('option[value="'+ columnName +'"]').appendTo(targetSelection);
+							designer.mainQuery.group['___temporary___'].column[columnName] = $.extend(true, {}, designer.mainQuery.group[groupName].column[columnName]);
+							designer.mainQuery.group['___temporary___'].column[columnName].oldGroupName = groupName; // simpan old group name, incase kalau tak jadi
+							delete designer.mainQuery.group[groupName].column[columnName];
+						}
+					}
+				}
+				// to source
+				else if ($(this).hasClass('arrowToSource')) {
+
+					var toBeMoved = targetSelection.val();
+
+					if (toBeMoved !== null) {
+						for (var c=0; c<toBeMoved.length; c++) {
+							var columnName = toBeMoved[c];
+							targetSelection.find('option[value="'+ columnName +'"]').appendTo(sourceSelection);
+							designer.mainQuery.group[groupName].column[columnName] = $.extend(true, {}, designer.mainQuery.group['___temporary___'].column[columnName]);
+							delete designer.mainQuery.group['___temporary___'].column[columnName];
+						}
+					}
+
+				}
+			});
+
+			// cancel button (group add new)
+			$('body').on('click', '#groupAddNew input.cancel', function(){
+				// pulangkan balik ke group lama
+				if (designer.mainQuery.group['___temporary___'] !== undefined) {
+					for (var columnName in designer.mainQuery.group['___temporary___'].column) {
+						var oldGroupName = designer.mainQuery.group['___temporary___'].column[columnName].oldGroupName;
+						designer.mainQuery.group[oldGroupName].column[columnName] = $.extend(true, {}, designer.mainQuery.group['___temporary___'].column[columnName]);
+						delete designer.mainQuery.group[oldGroupName].column[columnName].oldGroupName;
+					}
+
+					delete designer.mainQuery.group['___temporary___'];							
+				}
+				
+				toolbar.enableItem(1);
+				toolbar.enableItem(3);
+				toolbar.enableItem(5);
+				toolbar.enableItem(7);
+
+				layout.cells('c').attachHTMLString('');
+			});
+
+			// save button (group add new)
+			$('body').on('click', '#groupAddNew input.save', function(){
+				var newGroupName = $('#groupAddNew input.name').val();
+
+				// jika nama kosong
+				if (newGroupName === '' || newGroupName === undefined) {
+					dhtmlx.alert({
+						title:'Error',
+						style:"alert-info",
+						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Empty group name!'
+					});
+					return false;
+				}
+
+				// jika nama dah ada
+				if (designer.mainQuery.group[newGroupName] !== undefined) {
+					dhtmlx.alert({
+						title:'Error',
+						style:"alert-info",
+						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Group name already exist!<br/>Please enter another name.'
+					});
+					return false;
+				}
+
+				// register new group
+				designer.mainQuery.group[newGroupName] = $.extend(true, {}, designer.mainQuery.group['___temporary___']);
+				delete designer.mainQuery.group['___temporary___']; // remove temporary
+
+				// papar mesej berjaya
+				dhtmlx.message({
+					text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Group has been successfully saved!</td></tr></table>',
+					expire:2000
+				});
+
+				// clear
+				layout.cells('c').attachHTMLString('');
+
+				// update tree sebelah
+				layout.cells('b').progressOn();
+				var groups = [];
+				for (var groupName in designer.mainQuery.group) {
+					var column = [];
+					for (var columnName in designer.mainQuery.group[groupName].column) {
+						column.push({
+							id:groupName + ':::' + columnName,
+							text:columnName,
+							im0:'document.png',
+							im1:'document.png',
+							im2:'document.png'
+						});
+					}
+
+					groups.push({
+						id:groupName,
+						text:groupName,
+						im0:'application-document.png',
+						im1:'application-document.png',
+						im2:'application-document.png',
+						item: column
+					});
+				}
+				tree.deleteChildItems(0, false);
+				tree.loadJSONObject({id:0, item: groups }, function(){
+					layout.cells('b').progressOff();
+					tree.openAllItems(0);
+				});
+
+				// show toolbars item
+				toolbar.showItem(1);
+				toolbar.showItem(2);
+				toolbar.showItem(5);
+				toolbar.showItem(6);
+				toolbar.showItem(7);
+
+				toolbar.enableItem(1);
+				toolbar.enableItem(3);
+				toolbar.enableItem(5);
+				toolbar.enableItem(7);
+			});
+
+
+			/*var groups = [];
+			for (var groupName in designer.mainQuery.group) {
+				
+				var column = [];
+				for (var columnName in designer.mainQuery.group[groupName].column) {
+					column.push({
+						id:'column_GROUP:::'+ groupName + ':::' + columnName,
+						text:columnName,
+						im0:'document.png',
+						im1:'document.png',
+						im2:'document.png'
+					});
+				}
+
+				groups.push({
+					id:'GROUP:::'+ groupName,
+					text:groupName,
+					im0:'application-document.png',
+					im1:'application-document.png',
+					im2:'application-document.png',
+					item : column
+				});
+			}
+
+			var root = [{id:1, text:'Group', item: groups, im0:'application-document.png', im1:'application-document.png', im2:'application-document.png'}];
+
+			var tree = layout.cells('c').attachTree();
+			tree.setImagesPath(this.dhtmlxImagePath +'dhxtree_skyblue/');
+			tree.setIconsPath(this.fugueIconPath);
+			tree.enableDragAndDrop(true, false);
+			tree.setDragBehavior('complex');
+			tree.loadJSONObject({id:0, item:root}, function(){ tree.openAllItems(1); });
+
+			var oldParentIdBeforeDrag;
+
+			tree.attachEvent('onBeforeDrag', function(sId){
+				oldParentIdBeforeDrag = tree.getParentId(sId);
+				return true;
+			});
+
+			// tentukan apa yang tak boleh di drag
+			tree.attachEvent('onDragIn', function(sId, tId){
+				var sourceType;
+				var targetType;
+
+				console.log(tId);
+
+				if (sId === 1) return false;
+				if (sId.slice(0,8) === 'GROUP:::') { sourceType = 'group'; }
+				else if (sId.slice(0,15) === 'column_GROUP:::') { sourceType = 'column'; }
+
+				if (tId === 1) { targetType = 'root'; }
+				else if (tId.slice(0,15) === 'column_GROUP:::') { targetType = 'column'; }
+				else if (tId.slice(0,8) === 'GROUP:::') { targetType = 'group'; }
+
+				if (sourceType === 'group' && targetType === 'group') return false;
+				if (sourceType === 'group' && targetType === 'column') return false;
+				if (sourceType === 'column' && targetType === 'root') return false;
+				if (sourceType === 'column' && targetType === 'column') return false;
+
+				// console.log(sourceType);
+				// console.log(targetType);
+
+				return true;
+
+
+
+				var sourceType;
+				var targetType;
+
+				if      (sId.slice(0,8) === 'GROUP:::')         { sourceType = 'group'; }
+				else if (sId.slice(0,15) === 'column_GROUP:::') { sourceType = 'column'; }
+
+				if      (tId === 0) { targetType = 'root'; }
+				else if (tId.slice(0,15) === 'column_GROUP:::') { targetType = 'column'; }
+				else if (tId.slice(0,8) === 'GROUP:::')         { targetType = 'group'; }
+
+				if (sourceType === 'group' && targetType === 'group') return false;
+			});
+
+			tree.attachEvent('onDrop', function(sId, tId, id, sObject, tObject){
+				var sourceType;
+				var targetType;
+
+				if      (sId.slice(0,8) === 'GROUP:::')         { sourceType = 'group'; }
+				else if (sId.slice(0,15) === 'column_GROUP:::') { sourceType = 'column'; }
+
+				if      (tId === 0) { targetType = 'root'; }
+				else if (tId.slice(0,15) === 'column_GROUP:::') { targetType = 'column'; }
+				else if (tId.slice(0,8) === 'GROUP:::')         { targetType = 'group'; }
+
+				// tarik group, jatuh pada root (patut)
+				if (sourceType === 'group' && targetType === 'root') {
+					var groups = tree.getSubItems(tId).split(',');
+					var temporaryObject = {};
+					
+					for (var g=0; g<groups.length; g++) {
+						var groupName = groups[g].slice(8);
+						temporaryObject[groupName] = $.extend(true, {}, designer.mainQuery.group[groupName]);
+					}
+
+					designer.mainQuery.group = $.extend(true, {}, temporaryObject);
+				}
+				// tarik column, jatuh pada group (patut)
+				else if (sourceType === 'column' && targetType === 'group') {
+					var columns = tree.getSubItems(tId).split(',');
+					var temporaryObject = {};
+					var toBeSliced = 'column_' + tId + ':::';
+					var groupName = tId.slice(8);
+					var oldGroupName = oldParentIdBeforeDrag.slice(8);
+
+					var currentColumnName = sId.split(':::');
+					currentColumnName = currentColumnName[2];
+
+					for (var c=0; c<columns.length; c++) {
+						var columnName = columns[c].split(':::');
+						columnName = columnName[2];
+
+						if (currentColumnName === columnName) {
+							temporaryObject[columnName] = $.extend(true, {}, designer.mainQuery.group[oldGroupName].column[columnName]);
+						} else {
+							temporaryObject[columnName] = $.extend(true, {}, designer.mainQuery.group[groupName].column[columnName]);
+						}
+
+						delete designer.mainQuery.group[oldGroupName].column[columnName];
+					}
+
+					designer.mainQuery.group[groupName].column = $.extend(true, {}, temporaryObject);
+				}
+			});*/
+		}
+	};
+
 	Designer.prototype.OpenDataSourceWindow = function(selectItemId) {
 		var editName = null;
 		var mode = null;
@@ -1298,10 +1882,10 @@ function Designer() {
 				<tr>\n\
 					<td>Data Source Name</td>\n\
 					<td>:</td>\n\
-					<td><input type="text" class="name fullwidth" data-key="name" value="hoho"/></td>\n\
+					<td><input type="text" class="name fullwidth" data-key="name" value=""/></td>\n\
 				</tr>\n\
 				<tr>\n\
-					<td>Main Query</td>\n\
+					<td>Main</td>\n\
 					<td>:</td>\n\
 					<td><input type="checkbox" class="main" data-key="main"/></td>\n\
 				</tr>\n\
@@ -1311,7 +1895,7 @@ function Designer() {
 					<td></td>\n\
 				</tr>\n\
 				<tr>\n\
-					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;">select * from test.peribadi</textarea></td>\n\
+					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;"></textarea></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td><small>Max Preview Records</small></td>\n\
@@ -1422,6 +2006,7 @@ function Designer() {
 			for (var key in designer.details.app.dataSource) {
 				designer.details.app.dataSource[key].main = false;
 			}
+			designer.mainQuery = null;
 
 			// checkbox main
 			detail.main = form.find('input.main').prop('checked');
@@ -1430,7 +2015,7 @@ function Designer() {
 			if (detail.connection === '' || detail.connection === null) {
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Invalid connection selected. Make sure you<br/>have at least one connection to select.</p>'
 				});
 				return false;
@@ -1439,7 +2024,7 @@ function Designer() {
 			if (detail.name === '') {
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Empty data source name!</p>'
 				});
 				return false;
@@ -1448,7 +2033,7 @@ function Designer() {
 			if (detail.query === '') {
 				dhtmlx.alert({
 					title:'Error',
-					type:"alert-info",
+					style:"alert-info",
 					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Empty query!</p>'
 				});
 				return false;
@@ -1460,7 +2045,7 @@ function Designer() {
 				if (designer.details.app.dataSource[detail.name] !== undefined) {
 					dhtmlx.alert({
 						title:'Error',
-						type:"alert-info",
+						style:"alert-info",
 						text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Data source with name "'+ detail.name +'" already exist.</p>'
 					});
 					return false;
@@ -1484,7 +2069,7 @@ function Designer() {
 					if (response.status === 0) {
 						dhtmlx.alert({
 							title:'Error',
-							type:"alert-info",
+							style:"alert-info",
 							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
 						});
 
@@ -1501,6 +2086,8 @@ function Designer() {
 
 						//update details #setter
 						designer.details.app.dataSource[detail.name] = detail;
+
+						if (detail.main) designer.mainQuery = designer.details.app.dataSource[detail.name];
 
 						// jika data source tiada group, tambah root group
 						if (designer.details.app.dataSource[detail.name].group === undefined) {
@@ -1537,7 +2124,7 @@ function Designer() {
 				.fail(function(){
 					dhtmlx.alert({
 						title:'Error',
-						type:"alert-info",
+						style:"alert-info",
 						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Fetching failure!'
 					});
 
@@ -1547,48 +2134,49 @@ function Designer() {
 					layout.cells('b').progressOff();
 				});
 			}
-			// edit mode hoho
+			// edit mode
 			else if (mode === 'edit') {
-
-				// jika nama lama tidak sama dengan nama baru
-				if (editName !== detail.name) {
-
-					// jika nama dah ada
-					if (designer.details.app.dataSource[detail.name] !== undefined) {
-						dhtmlx.alert({
-							title:'Error',
-							type:"alert-info",
-							text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Data source with name "'+ detail.name +'" already exist.</p>'
-						});
-						return false;
-					}
-
-					// update tree
-					tree.changeItemId(editName, detail.name);
-					tree.setItemText(detail.name, detail.name);
-
-					designer.tree.data.changeItemId('1:::' + editName, '1:::' + detail.name);
-					designer.tree.data.setItemText('1:::' + detail.name, detail.name);
-				}
-
-				// simpan group object yang lama
-				var groupObject;
-				if (designer.details.app.dataSource[detail.name].group !== undefined) {
-					groupObject = $.extend(true, {}, designer.details.app.dataSource[detail.name].group);
-				}
 
 				// query compare
 				var newQuery = detail.query;
 				var oldQuery = designer.details.app.dataSource[editName].query;
 
+				// simpan group object yang lama
+				var groupObject;
+				if (designer.details.app.dataSource[editName].group !== undefined) {
+					groupObject = $.extend(true, {}, designer.details.app.dataSource[editName].group);
+				}
+
 				// jika query masih sama dengan yang lama
 				if (newQuery === oldQuery) {
+
+					// jika nama lama tidak sama dengan nama baru
+					if (editName !== detail.name) {
+
+						// jika nama dah ada
+						if (designer.details.app.dataSource[detail.name] !== undefined) {
+							dhtmlx.alert({
+								title:'Error',
+								style:"alert-info",
+								text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Data source with name "'+ detail.name +'" already exist.</p>'
+							});
+							return false;
+						}
+
+						// update tree
+						tree.changeItemId(editName, detail.name);
+						tree.setItemText(detail.name, detail.name);
+
+						designer.tree.data.changeItemId('1:::' + editName, '1:::' + detail.name);
+						designer.tree.data.setItemText('1:::' + detail.name, detail.name);
+					}
 
 					// remove yang lama
 					delete designer.details.app.dataSource[editName];
 
 					// add new connection #setter
 					designer.details.app.dataSource[detail.name] = detail;
+					if (detail.main) designer.mainQuery = designer.details.app.dataSource[detail.name];
 
 					// masukkan balik group object
 					designer.details.app.dataSource[detail.name].group = groupObject;
@@ -1606,6 +2194,7 @@ function Designer() {
 
 					// reset
 					toolbar.enableItem(1);
+					toolbar.hideItem(3);
 					layout.cells('a').progressOff();
 					layout.cells('b').progressOff();
 
@@ -1614,137 +2203,170 @@ function Designer() {
 				}
 				// jika query dah berubah
 				else {
-					$.ajax({
-						url:designer.phpPath + 'designer.fetchcolumn.php',
-						type:'post',
-						data:{
-							detail : JSON.stringify(detail),
-							connection : JSON.stringify(designer.details.app.connection[detail.connection])
-						},
-						dataType:'json'
-					})
-					.done(function(response){
-						if (response.status === 0) {
-							dhtmlx.alert({
-								title:'Error',
-								type:"alert-info",
-								text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
-							});
-							return false;
-						} else {
-							// remove yang lama
-							delete designer.details.app.dataSource[editName];
 
-							// add new connection #setter
-							designer.details.app.dataSource[detail.name] = detail;
+					dhtmlx.confirm({
+						title:"Confirm Execute",
+						style:'alert-info',
+						text:"You have changed the query and you might have to rearrange the group(s) and column(s). Proceed?",
+						callback:function(answer){
+							if (answer === true) {
 
-							var totalGroup = Object.keys(groupObject).length;
+								// jika nama lama tidak sama dengan nama baru
+								if (editName !== detail.name) {
 
-							// jika group ada satu sahaja
-							if (totalGroup === 1) {
-								for (var key in groupObject) {
-									groupObject[key].column = {}; // emptykan column
-
-									for (var c=0; c<response.length; c++) {
-										var columnName = response[c].name;
-										var columnType = response[c].dataType;
-										groupObject[key].column[columnName] = { dataType:columnType };
+									// jika nama dah ada
+									if (designer.details.app.dataSource[detail.name] !== undefined) {
+										dhtmlx.alert({
+											title:'Error',
+											style:"alert-info",
+											text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Data source with name "'+ detail.name +'" already exist.</p>'
+										});
+										return false;
 									}
+
+									// update tree
+									tree.changeItemId(editName, detail.name);
+									tree.setItemText(detail.name, detail.name);
+
+									designer.tree.data.changeItemId('1:::' + editName, '1:::' + detail.name);
+									designer.tree.data.setItemText('1:::' + detail.name, detail.name);
 								}
 
-								// masukkan balik group object
-								designer.details.app.dataSource[detail.name].group = groupObject;
-							}
-							// jika ada banyak group
-							else if (totalGroup > 1) {
-								
-								// loop setiap group > column dan tambah prefix
-								for (var groupName in groupObject) {
-									for (var columnName in groupObject[groupName].column) {
-										groupObject[groupName].column['old:::' + columnName] = $.extend(true, {}, groupObject[groupName].column[columnName]);
-										delete groupObject[groupName].column[columnName];
-									}
-								}
+								$.ajax({
+									url:designer.phpPath + 'designer.fetchcolumn.php',
+									type:'post',
+									data:{
+										detail : JSON.stringify(detail),
+										connection : JSON.stringify(designer.details.app.connection[detail.connection])
+									},
+									dataType:'json'
+								})
+								.done(function(response){
+									if (response.status === 0) {
+										dhtmlx.alert({
+											title:'Error',
+											style:"alert-info",
+											text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
+										});
+										return false;
+									} else {
+										// remove yang lama
+										delete designer.details.app.dataSource[editName];
 
-								// loop setiap column yang baru difetch
-								for (var c=0; c<response.length; c++) {
-									var columnName = response[c].name;
-									var tempColumnName = 'old:::' + columnName;
-									var columnType = response[c].dataType;
+										// add new connection #setter
+										designer.details.app.dataSource[detail.name] = detail;
 
-									// loop group
-									for (var groupName in groupObject) {
+										var totalGroup = Object.keys(groupObject).length;
 
-										// jika temp column name ada dalam group
-										if (groupObject[groupName].column[tempColumnName] !== undefined) {
-											delete groupObject[groupName].column[tempColumnName];
-											groupObject[groupName].column[columnName] = { dataType:columnType };
+										// jika group ada satu sahaja
+										if (totalGroup === 1) {
+											for (var key in groupObject) {
+												groupObject[key].column = {}; // emptykan column
 
-											// dah berjaya masuk, buang dari senarai asal
-											delete response[c];
+												for (var c=0; c<response.length; c++) {
+													var columnName = response[c].name;
+													var columnType = response[c].dataType;
+													groupObject[key].column[columnName] = { dataType:columnType };
+												}
+											}
+
+											// masukkan balik group object
+											designer.details.app.dataSource[detail.name].group = groupObject;
 										}
-									}
-								}
+										// jika ada banyak group
+										else if (totalGroup > 1) {
+											
+											// loop setiap group > column dan tambah prefix
+											for (var groupName in groupObject) {
+												for (var columnName in groupObject[groupName].column) {
+													groupObject[groupName].column['old:::' + columnName] = $.extend(true, {}, groupObject[groupName].column[columnName]);
+													delete groupObject[groupName].column[columnName];
+												}
+											}
 
-								// loop setip group kembali
-								for (var groupName in groupObject) {
-									for (var columnName in groupObject[groupName].column) {
-										if (columnName.slice(0,6) === 'old:::') {
-											delete groupObject[groupName].column[columnName];
+											// loop setiap column yang baru difetch
+											for (var c=0; c<response.length; c++) {
+												var columnName = response[c].name;
+												var tempColumnName = 'old:::' + columnName;
+												var columnType = response[c].dataType;
+
+												// loop group
+												for (var groupName in groupObject) {
+
+													// jika temp column name ada dalam group
+													if (groupObject[groupName].column[tempColumnName] !== undefined) {
+														delete groupObject[groupName].column[tempColumnName];
+														groupObject[groupName].column[columnName] = { dataType:columnType };
+
+														// dah berjaya masuk, buang dari senarai asal
+														delete response[c];
+													}
+												}
+											}
+
+											// loop setip group kembali
+											for (var groupName in groupObject) {
+												for (var columnName in groupObject[groupName].column) {
+													if (columnName.slice(0,6) === 'old:::') {
+														delete groupObject[groupName].column[columnName];
+													}
+												}
+
+												if ($.isEmptyObject(groupObject[groupName].column)) {
+													delete groupObject[groupName];
+												}
+											}
+
+											// loop sumber column, masukkan ke dalam satu group baru jika tiada yang berkaitan di atas
+											for (var c=0; c<response.length; c++) {
+												if (response[c] !== undefined) {
+
+													var columnName = response[c].name;
+													var columnType = response[c].dataType;
+
+													// jika group baru masih belum di create, create dulu
+													if (groupObject['NEW_GROUP'] === undefined) {
+														groupObject['NEW_GROUP'] = { column:{} };
+													}
+
+													groupObject['NEW_GROUP'].column[columnName] = { dataType:columnType }; 
+												}
+											}
+
+											// masukkan balik group object
+											designer.details.app.dataSource[detail.name].group = groupObject;
 										}
+
+										// clear tree
+										tree.clearSelection();
+
+										// reset right side
+										layout.cells('b').attachHTMLString(noDataSourceSelected);
+
+										dhtmlx.message({
+											text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source details saved.</td></tr></table>',
+											expire:2000
+										});
+
+										// reset
+										toolbar.enableItem(1);
+										toolbar.hideItem(3);
+										layout.cells('a').progressOff();
+										layout.cells('b').progressOff();
+
+										mode = null;
+										editName = null;
 									}
-
-									if ($.isEmptyObject(groupObject[groupName].column)) {
-										delete groupObject[groupName];
-									}
-								}
-
-								// loop sumber column, masukkan ke dalam satu group baru jika tiada yang berkaitan di atas
-								for (var c=0; c<response.length; c++) {
-									if (response[c] !== undefined) {
-
-										var columnName = response[c].name;
-										var columnType = response[c].dataType;
-
-										// jika group baru masih belum di create, create dulu
-										if (groupObject['NEW_GROUP'] === undefined) {
-											groupObject['NEW_GROUP'] = { column:{} };
-										}
-
-										groupObject['NEW_GROUP'].column[columnName] = { dataType:columnType }; 
-									}
-								}
-
-								// masukkan balik group object
-								designer.details.app.dataSource[detail.name].group = groupObject;
-							}
-
-							// clear tree
-							tree.clearSelection();
-
-							// reset right side
-							layout.cells('b').attachHTMLString(noDataSourceSelected);
-
-							dhtmlx.message({
-								text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source details saved.</td></tr></table>',
-								expire:2000
-							});
-
-							// reset
-							toolbar.enableItem(1);
-							layout.cells('a').progressOff();
-							layout.cells('b').progressOff();
-
-							mode = null;
-							editName = null;
+								})
+								.fail(function(){
+									dhtmlx.alert({
+										title:'Error',
+										style:"alert-info",
+										text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Fetching failure!'
+									});
+								});
+							} 
 						}
-					})
-					.fail(function(){
-						dhtmlx.alert({
-							title:'Error',
-							type:"alert-info",
-							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Fetching failure!'
-						});
 					});
 				}
 			}
@@ -1791,7 +2413,7 @@ function Designer() {
 				<td><input type="text" class="name fullwidth" data-key="name" value="'+ designer.details.app.dataSource[id].name +'"/></td>\n\
 			</tr>\n\
 			<tr>\n\
-				<td>Main Query</td>\n\
+				<td>Main</td>\n\
 				<td>:</td>\n\
 				<td><input type="checkbox" class="main" data-key="main"/></td>\n\
 			</tr>\n\
@@ -1900,7 +2522,7 @@ function Designer() {
 		this.tree.data.setIconsPath(this.fugueIconPath);
 		this.tree.data.loadJSONObject(defaultTree, function(){
 			designer.tree.data.openItem(1);
-		});	
+		});
 	};
 
 	Designer.prototype.InitStructureTree = function() {
@@ -2151,8 +2773,8 @@ function Designer() {
 	Designer.prototype.Logout = function(){
 		var phpPath = this.phpPath;
 		dhtmlx.confirm({
-			title : 'Logout',
-			type : 'alert-info',
+			title : "Logout",
+			style : 'alert-info',
 			text : 'Are you sure you want to logout?',
 			callback : function(answer){
 				if (answer === true) {
@@ -2166,7 +2788,7 @@ function Designer() {
 					.fail(function(){
 						dhtmlx.alert({
 							title : 'Error',
-							type : 'alert-info',
+							style : 'alert-info',
 							text : 'Unable to destroy session (unreachable).<br/>Logout failed.'
 						});
 					});
