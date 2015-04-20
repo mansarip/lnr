@@ -510,7 +510,7 @@ function Designer() {
 			connectionForm.find('input.name').focus();
 		});
 
-	 	// save button
+	 	// save button (connection add new)
 		$(layout.base).on('click', '.buttonPlaceholder input.save', function(){
 			var message = '';
 			var connectionForm = (mode === 'add') ? $('#connectionAddNew') : $('#connectionEdit');
@@ -1557,7 +1557,7 @@ function Designer() {
 			});
 
 			// event register
-			// save button (detail)
+			// save button (group detail)
 			$('body').on('click', '#groupDetail input.save', function(){
 				var oldGroupName = tree.getSelectedItemId();
 				var groupName = $('#groupDetail input.name').val();
@@ -2092,7 +2092,7 @@ function Designer() {
 				<tr>\n\
 					<td>Data Source Name</td>\n\
 					<td>:</td>\n\
-					<td><input type="text" class="name fullwidth" data-key="name" value=""/></td>\n\
+					<td><input type="text" class="name fullwidth" data-key="name" value="hoho"/></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td>Main</td>\n\
@@ -2105,7 +2105,7 @@ function Designer() {
 					<td></td>\n\
 				</tr>\n\
 				<tr>\n\
-					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;"></textarea></td>\n\
+					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;">select * from test.peribadi</textarea></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td><small>Max Preview Records</small></td>\n\
@@ -2201,7 +2201,7 @@ function Designer() {
 			}
 		});
 
-	 	// save button
+	 	// save button (data source)
 		$(layout.base).on('click', '.buttonPlaceholder input.save', function(){
 			var form = (mode === 'add') ? $('#dataSourceAddNew') : $('#dataSourceEdit');
 			var detail = {};
@@ -2321,6 +2321,15 @@ function Designer() {
 							text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source has been successfully saved!</td></tr></table>',
 							expire:2000
 						});
+
+						// update tree structure
+						if (detail.main) {
+							var groupNameTop = Object.keys(designer.mainQuery.group)[0];
+							var treeHeaderId = 4;
+							var treeFooterId = 6;
+							designer.tree.structure.setItemText(treeHeaderId, 'Header <small>[<i>'+ groupNameTop +'</i>]</small>');
+							designer.tree.structure.setItemText(treeFooterId, 'Footer <small>[<i>'+ groupNameTop +'</i>]</small>');
+						}
 					}
 
 					// reset

@@ -29,3 +29,5 @@ Tidak disertakan sekali
 20. Copy, cut, paste element di workspace (termasuk keyboard bind)
 21. Max preview record, belum dapat baca dari input
 22. ~~Proses re-fetch column dan susun kembali pada group, bila user re-execute query~~
+23. Update tree, lepas execute query untuk kali pertama
+24. Update tree, lepas re-arrange group

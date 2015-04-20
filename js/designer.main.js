@@ -20,7 +20,7 @@ $(function(){
 		// keyboard binding
 		designer.KeyboardBinding();
 
-		// test script
+		// test script 2
 		designer.details.app.connection['test'] = {
 			host: "localhost",
 			name: "testconnection",
@@ -33,6 +33,9 @@ $(function(){
 			user: "root"
 		};
 
+		designer.OpenDataSourceWindow();
+
+		/*// test script
 		designer.details.app.dataSource.hoho = {
 			connection: "test",
 			group: {
@@ -58,7 +61,7 @@ $(function(){
 
 		designer.mainQuery = designer.details.app.dataSource.hoho;
 
-		designer.OpenGroupWindow();
+		designer.OpenGroupWindow();*/
 	});
 
 });
