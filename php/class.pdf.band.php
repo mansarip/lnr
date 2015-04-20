@@ -57,6 +57,10 @@ class Band
 					$label = new Label($elem);
 					$label->AttachToBand($this);
 				}
+				elseif ($elemType == 'field') {
+					$field = new Field($elem);
+					$field->AttachToBand($this);
+				}
 			}
 
 			unset($this->elements);

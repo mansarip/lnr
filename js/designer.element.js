@@ -139,12 +139,12 @@ function Field() {
 
 	this.width = 90; //px
 	this.height = 20; //px
-	this.name = 'Label'; // tak unique (user boleh rename)
+	this.name = 'Field'; // tak unique (user boleh rename)
 	this.style = 'border:1px solid #333; width:'+ this.width +'px; height:'+ this.height +'px;';
 	this.elem = null;
 	this.id = null;
 	this.parentBand;
-	this.type = "label";
+	this.type = "field";
 	this.uniqueName = "";
 	this.zIndex = 0;
 	this.posY = 0; //px
@@ -179,7 +179,7 @@ function Field() {
 	};
 
 	Field.prototype.Draw = function(area){
-		this.elem = $('<div class="element label" style="'+ this.style +'"></div>');
+		this.elem = $('<div class="element field" style="'+ this.style +'"></div>');
 		this.elem.uniqueId();
 		this.elem.appendTo(area);
 

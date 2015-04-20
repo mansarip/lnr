@@ -21,7 +21,7 @@ $(function(){
 		designer.KeyboardBinding();
 
 		// test script 2
-		designer.details.app.connection['test'] = {
+		/*designer.details.app.connection['test'] = {
 			host: "localhost",
 			name: "testconnection",
 			pass: "",
@@ -52,7 +52,7 @@ $(function(){
 			type: "database"
 		};
 
-		designer.mainQuery = designer.details.app.dataSource.hoho;
+		designer.mainQuery = designer.details.app.dataSource.hoho;*/
 
 		/*// test script
 		designer.details.app.dataSource.hoho = {

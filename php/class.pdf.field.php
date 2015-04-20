@@ -11,8 +11,6 @@ class Field extends TextContainer
 		foreach ($details as $key => $value) {
 			$this->{$key} = $value;
 		}
-
-		//$this->ModPositionBasedOnMargin();
 	}
 
 	public function Display() {
