@@ -33,7 +33,26 @@ $(function(){
 			user: "root"
 		};
 
-		designer.OpenDataSourceWindow();
+		designer.details.app.dataSource.hoho = {
+			connection: "test",
+			group: {
+				ROOT_GROUP : {
+					column : {
+						ID: { dataType:'number' },
+						NAMA: { dataType:'string' },
+						NEGERI: { dataType:'string' },
+						JANTINA: { dataType:'string' }
+					}
+				}
+			},
+			main: true,
+			maxpreview: "100",
+			name: "hoho",
+			query: "select * from test.peribadi",
+			type: "database"
+		};
+
+		designer.mainQuery = designer.details.app.dataSource.hoho;
 
 		/*// test script
 		designer.details.app.dataSource.hoho = {

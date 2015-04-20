@@ -111,7 +111,6 @@ $bandObjects = array();
 $bandObjectsDynamic = array();
 
 
-
 /*==========  PDF Printing  ==========*/
 
 // pdf init

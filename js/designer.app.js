@@ -2813,6 +2813,18 @@ function Designer() {
 			label.AttachToParent();
 			label.UpdatePosition();
 		}
+		else if (type === 'field') {
+			var field = new Field();
+			field.parentBand = band;
+			field.SetPosition(posX, posY);
+			field.Draw(targetArea);
+			field.ApplyDrag();
+			field.ApplyResize();
+			field.RegisterTree();
+			field.Select();
+			field.AttachToParent();
+			field.UpdatePosition();
+		}
 
 		// update band min height
 		this.UpdateBandMinHeight(band);
@@ -2885,7 +2897,8 @@ function Designer() {
 					sql : this.details.app.dataSource[dataSourceName].query,
 					connection : this.details.app.dataSource[dataSourceName].connection,
 					active : true,
-					main : this.details.app.dataSource[dataSourceName].main
+					main : this.details.app.dataSource[dataSourceName].main,
+					group : this.details.app.dataSource[dataSourceName].group
 				};
 			}
 		}
@@ -2903,6 +2916,7 @@ function Designer() {
 			var band = designer.details.app.band[bandName];
 
 			// rename kepada nama yang viewer boleh baca
+			// contoh : 'Report Header' kepada 'reportHeader'
 			bandName = bandName.replace(/\s/g, '');
 			bandName = bandName.charAt(0).toLowerCase() + bandName.slice(1);
 			

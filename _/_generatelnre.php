@@ -118,7 +118,7 @@ $sourceString = '
 						"textColor":"",
 						"verticalElasticity":"",
 						"horizontalElasticity":"",
-						"text":"TESTINNNNGGGG....."
+						"text":"REPORT HEADER"
 					},
 					{
 						"type":"label",
@@ -151,7 +151,7 @@ $sourceString = '
 						"textColor":"",
 						"verticalElasticity":"",
 						"horizontalElasticity":"",
-						"text":"TESTINNNNGGGG....."
+						"text":"report header...."
 					}
 				]
 			},
@@ -225,7 +225,7 @@ $sourceString = '
 						"textColor":"",
 						"verticalElasticity":"",
 						"horizontalElasticity":"",
-						"text":"NEGERI"
+						"text":"NEGERI (HEADER)"
 					}
 				]
 			},
@@ -262,11 +262,12 @@ $sourceString = '
 						"textColor":"",
 						"verticalElasticity":"",
 						"horizontalElasticity":"",
-						"text":"GROUP JANTINA"
+						"text":"GROUP JANTINA (GROUP 1 HEADER)"
 					}
 				]
 			},
-			"group2Header":{
+			"group2Header":{},
+			"detail":{
 				"element":[
 					{
 						"type":"label",
@@ -299,11 +300,10 @@ $sourceString = '
 						"textColor":"",
 						"verticalElasticity":"",
 						"horizontalElasticity":"",
-						"text":"NAMA + ID"
+						"text":"NAMA + ID (detail)"
 					}
 				]
 			},
-			"detail":{},
 			"group2Footer":{},
 			"group1Footer":{
 				"element":[
@@ -338,7 +338,7 @@ $sourceString = '
 						"textColor":"",
 						"verticalElasticity":"",
 						"horizontalElasticity":"",
-						"text":"TOTAL DALAM JANTINA"
+						"text":"TOTAL DALAM JANTINA (GROUP 1 FOOTER)"
 					}
 				]
 			},
@@ -375,7 +375,7 @@ $sourceString = '
 						"textColor":"",
 						"verticalElasticity":"",
 						"horizontalElasticity":"",
-						"text":"TOTAL DALAM NEGERI"
+						"text":"TOTAL DALAM NEGERI (FOOTER)"
 					}
 				]
 			},
@@ -412,7 +412,7 @@ $sourceString = '
 						"textColor":"",
 						"verticalElasticity":"",
 						"horizontalElasticity":"",
-						"text":"Mukasurat X/X"
+						"text":"Mukasurat X/X (PAGE FOOTER)"
 					}
 				]
 			},
