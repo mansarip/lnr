@@ -2004,6 +2004,15 @@ function Designer() {
 				});
 
 				// update tree structure dengan band yang baru
+				var totalGroup = Object.keys(designer.mainQuery.group).length;
+				var groupPreviousNumber = totalGroup - 2;
+				var groupCurrentNumber = totalGroup - 1;
+				var groupStackId = '_group' + groupCurrentNumber;
+				var startHeader = (totalGroup === 2 ? 'header' : 'groupHeader' + groupPreviousNumber);
+				designer.tree.structure.insertNewNext(startHeader, groupStackId, 'Group <small class="grouplabel">'+ newGroupName +'</small>', null, 'zones-stack.png', 'zones-stack.png', 'zones-stack.png');
+				designer.tree.structure.insertNewChild(groupStackId, 'groupHeader' + groupCurrentNumber, 'Group Header', null, 'zone.png', 'zone.png', 'zone.png');
+				designer.tree.structure.moveItem('detail', 'item_child', groupStackId);
+				designer.tree.structure.insertNewChild(groupStackId, 'groupFooter' + groupCurrentNumber, 'Group Footer', null, 'zone.png', 'zone.png', 'zone.png');
 
 				// show toolbars item
 				toolbar.showItem(1);
@@ -2374,8 +2383,8 @@ function Designer() {
 						// update tree structure
 						if (detail.main) {
 							var groupNameTop = Object.keys(designer.mainQuery.group)[0];
-							designer.tree.structure.setItemText('header', 'Header <small>[<i>'+ groupNameTop +'</i>]</small>');
-							designer.tree.structure.setItemText('footer', 'Footer <small>[<i>'+ groupNameTop +'</i>]</small>');
+							designer.tree.structure.setItemText('header', 'Header <small class="grouplabel">'+ groupNameTop +'</small>');
+							designer.tree.structure.setItemText('footer', 'Footer <small class="grouplabel">'+ groupNameTop +'</small>');
 						}
 					}
 
