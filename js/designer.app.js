@@ -753,6 +753,14 @@ function Designer() {
 			selectItemId = selectItemId[1];
 			tree.selectItem(selectItemId, true);
 		}
+
+		//unbind
+		connectionWin.attachEvent('onClose', function(){
+			$(layout.base).off('click', '.buttonPlaceholder input.test');
+			$(layout.base).off('click', '.buttonPlaceholder input.reset');
+			$(layout.base).off('click', '.buttonPlaceholder input.save');
+			return true;
+		});
 	};
 
 	Designer.prototype.OpenParameterWindow = function() {
@@ -1033,6 +1041,13 @@ function Designer() {
 				}
 			}
 		});
+
+		// unbind
+		parameterWin.attachEvent('onClose', function(){
+			$(layout.base).find('input.reset').unbind();
+			$(layout.base).find('input.add').unbind();
+			return true;
+		});
 	};
 
 	Designer.prototype.PromptRemoveParameter = function() {
@@ -1229,6 +1244,13 @@ function Designer() {
 			preferences.close();
 			windows.unload();
 		});
+
+		// unbind
+		preferences.attachEvent('onClose', function(){
+			$(tabbar.base).find('input.close').unbind();
+			$(tabbar.base).find('input.save').unbind();
+			return true;
+		});
 	};
 
 	Designer.prototype.OpenGroupWindow = function(){
@@ -1329,6 +1351,7 @@ function Designer() {
 			toolbar.loadStruct(button);
 			toolbar.hideItem(3);
 			toolbar.hideItem(4);
+
 
 			// tree event
 			tree.attachEvent('onClick', function(id){
@@ -2042,29 +2065,6 @@ function Designer() {
 
 					designer.details.app.band[bandName] = band;
 				}
-				/*var bandHeader = new Band({title : 'Group Header : ' + newGroupName});
-				detailBand.before(bandHeader.elem);
-				bandHeader.ApplyResize();
-				bandHeader.elem.find('.area').droppable({
-					accept : '.standartTreeRow',
-					hoverClass : 'hoverDrop',
-					drop : function(event, ui){
-						designer.DeselectCurrentElement();
-						designer.DrawElement(event, ui);
-					}
-				});
-
-				var bandFooter = new Band({title : 'Group Footer : ' + newGroupName});
-				detailBand.after(bandFooter.elem);
-				bandFooter.ApplyResize();
-				bandFooter.elem.droppable({
-					accept : '.standartTreeRow',
-					hoverClass : 'hoverDrop',
-					drop : function(event, ui){
-						designer.DeselectCurrentElement();
-						designer.DrawElement(event, ui);
-					}
-				});*/
 
 				// show toolbars item
 				toolbar.showItem(1);
@@ -2079,6 +2079,24 @@ function Designer() {
 				toolbar.enableItem(7);
 			});
 		}
+
+		// unbind events
+		groupWin.attachEvent('onClose', function(win){
+			$('body').off('change', '#groupAddNew select.sourceGroup');
+			$('body').off('change', '#groupMoveColumn select.sourceGroup, #groupMoveColumn select.targetGroup');
+			$('body').off('click', '#groupDetail input.save');
+			$('body').off('click', '#groupDetail input.cancel');
+			$('body').off('click', '#groupSort img.arrow');
+			$('body').off('click', '#groupSort input.cancel');
+			$('body').off('click', '#groupSort input.save');
+			$('body').off('click', '#groupMoveColumn input.save');
+			$('body').off('click', '#groupMoveColumn img.arrow');
+			$('body').off('click', '#groupMoveColumn input.cancel');
+			$('body').off('click', '#groupAddNew img.arrow');
+			$('body').off('click', '#groupAddNew input.cancel');
+			$('body').off('click', '#groupAddNew input.save');
+			return true;
+		});
 	};
 
 	Designer.prototype.OpenDataSourceWindow = function(selectItemId) {
@@ -2781,6 +2799,13 @@ function Designer() {
 			selectItemId = selectItemId[1];
 			tree.selectItem(selectItemId, true);
 		}
+
+		// unbind
+		dataSourceWin.attachEvent('onClose', function(){
+			$(layout.base).off('click', '.buttonPlaceholder input.preview');
+			$(layout.base).off('click', '.buttonPlaceholder input.save');
+			return true;
+		});
 	};
 
 	Designer.prototype.PreviewRecords = function(detail) {
@@ -2899,7 +2924,6 @@ function Designer() {
 				designer.DrawElement(event, ui);
 			}
 		});
-
 	};
 
 	Designer.prototype.DrawElement = function(event, ui){
