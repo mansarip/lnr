@@ -49,9 +49,11 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf',GradientType=0);
 		background-color:#ededed;
 		padding: 5px;
+		border:1px solid #fff;
 	}
 	table td{
 		padding: 3px;
+		border:1px solid #fff;
 	}
 	table tr:nth-child(even){
 		background-color: #FBFBFB;

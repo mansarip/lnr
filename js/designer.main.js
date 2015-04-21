@@ -33,7 +33,9 @@ $(function(){
 			user: "root"
 		};
 
-		designer.details.app.dataSource.hoho = {
+		designer.OpenDataSourceWindow();
+
+		/*designer.details.app.dataSource.hoho = {
 			connection: "test",
 			group: {
 				ROOT_GROUP : {
@@ -52,7 +54,7 @@ $(function(){
 			type: "database"
 		};
 
-		designer.mainQuery = designer.details.app.dataSource.hoho;
+		designer.mainQuery = designer.details.app.dataSource.hoho;*/
 
 		/*// test script
 		designer.details.app.dataSource.hoho = {

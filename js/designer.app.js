@@ -56,13 +56,13 @@ function Designer() {
 				"Letter" : {"P": 648, "L": 1068}
 			},
 			band : {
-				"Report Header" : { "treeId":2 },
-				"Page Header" : { "treeId":3 },
-				"Header" : { "treeId":4 },
-				"Detail" : { "treeId":5 },
-				"Footer" : { "treeId":6 },
-				"Page Footer" : { "treeId":7 },
-				"Report Footer" : { "treeId":8 }
+				"Report Header" : { "treeId":'reportHeader' },
+				"Page Header" : { "treeId":'pageHeader' },
+				"Header" : { "treeId":'header' },
+				"Detail" : { "treeId":'detail' },
+				"Footer" : { "treeId":'footer' },
+				"Page Footer" : { "treeId":'pageFooter' },
+				"Report Footer" : { "treeId":'reportFooter' }
 			},
 			element : {
 				"Label" : {"icon":"ui-label.png"},
@@ -1242,10 +1242,8 @@ function Designer() {
 		    width:630,
 		    height:430,
 		    center:true,
-		    modal:true,
-		    resize:false
+		    modal:true
 		});
-		groupWin.button('minmax').hide();
 		groupWin.button('park').hide();
 		groupWin.setText('Group');
 
@@ -2005,6 +2003,8 @@ function Designer() {
 					tree.openAllItems(0);
 				});
 
+				// update tree structure dengan band yang baru
+
 				// show toolbars item
 				toolbar.showItem(1);
 				toolbar.showItem(2);
@@ -2141,12 +2141,12 @@ function Designer() {
 				<tr>\n\
 					<td>Data Source Name</td>\n\
 					<td>:</td>\n\
-					<td><input type="text" class="name fullwidth" data-key="name" value=""/></td>\n\
+					<td><input type="text" class="name fullwidth" data-key="name" value="zzz"/></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td>Main</td>\n\
 					<td>:</td>\n\
-					<td><input type="checkbox" class="main" data-key="main"/></td>\n\
+					<td><input type="checkbox" class="main" data-key="main" checked/></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td>Query</td>\n\
@@ -2154,7 +2154,7 @@ function Designer() {
 					<td></td>\n\
 				</tr>\n\
 				<tr>\n\
-					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;"></textarea></td>\n\
+					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;">select * from test.peribadi</textarea></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td><small>Max Preview Records</small></td>\n\
@@ -2374,10 +2374,8 @@ function Designer() {
 						// update tree structure
 						if (detail.main) {
 							var groupNameTop = Object.keys(designer.mainQuery.group)[0];
-							var treeHeaderId = 4;
-							var treeFooterId = 6;
-							designer.tree.structure.setItemText(treeHeaderId, 'Header <small>[<i>'+ groupNameTop +'</i>]</small>');
-							designer.tree.structure.setItemText(treeFooterId, 'Footer <small>[<i>'+ groupNameTop +'</i>]</small>');
+							designer.tree.structure.setItemText('header', 'Header <small>[<i>'+ groupNameTop +'</i>]</small>');
+							designer.tree.structure.setItemText('footer', 'Footer <small>[<i>'+ groupNameTop +'</i>]</small>');
 						}
 					}
 

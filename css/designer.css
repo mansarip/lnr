@@ -40,6 +40,9 @@ table.windowForm td select{
 table.windowForm td input.fullwidth{
 	width: 90%;
 }
+table.windowForm textarea{
+	font-size: 12px;
+}
 #workspace .band{
 	margin: 0 auto;
 	box-shadow: 0px 0px 1px #929292;
