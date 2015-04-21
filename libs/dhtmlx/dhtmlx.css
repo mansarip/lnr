@@ -1418,7 +1418,7 @@ div.dhx_popup_skin_detect {
 }
 .dhtmlxMenu_dhx_skyblue_Middle {
   position: relative;
-  height: 30px;
+  height: 24px;
   border: none;
   overflow: hidden;
   background-color: #ebebeb;
@@ -1498,7 +1498,7 @@ div.dhtmlxMenu_dhx_skyblue_TopLevel_Item_Selected {
   height: 22px;
   line-height: 22px;
   vertical-align: middle;
-  margin: 3px 2px 0px 0px;
+  /*margin: 3px 2px 0px 0px;*/
   padding: 0px 3px;
 }
 div.dhtmlxMenu_dhx_skyblue_TopLevel_Item_Normal div.top_level_text,

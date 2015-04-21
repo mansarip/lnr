@@ -160,6 +160,9 @@ function Designer() {
 		// init toolbar
 		this.InitMainToolbar();
 
+		// init menu
+		this.InitMenu();
+
 		// init structure tree
 		this.InitStructureTree();
 
@@ -173,38 +176,86 @@ function Designer() {
 		this.InitWorkspace();
 	};
 
+	Designer.prototype.InitMenu = function() {
+		var menu = this.layout.attachMenu({
+			items:[
+				{id:1, text:'File', items:[
+					{id:1.1, text:'_New'},
+					{id:1.2, text:'_Open'},
+					{id:1.3, text:'_Save'},
+					{id:1.4, type:'separator'},
+					{id:1.5, text:'_Preview'},
+					{id:1.6, text:'_Publish'},
+					{id:1.7, type:'separator'},
+					{id:1.8, text:'_Back To Home'},
+					{id:1.9, text:'_Logout'}
+				]},
+				{id:2, text:'Edit', items:[
+					{id:2.1, text:'_Undo'},
+					{id:2.2, text:'_Redo'},
+					{id:2.3, type:'separator'},
+					{id:2.4, text:'_Cut'},
+					{id:2.5, text:'_Copy'},
+					{id:2.6, text:'_Paste'},
+					{id:2.7, type:'separator'},
+					{id:2.8, text:'Preferences'}
+				]},
+				{id:3, text:'View', items:[
+					{id:3.1, text:'_Zoom In'},
+					{id:3.2, text:'_Zoom Out'},
+					{id:3.3, type:'separator'},
+					{id:3.4, text:'_Refresh'}
+				]},
+				{id:5, text:'Data', items:[
+					{id:5.1, text:'Connection'},
+					{id:5.2, text:'Data Source'},
+					{id:5.3, text:'Parameter'},
+					{id:5.4, text:'Group'}
+				]},
+				{id:4, text:'Help', items:[
+					{id:4.1, text:'_Documentation'},
+					{id:4.2, text:'_Report An Issue'},
+					{id:4.3, type:'separator'},
+					{id:4.4, text:'_About'}
+				]}
+			]
+		});
+
+		menu.attachEvent('onClick', function(id){
+			if      (id === '2.8') { designer.OpenPreferencesWindow(); }
+			else if (id === '5.1') { designer.OpenConnectionWindow(); }
+			else if (id === '5.2') { designer.OpenDataSourceWindow(); }
+			else if (id === '5.3') { designer.OpenParameterWindow(); }
+			else if (id === '5.4') { designer.OpenGroupWindow(); }
+		});
+	};
+
 	Designer.prototype.InitMainToolbar = function() {
 		var defaultButton = [
 			// general
-			{id:1, type:"button", text:"New", img:"document.png"},
-			{id:2, type:"button", text:"Open", img:"folder-horizontal-open.png"},
-			{id:3, type:"button", text:"Save", img:"disk-return-black.png"},
+			{id:1, type:"button", title:"New", img:"document.png"},
+			{id:2, type:"button", title:"Open", img:"folder-horizontal-open.png"},
+			{id:3, type:"button", title:"Save", img:"disk-return-black.png"},
 			{id:4, type:"separator"},
 
-			// settings
-			{id:11, type:"button", text:"Preferences", img:"gear.png"},
-			{id:12, type:"separator"},
-
 			// data management
-			{id:13, type:"buttonSelect", text:"Data", img:"databases.png", renderSelect:"disabled", options : [
-				{id:6, type:"button", text:"Connection", img:"lightning.png"},
-				{id:9, type:"button", text:"Source", img:"database-network.png"},
-				{id:8, type:"button", text:"Parameter", img:"paper-plane.png"},
-				{id:5, type:"button", text:"Group", img:"category-group.png"}
-			]},
+			{id:6, type:"button", title:"Connection", img:"lightning.png"},
+			{id:9, type:"button", title:"Source", img:"database-network.png"},
+			{id:8, type:"button", title:"Parameter", img:"paper-plane.png"},
+			{id:5, type:"button", title:"Group", img:"category-group.png"},
 			{id:14, type:"separator"},
 
 			// layout
-			{id:15, type:"button", text:"Refresh", img:"arrow-circle-045-left.png"},
+			{id:15, type:"button", title:"Refresh", img:"arrow-circle-045-left.png"},
 			{id:16, type:"separator"},
 
 			// viewing & publishing
-			{id:10, type:"button", text:"Preview", img:"magnifier.png"},
-			{id:7, type:"button", text:"Publish", img:"globe--arrow.png"},
+			{id:10, type:"button", title:"Preview", img:"magnifier.png"},
+			{id:7, type:"button", title:"Publish", img:"globe--arrow.png"},
 			{id:17, type:"separator"},
 
 			// logout
-			{id:18, type:"button", text:"", img:"door-open-out.png"},
+			{id:18, type:"button", title:"Logout", img:"door-open-out.png"},
 		];
 
 		this.toolbar.setIconsPath(this.fugueIconPath);
@@ -220,10 +271,6 @@ function Designer() {
 			// source window
 			else if (id === '9') {
 				designer.OpenDataSourceWindow();
-			}
-			// preferences window
-			else if (id === '11') {
-				designer.OpenPreferencesWindow();
 			}
 			// parameter window
 			else if (id === '8') {
