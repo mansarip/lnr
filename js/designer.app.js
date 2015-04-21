@@ -184,11 +184,11 @@ function Designer() {
 					{id:1.2, text:'_Open'},
 					{id:1.3, text:'_Save'},
 					{id:1.4, type:'separator'},
-					{id:1.5, text:'_Preview'},
+					{id:1.5, text:'Preview'},
 					{id:1.6, text:'_Publish'},
 					{id:1.7, type:'separator'},
 					{id:1.8, text:'_Back To Home'},
-					{id:1.9, text:'_Logout'}
+					{id:1.9, text:'Logout'}
 				]},
 				{id:2, text:'Edit', items:[
 					{id:2.1, text:'_Undo'},
@@ -227,6 +227,8 @@ function Designer() {
 			else if (id === '5.2') { designer.OpenDataSourceWindow(); }
 			else if (id === '5.3') { designer.OpenParameterWindow(); }
 			else if (id === '5.4') { designer.OpenGroupWindow(); }
+			else if (id === '1.5') { designer.Preview(); }
+			else if (id === '1.9') { designer.Logout(); }
 		});
 	};
 
@@ -389,9 +391,9 @@ function Designer() {
 				mode = 'add';
 				var addNewConnection = '\n\
 				<table border="0" class="windowForm" id="connectionAddNew">\n\
-				<colgroup style="width:120px"/>\n\
-				<colgroup style="width:10px"/>\n\
-				<colgroup/>\n\
+				<col style="width:120px"></col>\n\
+				<col style="width:10px"></col>\n\
+				<col></col>\n\
 				<tr>\n\
 					<td colspan="3"><b>Add New Connection</b></td>\n\
 				</tr>\n\
@@ -660,7 +662,7 @@ function Designer() {
 
 			// papar mesej
 			dhtmlx.message({
-				text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>'+ message +'</td></tr></table>',
+				text:'<table border="0"><col style="width:30px"><col><tr><td><img src="../img/icons/tick.png"></td><td>'+ message +'</td></tr></table>',
 				expire:2000
 			});
 		});
@@ -676,9 +678,9 @@ function Designer() {
 			// display detail #getter
 			var editConnection = '\n\
 			<table border="0" class="windowForm" id="connectionEdit">\n\
-			<colgroup style="width:120px"/>\n\
-			<colgroup style="width:10px"/>\n\
-			<colgroup/>\n\
+			<col style="width:120px">\n\
+			<col style="width:10px">\n\
+			<col>\n\
 			<tr>\n\
 				<td colspan="3"><b>Edit Connection Details</b></td>\n\
 			</tr>\n\
@@ -786,9 +788,9 @@ function Designer() {
 
 		var addNewContent = '\n\
 		<table border="0" class="windowForm" id="parameterAddNew">\n\
-		<colgroup style="width:120px"/>\n\
-		<colgroup style="width:10px"/>\n\
-		<colgroup/>\n\
+		<col style="width:120px">\n\
+		<col style="width:10px">\n\
+		<col>\n\
 		<tr>\n\
 			<td>Parameter Name</td>\n\
 			<td>:</td>\n\
@@ -1094,9 +1096,9 @@ function Designer() {
 		// general tab
 		var generalContent = '\n\
 		<table border="0" class="windowForm" id="preferencesGeneral">\n\
-		<colgroup style="width:100px"/>\n\
-		<colgroup style="width:10px"/>\n\
-		<colgroup/>\n\
+		<col style="width:100px">\n\
+		<col style="width:10px">\n\
+		<col>\n\
 		<tr>\n\
 			<td>Report Title</td>\n\
 			<td>:</td>\n\
@@ -1115,9 +1117,9 @@ function Designer() {
 		// format tab
 		var formatContent = '\n\
 		<table border="0" class="windowForm" id="preferencesFormat">\n\
-		<colgroup style="width:100px"/>\n\
-		<colgroup style="width:10px"/>\n\
-		<colgroup/>\n\
+		<col style="width:100px">\n\
+		<col style="width:10px">\n\
+		<col>\n\
 		<tr>\n\
 			<td>Paper</td>\n\
 			<td>:</td>\n\
@@ -1148,9 +1150,9 @@ function Designer() {
 		// margin tab
 		var generalContent = '\n\
 		<table border="0" class="windowForm" id="preferencesMargin">\n\
-		<colgroup style="width:70px"/>\n\
-		<colgroup style="width:10px"/>\n\
-		<colgroup/>\n\
+		<col style="width:70px">\n\
+		<col style="width:10px">\n\
+		<col>\n\
 		<tr>\n\
 			<td colspan="3">Unit in millimeter (mm)</td>\n\
 		</tr>\n\
@@ -1269,15 +1271,15 @@ function Designer() {
 
 			var info = '\n\
 			<table border="0" class="windowForm">\n\
-			<colgroup style="width:100px"/>\n\
-			<colgroup style="width:10px"/>\n\
+			<col style="width:100px">\n\
+			<col style="width:10px">\n\
 			<tr>\n\
 				<td>Connection</td>\n\
 				<td>:</td>\n\
 				<td><b>'+ this.mainQuery.connection +'</b></td>\n\
 			</tr>\n\
 			<tr>\n\
-				<td>Query</td>\n\
+				<td>Query Name</td>\n\
 				<td>:</td>\n\
 				<td><b>'+ this.mainQuery.name +'</b></td>\n\
 			</tr>\n\
@@ -1321,7 +1323,7 @@ function Designer() {
 				{id:2, type:"separator"},
 				{id:3, type:"button", text:"Remove", img:"cross.png", imgdis:"cross.png"},
 				{id:4, type:"separator"},
-				{id:5, type:"button", text:"Transfer", img:"arrow-circle-double-135.png", imgdis:"arrow-circle-double-135.png"},
+				{id:5, type:"button", text:"Move Column", img:"arrow-circle-double-135.png", imgdis:"arrow-circle-double-135.png"},
 				{id:6, type:"separator"},
 				{id:7, type:"button", text:"Sort Group", img:"sort-quantity.png", imgdis:"sort-quantity.png"}
 			];
@@ -1346,14 +1348,14 @@ function Designer() {
 				toolbar.enableItem(7);
 
 				$('#groupAddNew input.cancel').trigger('click');
-				$('#groupTransfer input.cancel').trigger('click');
+				$('#groupMoveColumn input.cancel').trigger('click');
 
 				// papar detail group
 				if (tree.getLevel(tree.getSelectedItemId()) === 1) {
 					var detailGroup = '<div id="groupDetail"><table border="0" class="windowForm">\n\
-					<colgroup style="width:120px"/>\n\
-					<colgroup style="width:10px"/>\n\
-					<colgroup/>\n\
+					<col style="width:120px">\n\
+					<col style="width:10px">\n\
+					<col>\n\
 					<tr>\n\
 						<td colspan="3"><b>Group Detail</b></td>\n\
 					</tr>\n\
@@ -1407,9 +1409,9 @@ function Designer() {
 					designer.mainQuery.group['___temporary___'] = { column:{} };
 
 					var newGroupForm = '<div id="groupAddNew"><table border="0" class="windowForm">\n\
-					<colgroup style="width:120px"/>\n\
-					<colgroup style="width:10px"/>\n\
-					<colgroup/>\n\
+					<col style="width:120px">\n\
+					<col style="width:10px">\n\
+					<col>\n\
 					<tr>\n\
 						<td colspan="3"><b>Add New Group</b></td>\n\
 					</tr>\n\
@@ -1420,9 +1422,9 @@ function Designer() {
 					</tr>\n\
 					</table>\n\
 					<table border="0" class="windowForm">\n\
-					<colgroup style="width:45%"/>\n\
-					<colgroup style="width:10%; text-align:center;"/>\n\
-					<colgroup style="width:45%"/>\n\
+					<col style="width:45%">\n\
+					<col style="width:10%; text-align:center;">\n\
+					<col style="width:45%">\n\
 					<tr>\n\
 						<td>\n\
 							<p>\n\
@@ -1484,7 +1486,7 @@ function Designer() {
 				else if (id === '3') {
 
 				}
-				// transfer
+				// move column
 				else if (id === '5') {
 					// drop down group
 					var listOfGroup = '';
@@ -1492,13 +1494,13 @@ function Designer() {
 						listOfGroup += '<option value="'+ groupName +'">'+ groupName +'</option>';	
 					}
 
-					var transferForm = '<div id="groupTransfer">\n\
+					var moveColumnForm = '<div id="groupMoveColumn">\n\
 					<table border="0" class="windowForm">\n\
-					<colgroup style="width:45%"/>\n\
-					<colgroup style="width:10%; text-align:center;"/>\n\
-					<colgroup style="width:45%"/>\n\
+					<col style="width:45%">\n\
+					<col style="width:10%; text-align:center;">\n\
+					<col style="width:45%">\n\
 					<tr>\n\
-						<td colspan="3"><b>Transfer column between groups</b></td>\n\
+						<td colspan="3"><b>Move column between groups</b></td>\n\
 					</tr>\n\
 					<tr>\n\
 						<td>\n\
@@ -1540,10 +1542,10 @@ function Designer() {
 						<input type="button" class="cancel" value="Cancel"/>\n\
 					</div></div>';
 
-					layout.cells('c').attachHTMLString(transferForm + closingButton);
+					layout.cells('c').attachHTMLString(moveColumnForm + closingButton);
 
 					// generate content untuk source selection
-					$('body').on('change', '#groupTransfer select.sourceGroup, #groupTransfer select.targetGroup', function(){
+					$('body').on('change', '#groupMoveColumn select.sourceGroup, #groupMoveColumn select.targetGroup', function(){
 						var source = $(this).val();
 						var content = '';
 						
@@ -1553,17 +1555,17 @@ function Designer() {
 
 						// jika source
 						if ($(this).hasClass('sourceGroup')) {
-							$('#groupTransfer select.sourceSelection').html(content);
+							$('#groupMoveColumn select.sourceSelection').html(content);
 						// jika target
 						} else {
-							$('#groupTransfer select.targetSelection').html(content);	
+							$('#groupMoveColumn select.targetSelection').html(content);	
 						}
 						
 					});
 
 					// buka list terus
-					$('#groupTransfer select.sourceGroup').trigger('change');
-					$('#groupTransfer select.targetGroup').trigger('change');
+					$('#groupMoveColumn select.sourceGroup').trigger('change');
+					$('#groupMoveColumn select.targetGroup').trigger('change');
 				}
 				// sort group
 				else if (id === '7') {
@@ -1746,8 +1748,8 @@ function Designer() {
 				toolbar.enableItem(7);
 			});
 
-			// save button (transfer)
-			$('body').on('click', '#groupTransfer input.save', function(){
+			// save button (move column)
+			$('body').on('click', '#groupMoveColumn input.save', function(){
 				// buang old group name
 				for (var groupName in designer.mainQuery.group) {
 					for (var columnName in designer.mainQuery.group[groupName].column) {
@@ -1804,22 +1806,22 @@ function Designer() {
 				layout.cells('c').attachHTMLString('');
 			});
 
-			// arrow (transfer)
-			$('body').on('click', '#groupTransfer img.arrow', function(){
-				var groupNameSource = $('#groupTransfer select.sourceGroup').val();
-				var groupNameTarget = $('#groupTransfer select.targetGroup').val();
+			// arrow (move column)
+			$('body').on('click', '#groupMoveColumn img.arrow', function(){
+				var groupNameSource = $('#groupMoveColumn select.sourceGroup').val();
+				var groupNameTarget = $('#groupMoveColumn select.targetGroup').val();
 
-				// jika transfer ke group yg sama
+				// jika move ke group yg sama
 				if (groupNameSource === groupNameTarget) {
 					dhtmlx.alert({
 						title:'Error',
 						style:'alert-info',
-						text:'Can\'t transfer to its own group!'
+						text:'Can\'t move to its own group!'
 					});
 				}
 				else {
-					var sourceSelection = $('#groupTransfer select.sourceSelection');
-					var targetSelection = $('#groupTransfer select.targetSelection');
+					var sourceSelection = $('#groupMoveColumn select.sourceSelection');
+					var targetSelection = $('#groupMoveColumn select.targetSelection');
 
 					// to target
 					if ($(this).hasClass('arrowToTarget')) {
@@ -1852,8 +1854,8 @@ function Designer() {
 				}
 			});
 
-			// cancel button (transfer)
-			$('body').on('click', '#groupTransfer input.cancel', function(){
+			// cancel button (move column)
+			$('body').on('click', '#groupMoveColumn input.cancel', function(){
 				// pulangkan balik ke group lama
 				for (var groupName in designer.mainQuery.group) {
 
@@ -1966,7 +1968,7 @@ function Designer() {
 
 				// papar mesej berjaya
 				dhtmlx.message({
-					text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Group has been successfully saved!</td></tr></table>',
+					text:'<table border="0"><col style="width:30px"><col><tr><td><img src="../img/icons/tick.png"></td><td>Group has been successfully saved!</td></tr></table>',
 					expire:2000
 				});
 
@@ -2112,9 +2114,9 @@ function Designer() {
 				mode = 'add';
 				var addNewDataSource = '\n\
 				<table border="0" class="windowForm" id="dataSourceAddNew">\n\
-				<colgroup style="width:120px"/>\n\
-				<colgroup style="width:10px"/>\n\
-				<colgroup/>\n\
+				<col style="width:120px">\n\
+				<col style="width:10px">\n\
+				<col>\n\
 				<tr>\n\
 					<td colspan="3"><b>Add New Data Source</b></td>\n\
 				</tr>\n\
@@ -2139,7 +2141,7 @@ function Designer() {
 				<tr>\n\
 					<td>Data Source Name</td>\n\
 					<td>:</td>\n\
-					<td><input type="text" class="name fullwidth" data-key="name" value="hoho"/></td>\n\
+					<td><input type="text" class="name fullwidth" data-key="name" value=""/></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td>Main</td>\n\
@@ -2152,7 +2154,7 @@ function Designer() {
 					<td></td>\n\
 				</tr>\n\
 				<tr>\n\
-					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;">select * from test.peribadi</textarea></td>\n\
+					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;"></textarea></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td><small>Max Preview Records</small></td>\n\
@@ -2365,7 +2367,7 @@ function Designer() {
 
 						// display message
 						dhtmlx.message({
-							text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source has been successfully saved!</td></tr></table>',
+							text:'<table border="0"><col style="width:30px"><col><tr><td><img src="../img/icons/tick.png"></td><td>Data source has been successfully saved!</td></tr></table>',
 							expire:2000
 						});
 
@@ -2454,7 +2456,7 @@ function Designer() {
 					layout.cells('b').attachHTMLString(noDataSourceSelected);
 
 					dhtmlx.message({
-						text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source details saved.</td></tr></table>',
+						text:'<table border="0"><col style="width:30px"><col><tr><td><img src="../img/icons/tick.png"></td><td>Data source details saved.</td></tr></table>',
 						expire:2000
 					});
 
@@ -2498,6 +2500,7 @@ function Designer() {
 									designer.tree.data.setItemText('1:::' + detail.name, detail.name);
 								}
 
+								// ajax untuk dapatkan column
 								$.ajax({
 									url:designer.phpPath + 'designer.fetchcolumn.php',
 									type:'post',
@@ -2508,6 +2511,8 @@ function Designer() {
 									dataType:'json'
 								})
 								.done(function(response){
+
+									// jika tidak berjaya (server bgtau sebab apa tak berjaya)
 									if (response.status === 0) {
 										dhtmlx.alert({
 											title:'Error',
@@ -2515,12 +2520,15 @@ function Designer() {
 											text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
 										});
 										return false;
+
+									// jika berjaya
 									} else {
 										// remove yang lama
 										delete designer.details.app.dataSource[editName];
 
 										// add new connection #setter
 										designer.details.app.dataSource[detail.name] = detail;
+										designer.mainQuery = designer.details.app.dataSource[detail.name];
 
 										var totalGroup = Object.keys(groupObject).length;
 
@@ -2610,7 +2618,7 @@ function Designer() {
 										layout.cells('b').attachHTMLString(noDataSourceSelected);
 
 										dhtmlx.message({
-											text:'<table border="0"><colgroup style="width:30px"/><tr><td><img src="../img/icons/tick.png"></td><td>Data source details saved.</td></tr></table>',
+											text:'<table border="0"><col style="width:30px"><col><tr><td><img src="../img/icons/tick.png"></td><td>Data source details saved.</td></tr></table>',
 											expire:2000
 										});
 
@@ -2649,9 +2657,9 @@ function Designer() {
 			//display edit form
 			var editDataSource = '\n\
 			<table border="0" class="windowForm" id="dataSourceEdit">\n\
-			<colgroup style="width:120px"/>\n\
-			<colgroup style="width:10px"/>\n\
-			<colgroup/>\n\
+			<col style="width:120px">\n\
+			<col style="width:10px">\n\
+			<col>\n\
 			<tr>\n\
 				<td colspan="3"><b>Edit Data Source</b></td>\n\
 			</tr>\n\

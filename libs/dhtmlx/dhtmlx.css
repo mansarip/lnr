@@ -5745,7 +5745,7 @@ span.dhxtabbar_tabs_text_test_dhx_skyblue {
 .dhxwins_vp_dhx_skyblue div.dhxwin_active {
   position: absolute;
   overflow: hidden;
-  border: 1px solid #FFF;
+  /*border: 1px solid #FFF;*/
   box-shadow: 0 0 3px #727272;
   border-radius: 3px;
   background: white;
