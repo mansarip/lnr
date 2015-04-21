@@ -2014,6 +2014,58 @@ function Designer() {
 				designer.tree.structure.moveItem('detail', 'item_child', groupStackId);
 				designer.tree.structure.insertNewChild(groupStackId, 'groupFooter' + groupCurrentNumber, 'Group Footer', null, 'zone.png', 'zone.png', 'zone.png');
 
+				// tambah band pada workspace
+				var detailBand = $('#workspace .band[data-name="Detail"]');
+				var bandObject = {};
+				bandObject['Group Header : ' + newGroupName] = { treeId : 'groupHeader' + groupCurrentNumber, type : 'header' };
+				bandObject['Group Footer : ' + newGroupName] = { treeId : 'groupFooter' + groupCurrentNumber, type : 'footer' };
+
+				for (var bandName in bandObject) {
+					var band = new Band({ title : bandName });
+
+					if (bandObject[bandName].type === 'header') {
+						detailBand.before(band.elem);
+					} else if (bandObject[bandName].type === 'footer') {
+						detailBand.after(band.elem);
+					}
+
+					band.RegisterTreeId(bandObject[bandName].treeId);
+					band.ApplyResize();
+					band.elem.find('.area').droppable({
+						accept : '.standartTreeRow',
+						hoverClass : 'hoverDrop',
+						drop : function(event, ui){
+							designer.DeselectCurrentElement();
+							designer.DrawElement(event, ui);
+						}
+					});
+
+					designer.details.app.band[bandName] = band;
+				}
+				/*var bandHeader = new Band({title : 'Group Header : ' + newGroupName});
+				detailBand.before(bandHeader.elem);
+				bandHeader.ApplyResize();
+				bandHeader.elem.find('.area').droppable({
+					accept : '.standartTreeRow',
+					hoverClass : 'hoverDrop',
+					drop : function(event, ui){
+						designer.DeselectCurrentElement();
+						designer.DrawElement(event, ui);
+					}
+				});
+
+				var bandFooter = new Band({title : 'Group Footer : ' + newGroupName});
+				detailBand.after(bandFooter.elem);
+				bandFooter.ApplyResize();
+				bandFooter.elem.droppable({
+					accept : '.standartTreeRow',
+					hoverClass : 'hoverDrop',
+					drop : function(event, ui){
+						designer.DeselectCurrentElement();
+						designer.DrawElement(event, ui);
+					}
+				});*/
+
 				// show toolbars item
 				toolbar.showItem(1);
 				toolbar.showItem(2);
