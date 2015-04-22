@@ -1654,8 +1654,17 @@ function Designer() {
 					}
 
 					// #setter
-					designer.mainQuery.group[groupName] = $.extend(true, {}, designer.mainQuery.group[oldGroupName]);
-					delete designer.mainQuery.group[oldGroupName];
+					var originalGroups = Object.keys(designer.mainQuery.group);
+					var changedGroupIndex = originalGroups.indexOf(oldGroupName);
+					var temporaryObject = $.extend(true, {}, designer.mainQuery.group);
+					designer.mainQuery.group = {};
+					for (var g=0; g<originalGroups.length; g++) {
+						if (g === changedGroupIndex) {
+							designer.mainQuery.group[groupName] = $.extend(true, {}, temporaryObject[originalGroups[g]]);
+						} else {
+							designer.mainQuery.group[originalGroups[g]] = $.extend(true, {}, temporaryObject[originalGroups[g]]);
+						}
+					}
 
 					// update tree
 					tree.changeItemId(oldGroupName, groupName);
