@@ -1660,6 +1660,34 @@ function Designer() {
 					// update tree
 					tree.changeItemId(oldGroupName, groupName);
 					tree.setItemText(groupName, groupName);
+
+					// update band title, band data-name
+					var groupNameArray = Object.keys(designer.mainQuery.group);
+					var groupNumber = groupNameArray.indexOf(groupName);
+					var dataNameHeader = (groupNumber === 0) ? 'Header' : 'Group Header : ' + oldGroupName;
+					var bandTitleHeader = (groupNumber === 0) ? 'Header : ' + groupName : 'Group Header : ' + groupName;
+					var dataNameFooter = (groupNumber === 0) ? 'Footer' : 'Group Footer : ' + oldGroupName;
+					var bandTitleFooter = (groupNumber === 0) ? 'Footer : ' + groupName : 'Group Footer : ' + groupName;
+
+					var bandHeader = $('#workspace .band[data-name="'+ dataNameHeader +'"]');
+					bandHeader.find('.title p').text(bandTitleHeader);
+					if (groupNumber > 0) { // attr data-name untuk header tidak berubah
+						bandHeader.attr('data-name', bandTitleHeader);
+					}
+
+					var bandFooter = $('#workspace .band[data-name="'+ dataNameFooter +'"]');
+					bandFooter.find('.title p').text(bandTitleFooter);
+					if (groupNumber > 0) { // attr data-name untuk header tidak berubah
+						bandFooter.attr('data-name', bandTitleFooter);
+					}
+
+					// update tree structure
+					if (groupNumber === 0) {
+						designer.tree.structure.setItemText('header', 'Header <small class="grouplabel">'+ groupName +'</small>');
+						designer.tree.structure.setItemText('footer', 'Footer <small class="grouplabel">'+ groupName +'</small>');
+					} else {
+						designer.tree.structure.setItemText('_group' + groupNumber, 'Group <small class="grouplabel">'+ groupName +'</small>');
+					}
 				}
 
 				layout.cells('c').attachHTMLString('');
@@ -2456,6 +2484,10 @@ function Designer() {
 							designer.tree.structure.setItemText('header', 'Header <small class="grouplabel">'+ groupNameTop +'</small>');
 							designer.tree.structure.setItemText('footer', 'Footer <small class="grouplabel">'+ groupNameTop +'</small>');
 						}
+
+						// update band title
+						$('#workspace .band[data-name="Header"] .title p').text('Header : ' + groupNameTop);
+						$('#workspace .band[data-name="Footer"] .title p').text('Footer : ' + groupNameTop);
 					}
 
 					// reset
