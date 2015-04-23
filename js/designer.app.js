@@ -22,6 +22,7 @@ function Designer() {
 	this.mainQuery = null;
 	this.currentSelectedElement = null;
 	this.currentWindowOpen = null;
+	this.currentTreeSelected = null;
 
 	Designer.prototype.CheckLogin = function(proceedFunc) {
 		var request = $.ajax({
@@ -204,7 +205,7 @@ function Designer() {
 					{id:3.1, text:'_Zoom In'},
 					{id:3.2, text:'_Zoom Out'},
 					{id:3.3, type:'separator'},
-					{id:3.4, text:'_Refresh'}
+					{id:3.4, text:'Refresh'}
 				]},
 				{id:5, text:'Data', items:[
 					{id:5.1, text:'Connection'},
@@ -229,6 +230,7 @@ function Designer() {
 			else if (id === '5.4') { designer.OpenGroupWindow(); }
 			else if (id === '1.5') { designer.Preview(); }
 			else if (id === '1.9') { designer.Logout(); }
+			else if (id === '3.4') { designer.Refresh(); }
 		});
 	};
 
@@ -3128,9 +3130,7 @@ function Designer() {
 
 		// structure
 		this.tree.structure.attachEvent('onClick', function(id){
-			// prevent bubble up
-			event.stopPropagation();
-
+			designer.currentTreeSelected = this.selectionBar.parentElement;
 			designer.DeselectCurrentElement();
 
 			// clear yang lain
@@ -3140,8 +3140,7 @@ function Designer() {
 
 		// data
 		this.tree.data.attachEvent('onClick', function(id){
-			// prevent bubble up
-			event.stopPropagation();
+			designer.currentTreeSelected = this.selectionBar.parentElement;
 
 			// clear yang lain
 			designer.tree.structure.clearSelection();
@@ -3149,8 +3148,7 @@ function Designer() {
 		});
 
 		this.tree.data.attachEvent('onDblClick', function(id){
-			// prevent bubble up
-			event.stopPropagation();
+			designer.currentTreeSelected = this.selectionBar.parentElement;
 
 			// dapatkan id parent
 			var parentId = designer.tree.data.getParentId(id);
@@ -3279,10 +3277,30 @@ function Designer() {
 
 	// event : body click
 	$('body').on('click', function(event){
-		// clear selection tree		
-		designer.tree.structure.clearSelection();
-		designer.tree.data.clearSelection();
-		designer.tree.element.clearSelection();
+
+		if (designer.currentTreeSelected !== $(event.target).closest('div')[0]) {
+			designer.tree.element.clearSelection();
+			designer.tree.structure.clearSelection();
+			designer.tree.data.clearSelection();
+		}
+
+		designer.currentTreeSelected = null;
+
+		// clear tree selection
+		/*if (designer.currentTreeSelected === designer.tree.structure) {
+			designer.tree.data.clearSelection();
+			designer.tree.element.clearSelection();
+		} else if (designer.currentTreeSelected === designer.tree.data) {
+			designer.tree.structure.clearSelection();
+			designer.tree.element.clearSelection();
+		} else if (designer.currentTreeSelected === designer.tree.element) {
+			designer.tree.structure.clearSelection();
+			designer.tree.data.clearSelection();
+		} else {
+			designer.tree.element.clearSelection();
+			designer.tree.structure.clearSelection();
+			designer.tree.data.clearSelection();
+		}*/
 
 		// clear selection element
 		designer.DeselectCurrentElement();

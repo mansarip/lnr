@@ -33,7 +33,7 @@ $(function(){
 			user: "root"
 		};
 
-		designer.OpenDataSourceWindow();
+		// designer.OpenDataSourceWindow();
 
 		/*designer.details.app.dataSource.hoho = {
 			connection: "test",
