@@ -68,11 +68,13 @@ function Label() {
 		designer.currentSelectedElement = this;
 		designer.tree.structure.selectItem(this.id);
 		this.elem.addClass('selected');
+		this.ShowProperties();
 	};
 
 	Label.prototype.Deselect = function() {
 		designer.currentSelectedElement = null;
 		this.elem.removeClass('selected');
+		designer.propertiesGrid.hide();
 	};
 
 	Label.prototype.RegisterTree = function(){
@@ -82,7 +84,8 @@ function Label() {
 		var treeText = 'Label';
 
 		designer.tree.structure.insertNewChild(treeParentId, treeChildId, treeText, function(id){
-			event.stopPropagation();
+			// event.stopPropagation();
+			designer.currentTreeSelected = this.span;
 			self.Select();
 		}, 'ui-label.png');
 
@@ -132,6 +135,10 @@ function Label() {
 
 	Label.prototype.AttachToParent = function(){
 		this.parentBand.element.push(this);
+	};
+
+	Label.prototype.ShowProperties = function(){
+		designer.propertiesGrid.show();
 	};
 }
 
@@ -196,7 +203,7 @@ function Field() {
 		});
 
 		this.elem.on('click', function(event){
-			event.stopPropagation();
+			event.stopPropagation();			
 			self.elem.trigger('mousedown');
 		});
 	};

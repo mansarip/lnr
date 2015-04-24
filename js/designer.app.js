@@ -17,6 +17,7 @@ function Designer() {
 		app : null,
 		report : null
 	};
+	this.propertiesGrid = null;
 	this.parameterListGrid;
 	this.parameterStatusBarBottom;
 	this.mainQuery = null;
@@ -143,6 +144,7 @@ function Designer() {
 		// setkan saiz cell
 		this.layout.cells('a').setWidth(230);
 		this.layout.cells('c').setWidth(230);
+		this.layout.cells('c').setHeight(200);
 
 		this.layout.cells('b').hideArrow();
 
@@ -175,6 +177,9 @@ function Designer() {
 
 		// init workspace
 		this.InitWorkspace();
+
+		// init properties
+		this.InitProperties();
 	};
 
 	Designer.prototype.InitMenu = function() {
@@ -2969,6 +2974,36 @@ function Designer() {
 		});
 	};
 
+	Designer.prototype.InitProperties = function() {
+		var properties = '<div id="properties" style="display:none">';
+
+		// element > general
+		properties += '\n\
+		<table border="0" class="windowForm">\n\
+		<col class="label"></col>\n\
+		<col></col>\n\
+		<tr><td>ID</td><td><span>....</span></td></tr>\n\
+		<tr><td>Name</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
+		<tr><td>Height</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
+		<tr><td>Left</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
+		<tr><td>Top</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
+		';
+
+		// element > label
+		properties += '\n\
+		<tr><td>Text</td><td><input type="button" value="..."/></td></tr>\n\
+		';
+
+		properties += '</table>';
+		properties += '</div>';
+
+		this.propertiesGrid = $(properties);
+		this.layout.cells('d').attachObject(this.propertiesGrid[0]);
+		this.propertiesGrid.hide();
+		this.propertiesGrid.find('table.windowForm').colResizable();
+	};
+
 	Designer.prototype.DrawElement = function(event, ui){
 		var type = $(ui.helper).text().toLowerCase();
 		var targetArea = $(event.target);
@@ -3278,32 +3313,29 @@ function Designer() {
 	// event : body click
 	$('body').on('click', function(event){
 
-		if (designer.currentTreeSelected !== $(event.target).closest('div')[0]) {
+		// tree item clicked (top level)
+		/*if (designer.currentTreeSelected !== $(event.target).closest('div')[0]) {
+			if (designer.currentTreeSelected !== event.target) {
+				designer.tree.structure.clearSelection();
+			}
+
 			designer.tree.element.clearSelection();
-			designer.tree.structure.clearSelection();
 			designer.tree.data.clearSelection();
 		}
 
 		designer.currentTreeSelected = null;
 
-		// clear tree selection
-		/*if (designer.currentTreeSelected === designer.tree.structure) {
-			designer.tree.data.clearSelection();
-			designer.tree.element.clearSelection();
-		} else if (designer.currentTreeSelected === designer.tree.data) {
-			designer.tree.structure.clearSelection();
-			designer.tree.element.clearSelection();
-		} else if (designer.currentTreeSelected === designer.tree.element) {
-			designer.tree.structure.clearSelection();
-			designer.tree.data.clearSelection();
-		} else {
-			designer.tree.element.clearSelection();
-			designer.tree.structure.clearSelection();
-			designer.tree.data.clearSelection();
-		}*/
-
 		// clear selection element
+		designer.DeselectCurrentElement();*/
+
+		designer.tree.structure.clearSelection();
+		designer.tree.element.clearSelection();
+		designer.tree.data.clearSelection();
 		designer.DeselectCurrentElement();
+	});
+
+	$('body').on('click', 'td.standartTreeRow', function(e){
+		e.stopPropagation();
 	});
 
 	// Array Remove - By John Resig (MIT Licensed)
