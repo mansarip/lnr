@@ -3002,6 +3002,10 @@ function Designer() {
 		this.layout.cells('d').attachObject(this.propertiesGrid[0]);
 		this.propertiesGrid.hide();
 		this.propertiesGrid.find('table.windowForm').colResizable();
+
+		$(this.layout.cells('d').cell).on('click', function(e){
+			e.stopPropagation();
+		});
 	};
 
 	Designer.prototype.DrawElement = function(event, ui){
