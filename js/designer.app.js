@@ -2869,7 +2869,7 @@ function Designer() {
 		});
 		previewWin.button('park').hide();
 		previewWin.setText('Preview Records');
-		previewWin.attachURL('previewrecords.php', null, {
+		previewWin.attachURL(this.phpPath + 'designer.previewrecords.php', null, {
 			connection : JSON.stringify(designer.details.app.connection[detail.connection]),
 			query : detail.query,
 			max : detail.maxpreview
@@ -3092,7 +3092,7 @@ function Designer() {
 		// generate report details
 		this.GenerateReportDetails();
 
-		parameterWin.attachURL('preview.php', null, {data:JSON.stringify(this.details.report) });
+		parameterWin.attachURL(this.phpPath + 'designer.preview.php', null, {data:JSON.stringify(this.details.report) });
 	};
 
 	Designer.prototype.GenerateReportDetails = function() {

@@ -77,7 +77,7 @@ function Viewer() {
 		if (this.get.output === undefined) this.get.output = 'pdf';
 
 		var outputType = this.get.output;
-		var url = 'output.'+ outputType +'.php';
+		var url = this.phpPath + 'viewer.output.'+ outputType +'.php';
 		var queryString = '';
 
 		for (var key in this.get) {
