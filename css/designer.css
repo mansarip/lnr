@@ -123,9 +123,15 @@ small.grouplabel{
 	background-color: #3F9BCA;
 	padding: 1px 5px;
 }
+#properties{
+	position: absolute;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	top: 0;
+	bottom: 0;
+}
 #properties table.windowForm{
 	margin: 0;
-	position: absolute;
 	width: 100%;
 }
 #properties table.windowForm th{

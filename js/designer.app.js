@@ -2975,14 +2975,17 @@ function Designer() {
 	};
 
 	Designer.prototype.InitProperties = function() {
-		var properties = '<div id="properties" style="display:none">';
+		var properties = '<div id="properties">';
 
 		// element > general
 		properties += '\n\
 		<table border="0" class="windowForm">\n\
 		<col class="label"></col>\n\
 		<col></col>\n\
+		<tr><td style="padding:0 !important;"></td><td style="padding:0 !important;"></td></tr>\n\
+		<tr><th colspan="2">General</th></tr>\n\
 		<tr><td>ID</td><td><span>....</span></td></tr>\n\
+		<tr><td>Type</td><td><span>....</span></td></tr>\n\
 		<tr><td>Name</td><td><input type="text" class="fullwidth"/></td></tr>\n\
 		<tr><td>Width</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
 		<tr><td>Height</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
@@ -2990,9 +2993,63 @@ function Designer() {
 		<tr><td>Top</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
 		';
 
-		// element > label
+		// element > label (Content)
 		properties += '\n\
+		<tr><th colspan="2">Content</th></tr>\n\
 		<tr><td>Text</td><td><input type="button" value="..."/></td></tr>\n\
+		<tr><td>HTML</td><td><input type="checkbox"/></td></tr>\n\
+		';
+
+		// element > label, field (Appearance)
+		properties += '\n\
+		<tr><th colspan="2">Appearance</th></tr>\n\
+		<tr><td>Line Height</td><td><input type="number" class="fullwidth"/></td></tr>\n\
+		<tr><td>Text Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Fill Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		';
+
+		// element > label, field (Printing)
+		properties += '\n\
+		<tr><th colspan="2">Printing</th></tr>\n\
+		<tr><td>Elasticity</td>\n\
+			<td>\n\
+			<select>\n\
+			<option>Fixed</option>\n\
+			<option>Vertical</option>\n\
+			<option>Horizontal</option>\n\
+			<option>Vertical,Horizontal</option>\n\
+			</select>\n\
+			</td>\n\
+		</tr>\n\
+		';
+
+		// element > label, field (Border)
+		properties += '\n\
+		<tr><th colspan="2">Border - All</th></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><th colspan="2">Border - Top</th></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><th colspan="2">Border - Bottom</th></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><th colspan="2">Border - Right</th></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><th colspan="2">Border - Left</th></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
 		';
 
 		properties += '</table>';
@@ -3000,8 +3057,8 @@ function Designer() {
 
 		this.propertiesGrid = $(properties);
 		this.layout.cells('d').attachObject(this.propertiesGrid[0]);
-		this.propertiesGrid.hide();
-		this.propertiesGrid.find('table.windowForm').colResizable();
+		//this.propertiesGrid.hide();
+		//this.propertiesGrid.find('table.windowForm').colResizable();
 
 		$(this.layout.cells('d').cell).on('click', function(e){
 			e.stopPropagation();
@@ -3074,6 +3131,7 @@ function Designer() {
 	Designer.prototype.Refresh = function() {
 		this.layout.cells('a').setWidth(230);
 		this.layout.cells('c').setWidth(230);
+		this.layout.cells('c').setHeight(200);
 	};
 
 	Designer.prototype.Preview = function() {
