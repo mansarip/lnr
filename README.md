@@ -19,7 +19,21 @@ Tidak disertakan sekali
 10. ~~Logout button, kembali pada home~~
 11. New function : refresh window
 12. Buat object untuk setiap element
+    - ~~label~~
+    - field
+    - picture
+    - rectangle
+    - qr code
+    - barcode
+    - svg
 13. Buat properties untuk setiap element
+    - label
+    - field
+    - picture
+    - rectangle
+    - qr code
+    - barcode
+    - svg
 14. Delete function, untuk remove element dari workspace dan details
 15. Simpan history untuk tujuan undo redo
 16. Selectable element guna mouse
