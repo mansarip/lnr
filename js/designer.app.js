@@ -3236,7 +3236,6 @@ function Designer() {
 
 		// structure
 		this.tree.structure.attachEvent('onClick', function(id){
-			//designer.DeselectCurrentElement();
 			designer.currentTreeSelected = this.selectionBar.parentElement;
 			designer.DeselectCurrentElement();
 

@@ -113,6 +113,7 @@ function Element() {
 		var treeText = this.type.charAt(0).toUpperCase() + this.type.slice(1);
 
 		designer.tree.structure.insertNewChild(treeParentId, treeChildId, treeText, function(id){
+			designer.DeselectCurrentElement();
 			designer.currentTreeSelected = this.span;
 			self.Select();
 		}, self.treeIcon);
