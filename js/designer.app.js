@@ -2995,9 +2995,19 @@ function Designer() {
 
 		// element > label (Content)
 		properties += '\n\
+		<tbody class="label particular">\n\
 		<tr><th colspan="2">Content</th></tr>\n\
 		<tr><td>Text</td><td><input type="button" value="..."/></td></tr>\n\
 		<tr><td>HTML</td><td><input type="checkbox"/></td></tr>\n\
+		<tbody>\n\
+		';
+
+		// element > field (Content)
+		properties += '\n\
+		<tbody class="field particular">\n\
+		<tr><th colspan="2">Content</th></tr>\n\
+		<tr><td>Field</td><td><input type="button" value="..."/></td></tr>\n\
+		<tbody>\n\
 		';
 
 		// element > label, field (Appearance)
@@ -3006,6 +3016,7 @@ function Designer() {
 		<tr><td>Line Height</td><td><input type="number" class="fullwidth"/></td></tr>\n\
 		<tr><td>Text Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
 		<tr><td>Fill Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Padding</td><td><input type="number" class="fullwidth"/></td></tr>\n\
 		';
 
 		// element > label, field (Printing)
@@ -3057,7 +3068,7 @@ function Designer() {
 
 		this.propertiesGrid = $(properties);
 		this.layout.cells('d').attachObject(this.propertiesGrid[0]);
-		//this.propertiesGrid.hide();
+		this.propertiesGrid.hide();
 		//this.propertiesGrid.find('table.windowForm').colResizable();
 
 		$(this.layout.cells('d').cell).on('click', function(e){
@@ -3077,31 +3088,29 @@ function Designer() {
 		var posX = clone.position().left - targetArea.offset().left;
 		var posY = clone.position().top - targetArea.offset().top;
 		clone.remove();
-		
+
+		// element object creation
+		var object;
+
 		if (type === 'label') {
-			var label = new Label();
-			label.parentBand = band;
-			label.SetPosition(posX, posY);
-			label.Draw(targetArea);
-			label.ApplyDrag();
-			label.ApplyResize();
-			label.RegisterTree();
-			label.Select();
-			label.AttachToParent();
-			label.UpdatePosition();
+			object = new Label();
+		} else if (type === 'field') {
+			object = new Field();
+		} else if (type === 'rectangle') {
+			object = new Rectangle();
+		} else if (type === 'image') {
+			object = new Image();
 		}
-		else if (type === 'field') {
-			var field = new Field();
-			field.parentBand = band;
-			field.SetPosition(posX, posY);
-			field.Draw(targetArea);
-			field.ApplyDrag();
-			field.ApplyResize();
-			field.RegisterTree();
-			field.Select();
-			field.AttachToParent();
-			field.UpdatePosition();
-		}
+
+		object.parentBand = band;
+		object.SetPosition(posX, posY);
+		object.Draw(targetArea);
+		object.ApplyDrag();
+		object.ApplyResize();
+		object.RegisterTree();
+		object.Select();
+		object.AttachToParent();
+		object.UpdatePosition();
 
 		// update band min height
 		this.UpdateBandMinHeight(band);
@@ -3227,6 +3236,7 @@ function Designer() {
 
 		// structure
 		this.tree.structure.attachEvent('onClick', function(id){
+			//designer.DeselectCurrentElement();
 			designer.currentTreeSelected = this.selectionBar.parentElement;
 			designer.DeselectCurrentElement();
 
@@ -3374,22 +3384,6 @@ function Designer() {
 
 	// event : body click
 	$('body').on('click', function(event){
-
-		// tree item clicked (top level)
-		/*if (designer.currentTreeSelected !== $(event.target).closest('div')[0]) {
-			if (designer.currentTreeSelected !== event.target) {
-				designer.tree.structure.clearSelection();
-			}
-
-			designer.tree.element.clearSelection();
-			designer.tree.data.clearSelection();
-		}
-
-		designer.currentTreeSelected = null;
-
-		// clear selection element
-		designer.DeselectCurrentElement();*/
-
 		designer.tree.structure.clearSelection();
 		designer.tree.element.clearSelection();
 		designer.tree.data.clearSelection();

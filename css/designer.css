@@ -150,6 +150,9 @@ small.grouplabel{
 	width: 40%;
 	border-right:1px solid #c8c8c8	
 }
+#properties table tbody.particular{
+	display: none;
+}
 
 /*overwrite jqueryui handle styles*/
 .element .ui-resizable-n{ top:0; height:2px;}
