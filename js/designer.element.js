@@ -159,6 +159,9 @@ function Element() {
 		propertiesElem.find('input.lineHeight').val(this.lineHeight);
 		propertiesElem.find('select.fontFamily').val(this.fontFamily);
 		propertiesElem.find('input.fontSize').val(this.fontSize);
+		propertiesElem.find('input.fontBold').prop('checked', this.fontBold);
+		propertiesElem.find('input.fontItalic').prop('checked', this.fontItalic);
+		propertiesElem.find('input.fontUnderline').prop('checked', this.fontUnderline);
 		propertiesElem.find('input.textColor').val(this.textColor);
 		propertiesElem.find('input.fillColorEnable').prop('checked', this.fillColorEnable);
 		propertiesElem.find('input.fillColor').val(this.fillColor);

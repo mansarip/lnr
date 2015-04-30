@@ -3059,6 +3059,9 @@ function Designer() {
 				</td>\n\
 			</tr>\n\
 			<tr><td>Font Size</td><td><input type="number" min="0" class="fontSize fullwidth" data-key="fontSize"/></td></tr>\n\
+			<tr><td>Font Bold</td><td><input type="checkbox" class="fontBold" data-key="fontBold"/></tr>\n\
+			<tr><td>Font Italic</td><td><input type="checkbox" class="fontItalic" data-key="fontItalic"/></tr>\n\
+			<tr><td>Font Underline</td><td><input type="checkbox" class="fontUnderline" data-key="fontUnderline"/></tr>\n\
 			<tr><td>Text Color</td><td><input type="text" class="textColor fullwidth"/></td></tr>\n\
 		</tbody>\n\
 		<tr><td>Fill Color</td><td><input type="checkbox" class="fillColorEnable"/><input type="text" class="fillColor" style="width:60%"/></td></tr>\n\
@@ -3150,9 +3153,35 @@ function Designer() {
 					designer.currentSelectedElement.elem.find('span.content').html(designer.currentSelectedElement.text);
 				} else {
 					designer.currentSelectedElement.elem.find('span.content').text(designer.currentSelectedElement.text);
-				}				
-
+				}		
 				designer.currentSelectedElement.isHTML = value;
+
+			} else if (propertyKey === 'fontBold') {
+				if (!designer.currentSelectedElement.isHTML && value === true) {
+					designer.currentSelectedElement.elem.find('span.content').css('font-weight', 'bold');
+
+				} else if (!designer.currentSelectedElement.isHTML && value === false) {
+					designer.currentSelectedElement.elem.find('span.content').css('font-weight', '');
+				}
+				designer.currentSelectedElement.fontBold = value;
+
+			} else if (propertyKey === 'fontItalic') {
+				if (!designer.currentSelectedElement.isHTML && value === true) {
+					designer.currentSelectedElement.elem.find('span.content').css('font-style', 'italic');
+
+				} else if (!designer.currentSelectedElement.isHTML && value === false) {
+					designer.currentSelectedElement.elem.find('span.content').css('font-style', '');
+				}
+				designer.currentSelectedElement.fontItalic = value;
+
+			} else if (propertyKey === 'fontUnderline') {
+				if (!designer.currentSelectedElement.isHTML && value === true) {
+					designer.currentSelectedElement.elem.find('span.content').css('text-decoration', 'underline');
+
+				} else if (!designer.currentSelectedElement.isHTML && value === false) {
+					designer.currentSelectedElement.elem.find('span.content').css('text-decoration', '');
+				}
+				designer.currentSelectedElement.fontUnderline = value;
 			}
 		});
 
@@ -3164,7 +3193,7 @@ function Designer() {
 			if (value !== '') {
 
 				value = Number(value);
-				
+
 				if (propertyKey === 'width') {
 					designer.currentSelectedElement.elem.css('width', value);
 					designer.currentSelectedElement.width = value;

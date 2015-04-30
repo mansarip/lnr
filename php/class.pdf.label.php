@@ -19,8 +19,14 @@ class Label extends TextContainer
 		// line height
 		$pdf->setCellHeightRatio($this->lineHeight);
 
+		// font style
+		$fontStyle = '';
+		if ($this->fontBold) $fontStyle .= 'B';
+		if ($this->fontItalic) $fontStyle .= 'I';
+		if ($this->fontUnderline) $fontStyle .= 'U';
+
 		// font
-		$pdf->SetFont($this->fontFamily, '', $this->fontSize);
+		$pdf->SetFont($this->fontFamily, $fontStyle, $this->fontSize);
 
 		$pdf->MultiCell(
 			$this->width,
