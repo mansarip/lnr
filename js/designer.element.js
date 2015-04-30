@@ -2,40 +2,43 @@
  * Element Class
  */
 function Element() {
-	this.id;                  // string
-	this.name;                // string
-	this.width;               // float
-	this.type;                // string
-	this.height;              // float
-	this.posX;                // int
-	this.posY;                // int
-	this.fillColor;           // string
-	this.padding;             // int
-	this.horizontalPadding;   // int
-	this.verticalPadding;     // int
-	this.borderAllEnable;     // bool
-	this.borderAllWidth;      // int
-	this.borderAllStyle;      // string
-	this.borderAllColor;      // string
-	this.borderTopEnable;     // bool
-	this.borderTopWidth;      // int
-	this.borderTopStyle;      // string
-	this.borderTopColor;      // string
-	this.borderBottomEnable;  // bool
-	this.borderBottomWidth;   // int
-	this.borderBottomStyle;   // string
-	this.borderBottomColor;   // string
-	this.borderLeftEnable;    // bool
-	this.borderLeftWidth;     // int
-	this.borderLeftStyle;     // string
-	this.borderLeftColor;     // string
-	this.borderRightEnable;   // bool
-	this.borderRightWidth;    // int
-	this.borderRightStyle;    // string
-	this.borderRightColor;    // string
-	this.elem;                // jquery object
-	this.parentBand;          // jquery object
-	this.treeIcon;            // string
+	this.id;                               // string
+	this.name;                             // string
+	this.width;                            // float
+	this.type;                             // string
+	this.height;                           // float
+	this.posX;                             // int
+	this.posY;                             // int
+	this.fillColorEnable    = false;       // bool
+	this.fillColor          = '#ffffff';   // string
+	this.padding            = 0;           // int
+	this.horizontalPadding;                // int
+	this.verticalPadding;                  // int
+	this.borderAllEnable    = true;        // bool
+	this.borderAllWidth     = 1;           // int
+	this.borderAllStyle     = 'solid';     // string
+	this.borderAllColor     = '#000000';   // string
+	this.borderTopEnable    = true;        // bool
+	this.borderTopWidth     = 1;           // int
+	this.borderTopStyle     = 'solid';     // string
+	this.borderTopColor     = '#000000';   // string
+	this.borderBottomEnable = true;        // bool
+	this.borderBottomWidth  = 1;           // int
+	this.borderBottomStyle  = 'solid';     // string
+	this.borderBottomColor  = '#000000';   // string
+	this.borderLeftEnable   = true;        // bool
+	this.borderLeftWidth    = 1;           // int
+	this.borderLeftStyle    = 'solid';     // string
+	this.borderLeftColor    = '#000000';   // string
+	this.borderRightEnable  = true;        // bool
+	this.borderRightWidth   = 1;           // int
+	this.borderRightStyle   = 'solid';     // string
+	this.borderRightColor   = '#000000';   // string
+
+	this.elem;                             // jquery object
+	this.parentBand;                       // jquery object
+	this.treeIcon;                         // string
+	this.propertiesItems;                  // jquery object
 
 	Element.prototype.ApplyDrag = function(){
 		var self = this;
@@ -75,6 +78,7 @@ function Element() {
 	Element.prototype.Deselect = function(){
 		designer.currentSelectedElement = null;
 		this.elem.removeClass('selected');
+		this.propertiesItems.hide();
 		designer.propertiesGrid.hide();
 	};
 
@@ -85,6 +89,7 @@ function Element() {
 
 		// id
 		this.id = this.elem.attr('id');
+		this.name = this.type + '-' + this.id;
 
 		// events
 		var self = this;
@@ -134,8 +139,50 @@ function Element() {
 	};
 
 	Element.prototype.ShowProperties = function(){
-		var tbody = $('#properties table tbody.label');
-		tbody.show();
+		var propertiesElem = $('#properties');
+
+		// #getter
+		propertiesElem.find('span.id').text(this.id);
+		propertiesElem.find('span.type').text(this.type);
+		propertiesElem.find('input.name').val(this.name);
+		propertiesElem.find('input.width').val(this.width);
+		propertiesElem.find('input.height').val(this.height);
+		propertiesElem.find('input.left').val(this.posX);
+		propertiesElem.find('input.top').val(this.posY);
+		propertiesElem.find('input.ishtml').prop('checked', this.isHTML);
+		propertiesElem.find('input.lineHeight').val(this.lineHeight);
+		propertiesElem.find('input.textColor').val(this.textColor);
+		propertiesElem.find('input.fillColorEnable').prop('checked', this.fillColorEnable);
+		propertiesElem.find('input.fillColor').val(this.fillColor);
+		propertiesElem.find('input.padding').val(this.padding);
+		propertiesElem.find('select.elasticity').val(this.elasticity);
+
+		propertiesElem.find('input.borderAllEnable').prop('checked', this.borderAllEnable);
+		propertiesElem.find('input.borderAllWidth').val(this.borderAllWidth);
+		propertiesElem.find('input.borderAllStyle').val(this.borderAllStyle);
+		propertiesElem.find('input.borderAllColor').val(this.borderAllColor);
+
+		propertiesElem.find('input.borderTopEnable').prop('checked', this.borderTopEnable);
+		propertiesElem.find('input.borderTopWidth').val(this.borderTopWidth);
+		propertiesElem.find('input.borderTopStyle').val(this.borderTopStyle);
+		propertiesElem.find('input.borderTopColor').val(this.borderTopColor);
+
+		propertiesElem.find('input.borderBottomEnable').prop('checked', this.borderBottomEnable);
+		propertiesElem.find('input.borderBottomWidth').val(this.borderBottomWidth);
+		propertiesElem.find('input.borderBottomStyle').val(this.borderBottomStyle);
+		propertiesElem.find('input.borderBottomColor').val(this.borderBottomColor);
+
+		propertiesElem.find('input.borderRightEnable').prop('checked', this.borderRightEnable);
+		propertiesElem.find('input.borderRightWidth').val(this.borderRightWidth);
+		propertiesElem.find('input.borderRightStyle').val(this.borderRightStyle);
+		propertiesElem.find('input.borderRightColor').val(this.borderRightColor);
+
+		propertiesElem.find('input.borderLeftEnable').prop('checked', this.borderLeftEnable);
+		propertiesElem.find('input.borderLeftWidth').val(this.borderLeftWidth);
+		propertiesElem.find('input.borderLeftStyle').val(this.borderLeftStyle);
+		propertiesElem.find('input.borderLeftColor').val(this.borderLeftColor);
+
+		this.propertiesItems.show();
 		designer.propertiesGrid.show();
 	};
 
@@ -163,7 +210,7 @@ function TextContainer() {
 	this.fontBold = false;          //bool
 	this.fontUnderline = false;     //bool
 	this.fontStriketrough = false;  //bool
-	this.fontColor = '#333333';     //string
+	this.textColor = '#333333';     //string
 	this.textAlign = 'L';           //string
 	this.verticalAlign = 'T';       //string
 	this.elasticity = 'fixed';      //string
@@ -179,6 +226,8 @@ function Label() {
 	this.height = 20;
 	this.type = 'label';
 	this.treeIcon = 'ui-label.png';
+	this.propertiesItems = $('#properties table tbody.' + this.type);
+	this.isHTML = false;
 }
 
 /**
@@ -191,6 +240,7 @@ function Field() {
 	this.height = 20;
 	this.type = 'field';
 	this.treeIcon = 'ui-text-field.png';
+	this.propertiesItems = $('#properties table tbody.' + this.type);
 }
 
 /**
@@ -203,6 +253,7 @@ function Rectangle() {
 	this.height = 60;
 	this.type = 'rectangle';
 	this.treeIcon = 'layer-shape.png';
+	this.propertiesItems = $('#properties table tbody.' + this.type);
 }
 
 /**
@@ -215,4 +266,55 @@ function Image() {
 	this.height = 60;
 	this.type = 'image';
 	this.treeIcon = 'picture.png';
+	this.propertiesItems = $('#properties table tbody.' + this.type);
+	this.source;
+	this.dpi;
+}
+
+/**
+ * Svg Class (extend Element)
+ */
+Svg.prototype = new Element();
+Svg.prototype.constructor = Svg;
+function Svg() {
+	this.width = 80;
+	this.height = 60;
+	this.type = 'svg';
+	this.treeIcon = 'document-text-image.png';
+	this.propertiesItems = $('#properties table tbody.' + this.type);
+	this.source;
+}
+
+/**
+ * QRCode Class (extend Element)
+ */
+QRCode.prototype = new Element();
+QRCode.prototype.constructor = QRCode;
+function QRCode() {
+	this.width = 40;
+	this.height = 40;
+	this.type = 'qrcode';
+	this.treeIcon = 'barcode-2d.png';
+	this.propertiesItems = $('#properties table tbody.' + this.type);
+	this.code;
+	this.color;
+	this.distort;
+	this.barType;
+}
+
+/**
+ * Barcode Class (extend Element)
+ */
+Barcode.prototype = new Element();
+Barcode.prototype.constructor = Barcode;
+function Barcode() {
+	this.width = 40;
+	this.height = 40;
+	this.type = 'barcode';
+	this.treeIcon = 'barcode-2d.png';
+	this.propertiesItems = $('#properties table tbody.' + this.type);
+	this.code;
+	this.color;
+	this.distort;
+	this.barType;
 }

@@ -2984,13 +2984,13 @@ function Designer() {
 		<col></col>\n\
 		<tr><td style="padding:0 !important;"></td><td style="padding:0 !important;"></td></tr>\n\
 		<tr><th colspan="2">General</th></tr>\n\
-		<tr><td>ID</td><td><span>....</span></td></tr>\n\
-		<tr><td>Type</td><td><span>....</span></td></tr>\n\
-		<tr><td>Name</td><td><input type="text" class="fullwidth"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
-		<tr><td>Height</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
-		<tr><td>Left</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
-		<tr><td>Top</td><td><input type="number" min="0" class="fullwidth"/></td></tr>\n\
+		<tr><td>ID</td><td><span class="id"></span></td></tr>\n\
+		<tr><td>Type</td><td><span class="type"></span></td></tr>\n\
+		<tr><td>Name</td><td><input type="text" class="name fullwidth"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" min="0" class="width fullwidth"/></td></tr>\n\
+		<tr><td>Height</td><td><input type="number" min="0" class="height fullwidth"/></td></tr>\n\
+		<tr><td>Left</td><td><input type="number" min="0" class="left fullwidth"/></td></tr>\n\
+		<tr><td>Top</td><td><input type="number" min="0" class="top fullwidth"/></td></tr>\n\
 		';
 
 		// element > label (Content)
@@ -2998,7 +2998,7 @@ function Designer() {
 		<tbody class="label particular">\n\
 		<tr><th colspan="2">Content</th></tr>\n\
 		<tr><td>Text</td><td><input type="button" value="..."/></td></tr>\n\
-		<tr><td>HTML</td><td><input type="checkbox"/></td></tr>\n\
+		<tr><td>HTML</td><td><input type="checkbox" class="ishtml"/></td></tr>\n\
 		<tbody>\n\
 		';
 
@@ -3010,13 +3010,49 @@ function Designer() {
 		<tbody>\n\
 		';
 
+		// element > image (Content)
+		properties += '\n\
+		<tbody class="image particular">\n\
+		<tr><th colspan="2">Content</th></tr>\n\
+		<tr><td>Source</td><td><input type="text" value=""/></td></tr>\n\
+		<tr><td>Dpi</td><td><input type="number" value="72"/></td></tr>\n\
+		<tbody>\n\
+		';
+
+		// element > svg (Content)
+		properties += '\n\
+		<tbody class="svg particular">\n\
+		<tr><th colspan="2">Content</th></tr>\n\
+		<tr><td>Source</td><td><input type="text" value=""/></td></tr>\n\
+		<tbody>\n\
+		';
+
+		// element > qrcode (Content)
+		properties += '\n\
+		<tbody class="qrcode particular">\n\
+		<tr><th colspan="2">Content</th></tr>\n\
+		<tr><td>Code</td><td><input type="text" value="" class="fullwidth"/></td></tr>\n\
+		<tr><td>Bar Type</td>\n\
+			<td>\n\
+			<select>\n\
+			<option>QRCODE, L</option>\n\
+			<option>QRCODE, M</option>\n\
+			<option>QRCODE, Q</option>\n\
+			<option>QRCODE, H</option>\n\
+			</select>\n\
+			</td></tr>\n\
+		<tbody>\n\
+		';
+
 		// element > label, field (Appearance)
 		properties += '\n\
 		<tr><th colspan="2">Appearance</th></tr>\n\
-		<tr><td>Line Height</td><td><input type="number" class="fullwidth"/></td></tr>\n\
-		<tr><td>Text Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
-		<tr><td>Fill Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
-		<tr><td>Padding</td><td><input type="number" class="fullwidth"/></td></tr>\n\
+		<tbody class="label field particular">\n\
+			<tr><td>Line Height</td><td><input type="number" step="0.1" class="lineHeight fullwidth"/></td></tr>\n\
+			<tr><td>Text Color</td><td><input type="text" class="textColor fullwidth"/></td></tr>\n\
+		</tbody>\n\
+		<tr><td>Fill Color</td><td><input type="checkbox" class="fillColorEnable"/><input type="text" class="fillColor" style="width:60%"/></td></tr>\n\
+		<tr><td>Padding</td><td><input type="number" class="padding fullwidth"/></td></tr>\n\
 		';
 
 		// element > label, field (Printing)
@@ -3024,43 +3060,45 @@ function Designer() {
 		<tr><th colspan="2">Printing</th></tr>\n\
 		<tr><td>Elasticity</td>\n\
 			<td>\n\
-			<select>\n\
-			<option>Fixed</option>\n\
-			<option>Vertical</option>\n\
-			<option>Horizontal</option>\n\
-			<option>Vertical,Horizontal</option>\n\
+			<select class="elasticity">\n\
+			<option value="fixed">Fixed</option>\n\
+			<option value="vertical">Vertical</option>\n\
+			<option value="horizontal">Horizontal</option>\n\
+			<option value="verticalHorizontal">Vertical,Horizontal</option>\n\
 			</select>\n\
 			</td>\n\
 		</tr>\n\
 		';
 
-		// element > label, field (Border)
+		// element > all (Border)
 		properties += '\n\
+		<tbody class="border">\n\
 		<tr><th colspan="2">Border - All</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox" class="borderAllEnable"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="borderAllWidth fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="borderAllStyle fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="borderAllColor fullwidth"/></td></tr>\n\
 		<tr><th colspan="2">Border - Top</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox" class="borderTopEnable"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="borderTopWidth fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="borderTopStyle fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="borderTopColor fullwidth"/></td></tr>\n\
 		<tr><th colspan="2">Border - Bottom</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox" class="borderBottomEnable"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="borderBottomWidth fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="borderBottomStyle fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="borderBottomColor fullwidth"/></td></tr>\n\
 		<tr><th colspan="2">Border - Right</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox" class="borderRightEnable"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="borderRightWidth fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="borderRightStyle fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="borderRightColor fullwidth"/></td></tr>\n\
 		<tr><th colspan="2">Border - Left</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="fullwidth"/></td></tr>\n\
+		<tr><td>Enable</td><td><input type="checkbox" class="borderLeftEnable"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" class="borderLeftWidth fullwidth"/></td></tr>\n\
+		<tr><td>Style</td><td><input type="text" class="borderLeftStyle fullwidth"/></td></tr>\n\
+		<tr><td>Color</td><td><input type="text" class="borderLeftColor fullwidth"/></td></tr>\n\
+		</tbody>\n\
 		';
 
 		properties += '</table>';
@@ -3069,7 +3107,6 @@ function Designer() {
 		this.propertiesGrid = $(properties);
 		this.layout.cells('d').attachObject(this.propertiesGrid[0]);
 		this.propertiesGrid.hide();
-		//this.propertiesGrid.find('table.windowForm').colResizable();
 
 		$(this.layout.cells('d').cell).on('click', function(e){
 			e.stopPropagation();
@@ -3092,6 +3129,9 @@ function Designer() {
 		// element object creation
 		var object;
 
+		// proper type name
+		type = type.replace(' ','');
+
 		if (type === 'label') {
 			object = new Label();
 		} else if (type === 'field') {
@@ -3100,6 +3140,12 @@ function Designer() {
 			object = new Rectangle();
 		} else if (type === 'image') {
 			object = new Image();
+		} else if (type === 'svg') {
+			object = new Svg();
+		} else if (type === 'qrcode') {
+			object = new QRCode();
+		} else if (type === 'barcode') {
+			object = new Barcode();
 		}
 
 		object.parentBand = band;
