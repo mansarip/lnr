@@ -315,12 +315,12 @@ function Designer() {
 		windows.attachViewportTo('app');
 
 		var connectionWin = windows.createWindow({
-		    id:"connection",
-		    width:550,
-		    height:430,
-		    center:true,
-		    modal:true,
-		    resize:false
+			id:"connection",
+			width:550,
+			height:430,
+			center:true,
+			modal:true,
+			resize:false
 		});
 		connectionWin.button('minmax').hide();
 		connectionWin.button('park').hide();
@@ -498,7 +498,7 @@ function Designer() {
 
 		});
 
-	 	// test button
+		// test button
 		$(layout.base).on('click', '.buttonPlaceholder input.test', function(){
 
 			var connectionForm = (mode === 'add') ? $('#connectionAddNew') : $('#connectionEdit');
@@ -557,7 +557,7 @@ function Designer() {
 			}
 		});
 
-	 	// reset button
+		// reset button
 		$(layout.base).on('click', '.buttonPlaceholder input.reset', function(){
 			var connectionForm = (mode === 'add') ? $('#connectionAddNew') : $('#connectionEdit');
 			connectionForm.find('input, select').each(function(){
@@ -566,7 +566,7 @@ function Designer() {
 			connectionForm.find('input.name').focus();
 		});
 
-	 	// save button (connection add new)
+		// save button (connection add new)
 		$(layout.base).on('click', '.buttonPlaceholder input.save', function(){
 			var message = '';
 			var connectionForm = (mode === 'add') ? $('#connectionAddNew') : $('#connectionEdit');
@@ -775,12 +775,12 @@ function Designer() {
 		windows.attachViewportTo('app');
 
 		var parameterWin = windows.createWindow({
-		    id:"parameter",
-		    width:550,
-		    height:430,
-		    center:true,
-		    modal:true,
-		    resize:false
+			id:"parameter",
+			width:550,
+			height:430,
+			center:true,
+			modal:true,
+			resize:false
 		});
 		parameterWin.button('minmax').hide();
 		parameterWin.button('park').hide();
@@ -1085,12 +1085,12 @@ function Designer() {
 		windows.attachViewportTo('app');
 		
 		var preferences = windows.createWindow({
-		    id:"preferences",
-		    width:400,
-		    height:400,
-		    center:true,
-		    modal:true,
-		    resize:false
+			id:"preferences",
+			width:400,
+			height:400,
+			center:true,
+			modal:true,
+			resize:false
 		});
 		preferences.button('minmax').hide();
 		preferences.button('park').hide();
@@ -1267,11 +1267,11 @@ function Designer() {
 		windows.attachViewportTo('app');
 
 		var groupWin = windows.createWindow({
-		    id:"group",
-		    width:630,
-		    height:430,
-		    center:true,
-		    modal:true
+			id:"group",
+			width:630,
+			height:430,
+			center:true,
+			modal:true
 		});
 		groupWin.button('park').hide();
 		groupWin.setText('Group');
@@ -2150,12 +2150,12 @@ function Designer() {
 		windows.attachViewportTo('app');
 
 		var dataSourceWin = windows.createWindow({
-		    id:"dataSource",
-		    width:550,
-		    height:430,
-		    center:true,
-		    modal:true,
-		    resize:false
+			id:"dataSource",
+			width:550,
+			height:430,
+			center:true,
+			modal:true,
+			resize:false
 		});
 		dataSourceWin.button('minmax').hide();
 		dataSourceWin.button('park').hide();
@@ -2321,7 +2321,7 @@ function Designer() {
 
 		});
 
-	 	// preview button
+		// preview button
 		$(layout.base).on('click', '.buttonPlaceholder input.preview', function(){
 			var form = (mode === 'add') ? $('#dataSourceAddNew') : $('#dataSourceEdit');
 			var connectionName = form.find('.connection').val();
@@ -2373,7 +2373,7 @@ function Designer() {
 			}
 		});
 
-	 	// save button (data source)
+		// save button (data source)
 		$(layout.base).on('click', '.buttonPlaceholder input.save', function(){
 			var form = (mode === 'add') ? $('#dataSourceAddNew') : $('#dataSourceEdit');
 			var detail = {};
@@ -2861,11 +2861,11 @@ function Designer() {
 		windows.attachViewportTo('app');
 
 		var previewWin = windows.createWindow({
-		    id:"dataSource",
-		    width:600,
-		    height:400,
-		    center:true,
-		    modal:true
+			id:"dataSource",
+			width:600,
+			height:400,
+			center:true,
+			modal:true
 		});
 		previewWin.button('park').hide();
 		previewWin.setText('Preview Records');
@@ -2986,18 +2986,18 @@ function Designer() {
 		<tr><th colspan="2">General</th></tr>\n\
 		<tr><td>ID</td><td><span class="id"></span></td></tr>\n\
 		<tr><td>Type</td><td><span class="type"></span></td></tr>\n\
-		<tr><td>Name</td><td><input type="text" class="name fullwidth"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" min="0" class="width fullwidth"/></td></tr>\n\
-		<tr><td>Height</td><td><input type="number" min="0" class="height fullwidth"/></td></tr>\n\
-		<tr><td>Left</td><td><input type="number" min="0" class="left fullwidth"/></td></tr>\n\
-		<tr><td>Top</td><td><input type="number" min="0" class="top fullwidth"/></td></tr>\n\
+		<tr><td>Name</td><td><input type="text" class="name fullwidth" data-key="name"/></td></tr>\n\
+		<tr><td>Width</td><td><input type="number" min="0" class="width fullwidth" data-key="width"/></td></tr>\n\
+		<tr><td>Height</td><td><input type="number" min="0" class="height fullwidth" data-key="height"/></td></tr>\n\
+		<tr><td>Left</td><td><input type="number" min="0" class="left fullwidth" data-key="posX"/></td></tr>\n\
+		<tr><td>Top</td><td><input type="number" min="0" class="top fullwidth" data-key="posY"/></td></tr>\n\
 		';
 
 		// element > label (Content)
 		properties += '\n\
 		<tbody class="label particular">\n\
 		<tr><th colspan="2">Content</th></tr>\n\
-		<tr><td>Text</td><td><input type="button" value="..."/></td></tr>\n\
+		<tr><td>Text</td><td><input type="button" class="text" data-key="text" value="..."/></td></tr>\n\
 		<tr><td>HTML</td><td><input type="checkbox" class="ishtml"/></td></tr>\n\
 		<tbody>\n\
 		';
@@ -3105,6 +3105,78 @@ function Designer() {
 		properties += '</div>';
 
 		this.propertiesGrid = $(properties);
+
+		// event register, on click
+		this.propertiesGrid.find('input[type="button"]').on('click', function(e){
+			var button = $(this);
+			var propertyKey = $(this).attr('data-key');
+
+			if (propertyKey === 'text') {
+				var windows = new dhtmlXWindows();
+				windows.attachViewportTo('app');
+
+				var textWin = windows.createWindow({
+					id:"labelText",
+					width:300,
+					height:200,
+					left:(e.pageX - 300),
+					top:(e.pageY - 200)
+				});
+				textWin.button('minmax').hide();
+				textWin.button('park').hide();
+				textWin.setText('Text');
+
+				// disable button supaya tak boleh bukak 2 kali
+				button.prop('disabled', true);
+
+				designer.currentWindowOpen = textWin;
+
+				// jika bukan html
+				if (!designer.currentSelectedElement.ishtml) {
+					var textBox = $('<textarea class="labelText">'+ designer.currentSelectedElement.text +'</textarea>');
+					textWin.attachObject(textBox[0]);
+					textBox.focus();
+					designer.moveCursorToEnd(textBox[0]);
+
+					textBox.closest('div.dhxwin_active').on('click', function(e){
+						e.stopPropagation();
+					});
+				}
+
+				textWin.attachEvent('onClose', function(){
+					// #setter
+					var labelTextValue = $(designer.currentWindowOpen.cell).find('textarea.labelText').val();
+					designer.currentSelectedElement.text = labelTextValue;
+					designer.currentSelectedElement.elem.find('span.content').text(labelTextValue);
+					
+					designer.currentWindowOpen = null;
+					button.prop('disabled', false);
+					return true;
+				});
+			}
+		});
+
+		// event register, on blur
+		this.propertiesGrid.find('input[type="text"], input[type="number"]').on('blur', function(){
+			var propertyKey = $(this).attr('data-key');
+			var type = $(this).attr('type');
+			var value = $(this).val();
+
+			// #setter
+
+			// jika ruang nombor, tapi masuk selain nombor
+			if (type === 'number' && value === '') {
+				$(this).val(designer.currentSelectedElement[propertyKey]);
+			}
+			else if (type === 'number' && value !== '') {
+				value = Number(value);
+				designer.currentSelectedElement[propertyKey] = value;
+			}
+			else if (type === 'text') {
+				if (designer.currentSelectedElement[propertyKey] !== undefined) designer.currentSelectedElement[propertyKey] = value;
+			}
+		});
+
 		this.layout.cells('d').attachObject(this.propertiesGrid[0]);
 		this.propertiesGrid.hide();
 
@@ -3195,11 +3267,11 @@ function Designer() {
 		windows.attachViewportTo('app');
 
 		var parameterWin = windows.createWindow({
-		    id:"preview",
-		    width:550,
-		    height:430,
-		    center:true,
-		    modal:true
+			id:"preview",
+			width:550,
+			height:430,
+			center:true,
+			modal:true
 		});
 		parameterWin.button('minmax').hide();
 		parameterWin.button('park').hide();
@@ -3271,6 +3343,7 @@ function Designer() {
 				delete element.style;
 				delete element.elem;
 				delete element.parentBand;
+				delete element.propertiesItems;
 
 				designer.details.report.layout.band[bandName].element.push(element);
 			}
@@ -3429,15 +3502,35 @@ function Designer() {
 
 	// event : body click
 	$('body').on('click', function(event){
-		designer.tree.structure.clearSelection();
-		designer.tree.element.clearSelection();
-		designer.tree.data.clearSelection();
-		designer.DeselectCurrentElement();
+
+		// jika semasa labelText sedang dibuka
+		if (designer.currentWindowOpen !== null && designer.currentWindowOpen.getId() === 'labelText') {
+			designer.currentWindowOpen.close();
+
+		// normal
+		} else {
+			designer.tree.structure.clearSelection();
+			designer.tree.element.clearSelection();
+			designer.tree.data.clearSelection();
+			designer.DeselectCurrentElement();
+		}
 	});
 
 	$('body').on('click', 'td.standartTreeRow', function(e){
 		e.stopPropagation();
 	});
+
+	// http://davidwalsh.name/caret-end
+	Designer.prototype.moveCursorToEnd = function(el){
+		if (typeof el.selectionStart == "number") {
+			el.selectionStart = el.selectionEnd = el.value.length;
+		} else if (typeof el.createTextRange != "undefined") {
+			el.focus();
+			var range = el.createTextRange();
+			range.collapse(false);
+			range.select();
+		}
+	};
 
 	// Array Remove - By John Resig (MIT Licensed)
 	Designer.prototype.RemoveFromArray = function(array, from, to) {

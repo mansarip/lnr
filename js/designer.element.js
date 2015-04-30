@@ -87,6 +87,10 @@ function Element() {
 		this.elem.uniqueId();
 		this.elem.appendTo(area);
 
+		if (this.type === 'label') {
+			this.elem.append('<span class="content"></span>');
+		}
+
 		// id
 		this.id = this.elem.attr('id');
 		this.name = this.type + '-' + this.id;
@@ -227,6 +231,7 @@ function Label() {
 	this.type = 'label';
 	this.treeIcon = 'ui-label.png';
 	this.propertiesItems = $('#properties table tbody.' + this.type);
+	this.text = '';
 	this.isHTML = false;
 }
 
