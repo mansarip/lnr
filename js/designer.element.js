@@ -66,7 +66,7 @@ function Element() {
 				var band = designer.details.app.band[bandName];
 				designer.UpdateBandMinHeight(band);
 				self.UpdateSize();
-				 $( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
+				$( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
 			}
 		});
 	};
@@ -87,9 +87,7 @@ function Element() {
 		this.elem.uniqueId();
 		this.elem.appendTo(area);
 
-		if (this.type === 'label') {
-			this.elem.append('<span class="content"></span>');
-		}
+		this.PostInit();
 
 		// id
 		this.id = this.elem.attr('id');
@@ -138,6 +136,10 @@ function Element() {
 	};
 
 	Element.prototype.SetPosition = function(x, y){
+		// jadikan integer
+		x = Math.floor(x);
+		y = Math.floor(y);
+
 		this.posX = x;
 		this.posY = y;
 	};
@@ -155,6 +157,8 @@ function Element() {
 		propertiesElem.find('input.top').val(this.posY);
 		propertiesElem.find('input.ishtml').prop('checked', this.isHTML);
 		propertiesElem.find('input.lineHeight').val(this.lineHeight);
+		propertiesElem.find('select.fontFamily').val(this.fontFamily);
+		propertiesElem.find('input.fontSize').val(this.fontSize);
 		propertiesElem.find('input.textColor').val(this.textColor);
 		propertiesElem.find('input.fillColorEnable').prop('checked', this.fillColorEnable);
 		propertiesElem.find('input.fillColor').val(this.fillColor);
@@ -198,6 +202,11 @@ function Element() {
 	Element.prototype.UpdateSize = function(){
 		this.width = this.elem.width();
 		this.height = this.elem.height();
+
+		if (this === designer.currentSelectedElement) {
+			$('#properties input.width').val(this.width);
+			$('#properties input.height').val(this.height);
+		}
 	};
 }
 
@@ -208,8 +217,8 @@ TextContainer.prototype = new Element();
 TextContainer.prototype.constructor = Label;
 function TextContainer() {
 	this.lineHeight = 1.0;          //float
-	this.fontFamily = 'Helvetica';  //string
-	this.fontSize = 10;             //int
+	this.fontFamily = 'helvetica';  //string
+	this.fontSize = 12;             //int
 	this.fontItalic = false;        //bool
 	this.fontBold = false;          //bool
 	this.fontUnderline = false;     //bool
@@ -233,6 +242,77 @@ function Label() {
 	this.propertiesItems = $('#properties table tbody.' + this.type);
 	this.text = '';
 	this.isHTML = false;
+
+	Label.prototype.PostInit = function() {
+		var label = this;
+		this.elem.append('<span class="content" style="font-family:'+ this.fontFamily +'; font-size:'+ this.fontSize +'px; display:block; line-height:'+ (this.lineHeight * 12) +'px"></span>');
+
+		// dbl click
+		this.elem.on('dblclick', function(e){
+			var button = $('#properties input.text');
+			label.OpenTextWindow(button, e.pageX, e.pageY);
+		});
+	};
+
+	Label.prototype.OpenTextWindow = function(button, x, y){
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var textWin = windows.createWindow({
+			id:"labelText",
+			width:300,
+			height:200,
+			left:x,
+			top:y
+		});
+		textWin.button('minmax').hide();
+		textWin.button('park').hide();
+		textWin.setText('Text');
+
+		// disable button supaya tak boleh bukak 2 kali
+		button.prop('disabled', true);
+
+		designer.currentWindowOpen = textWin;
+
+		// jika bukan html
+		if (!designer.currentSelectedElement.isHTML) {
+			var textBox = $('<textarea class="labelText">'+ designer.currentSelectedElement.text +'</textarea>');
+			textWin.attachObject(textBox[0]);
+			textBox.focus();
+			designer.moveCursorToEnd(textBox[0]);
+
+			textBox.closest('div.dhxwin_active').on('click', function(e){
+				e.stopPropagation();
+			});
+		}
+		// jika html
+		else {
+			var editor = textWin.attachEditor();
+			editor.setContent(designer.currentSelectedElement.text);
+
+			$(editor.base).closest('div.dhxwin_active').on('click', function(e){
+				e.stopPropagation();
+			});
+		}
+
+		textWin.attachEvent('onClose', function(){
+			// #setter
+			if (!designer.currentSelectedElement.isHTML) {
+				var labelTextValue = $(designer.currentWindowOpen.cell).find('textarea.labelText').val();
+				designer.currentSelectedElement.text = labelTextValue;
+				designer.currentSelectedElement.elem.find('span.content').html(labelTextValue.replace(/\r\n|\r|\n/g,"<br />"));
+			}
+			// jika html
+			else {
+				designer.currentSelectedElement.text = editor.getContent();
+				designer.currentSelectedElement.elem.find('span.content').html(designer.currentSelectedElement.text);
+			}
+
+			designer.currentWindowOpen = null;
+			button.prop('disabled', false);
+			return true;
+		});
+	};
 }
 
 /**
@@ -246,6 +326,8 @@ function Field() {
 	this.type = 'field';
 	this.treeIcon = 'ui-text-field.png';
 	this.propertiesItems = $('#properties table tbody.' + this.type);
+
+	Field.prototype.PostInit = function(){};
 }
 
 /**
@@ -259,6 +341,8 @@ function Rectangle() {
 	this.type = 'rectangle';
 	this.treeIcon = 'layer-shape.png';
 	this.propertiesItems = $('#properties table tbody.' + this.type);
+
+	Rectangle.prototype.PostInit = function(){};
 }
 
 /**
@@ -274,6 +358,8 @@ function Image() {
 	this.propertiesItems = $('#properties table tbody.' + this.type);
 	this.source;
 	this.dpi;
+
+	Image.prototype.PostInit = function(){};
 }
 
 /**
@@ -288,6 +374,8 @@ function Svg() {
 	this.treeIcon = 'document-text-image.png';
 	this.propertiesItems = $('#properties table tbody.' + this.type);
 	this.source;
+
+	Svg.prototype.PostInit = function(){};
 }
 
 /**
@@ -305,6 +393,8 @@ function QRCode() {
 	this.color;
 	this.distort;
 	this.barType;
+
+	QRCode.prototype.PostInit = function(){};
 }
 
 /**
@@ -322,4 +412,6 @@ function Barcode() {
 	this.color;
 	this.distort;
 	this.barType;
+
+	Barcode.prototype.PostInit = function(){};
 }

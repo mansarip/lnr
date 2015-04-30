@@ -2998,7 +2998,7 @@ function Designer() {
 		<tbody class="label particular">\n\
 		<tr><th colspan="2">Content</th></tr>\n\
 		<tr><td>Text</td><td><input type="button" class="text" data-key="text" value="..."/></td></tr>\n\
-		<tr><td>HTML</td><td><input type="checkbox" class="ishtml"/></td></tr>\n\
+		<tr><td>HTML</td><td><input type="checkbox" class="ishtml" data-key="ishtml"/></td></tr>\n\
 		<tbody>\n\
 		';
 
@@ -3048,7 +3048,17 @@ function Designer() {
 		properties += '\n\
 		<tr><th colspan="2">Appearance</th></tr>\n\
 		<tbody class="label field particular">\n\
-			<tr><td>Line Height</td><td><input type="number" step="0.1" class="lineHeight fullwidth"/></td></tr>\n\
+			<tr><td>Line Height</td><td><input type="number" step="0.1" class="lineHeight fullwidth" data-key="lineHeight"/></td></tr>\n\
+			<tr><td>Font Family</td>\n\
+				<td>\n\
+				<select class="fontFamily" data-key="fontFamily">\n\
+				<option value="helvetica">Helvetica</option>\n\
+				<option value="times">Times</option>\n\
+				<option value="courier">Courier</option>\n\
+				</select>\n\
+				</td>\n\
+			</tr>\n\
+			<tr><td>Font Size</td><td><input type="number" min="0" class="fontSize fullwidth" data-key="fontSize"/></td></tr>\n\
 			<tr><td>Text Color</td><td><input type="text" class="textColor fullwidth"/></td></tr>\n\
 		</tbody>\n\
 		<tr><td>Fill Color</td><td><input type="checkbox" class="fillColorEnable"/><input type="text" class="fillColor" style="width:60%"/></td></tr>\n\
@@ -3112,48 +3122,75 @@ function Designer() {
 			var propertyKey = $(this).attr('data-key');
 
 			if (propertyKey === 'text') {
-				var windows = new dhtmlXWindows();
-				windows.attachViewportTo('app');
-
-				var textWin = windows.createWindow({
-					id:"labelText",
-					width:300,
-					height:200,
-					left:(e.pageX - 300),
-					top:(e.pageY - 200)
-				});
-				textWin.button('minmax').hide();
-				textWin.button('park').hide();
-				textWin.setText('Text');
-
-				// disable button supaya tak boleh bukak 2 kali
-				button.prop('disabled', true);
-
-				designer.currentWindowOpen = textWin;
-
-				// jika bukan html
-				if (!designer.currentSelectedElement.ishtml) {
-					var textBox = $('<textarea class="labelText">'+ designer.currentSelectedElement.text +'</textarea>');
-					textWin.attachObject(textBox[0]);
-					textBox.focus();
-					designer.moveCursorToEnd(textBox[0]);
-
-					textBox.closest('div.dhxwin_active').on('click', function(e){
-						e.stopPropagation();
-					});
-				}
-
-				textWin.attachEvent('onClose', function(){
-					// #setter
-					var labelTextValue = $(designer.currentWindowOpen.cell).find('textarea.labelText').val();
-					designer.currentSelectedElement.text = labelTextValue;
-					designer.currentSelectedElement.elem.find('span.content').text(labelTextValue);
-					
-					designer.currentWindowOpen = null;
-					button.prop('disabled', false);
-					return true;
-				});
+				var x = e.pageX - 300;
+				var y = e.pageY - 200;
+				designer.currentSelectedElement.OpenTextWindow(button, x, y);
 			}
+		});
+
+		// event register, on change (dropdown)
+		this.propertiesGrid.find('select').on('change', function(){
+			var propertyKey = $(this).attr('data-key');
+			var value = $(this).val();
+
+			if (propertyKey === 'fontFamily') {
+				designer.currentSelectedElement.elem.find('span.content').css('font-family', value);
+				designer.currentSelectedElement.fontFamily = value;
+			}
+		});
+
+		// event register, on change (checkbox)
+		this.propertiesGrid.find('input[type="checkbox"]').on('change', function(){
+			var propertyKey = $(this).attr('data-key');
+			var value = $(this).prop('checked');
+			
+			if (propertyKey === 'ishtml') {
+				if (value === true) {
+					// convert text kepada html
+					designer.currentSelectedElement.elem.find('span.content').html(designer.currentSelectedElement.text);
+				} else {
+					designer.currentSelectedElement.elem.find('span.content').text(designer.currentSelectedElement.text);
+				}				
+
+				designer.currentSelectedElement.isHTML = value;
+			}
+		});
+
+		// event register, on change (number)
+		this.propertiesGrid.find('input[type="number"]').on('change', function(){
+			var propertyKey = $(this).attr('data-key');
+			var value = $(this).val();
+
+			if (value !== '') {
+
+				value = Number(value);
+				
+				if (propertyKey === 'width') {
+					designer.currentSelectedElement.elem.css('width', value);
+					designer.currentSelectedElement.width = value;
+
+				} else if (propertyKey === 'height') {
+					designer.currentSelectedElement.elem.css('height', value);
+					designer.currentSelectedElement.height = value;
+
+				} else if (propertyKey === 'posX') {
+					designer.currentSelectedElement.elem.css('left', value + 'px');
+					designer.currentSelectedElement.posX = value;
+
+				} else if (propertyKey === 'posY') {
+					designer.currentSelectedElement.elem.css('top', value + 'px');
+					designer.currentSelectedElement.posY = value;
+
+				} else if (propertyKey === 'lineHeight') {
+					designer.currentSelectedElement.elem.find('span.content').css('line-height', (value * 12)+'px');
+					designer.currentSelectedElement.lineHeight = value;
+
+				} else if (propertyKey === 'fontSize') {
+					designer.currentSelectedElement.elem.find('span.content').css('font-size', value+'px');
+					designer.currentSelectedElement.fontSize = value;
+				}
+			}
+
 		});
 
 		// event register, on blur
@@ -3162,15 +3199,37 @@ function Designer() {
 			var type = $(this).attr('type');
 			var value = $(this).val();
 
-			// #setter
-
 			// jika ruang nombor, tapi masuk selain nombor
 			if (type === 'number' && value === '') {
 				$(this).val(designer.currentSelectedElement[propertyKey]);
 			}
 			else if (type === 'number' && value !== '') {
 				value = Number(value);
-				designer.currentSelectedElement[propertyKey] = value;
+				
+				if (propertyKey === 'width') {
+					designer.currentSelectedElement.elem.css('width', value);
+					designer.currentSelectedElement.width = value;
+
+				} else if (propertyKey === 'height') {
+					designer.currentSelectedElement.elem.css('height', value);
+					designer.currentSelectedElement.height = value;
+
+				} else if (propertyKey === 'posX') {
+					designer.currentSelectedElement.elem.css('left', value + 'px');
+					designer.currentSelectedElement.posX = value;
+
+				} else if (propertyKey === 'posY') {
+					designer.currentSelectedElement.elem.css('top', value + 'px');
+					designer.currentSelectedElement.posY = value;
+
+				} else if (propertyKey === 'lineHeight') {
+					designer.currentSelectedElement.elem.find('span.content').css('line-height', (value * 12)+'px');
+					designer.currentSelectedElement.lineHeight = value;
+					
+				} else if (propertyKey === 'fontSize') {
+					designer.currentSelectedElement.elem.find('span.content').css('font-size', value+'px');
+					designer.currentSelectedElement.fontSize = value;
+				}
 			}
 			else if (type === 'text') {
 				if (designer.currentSelectedElement[propertyKey] !== undefined) designer.currentSelectedElement[propertyKey] = value;

@@ -11,13 +11,31 @@ class Label extends TextContainer
 		}
 
 		$this->StoreOriginalPosition($this->posX, $this->posY);
-
-		//$this->ModPositionBasedOnMargin();
 	}
 
 	public function Display() {
 		global $pdf;
-		$pdf->MultiCell($this->width, $this->height, $this->text, $border=1, $align='L', $fill=false, $ln=1, $this->posX, $this->posY);
+
+		// line height
+		$pdf->setCellHeightRatio($this->lineHeight);
+
+		// font
+		$pdf->SetFont($this->fontFamily, '', $this->fontSize);
+
+		$pdf->MultiCell(
+			$this->width,
+			$this->height,
+			$this->text,
+			$border=1,
+			$align='L',
+			$fill=false,
+			$ln=1,
+			$this->posX,
+			$this->posY,
+			$reseth=true,
+			$stretch=0,
+			$this->isHTML
+		);
 	}
 }
 
