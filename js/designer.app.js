@@ -3062,9 +3062,9 @@ function Designer() {
 			<tr><td>Font Bold</td><td><input type="checkbox" class="fontBold" data-key="fontBold"/></tr>\n\
 			<tr><td>Font Italic</td><td><input type="checkbox" class="fontItalic" data-key="fontItalic"/></tr>\n\
 			<tr><td>Font Underline</td><td><input type="checkbox" class="fontUnderline" data-key="fontUnderline"/></tr>\n\
-			<tr><td>Text Color</td><td><input type="text" class="textColor fullwidth"/></td></tr>\n\
+			<tr><td>Text Color</td><td><input type="text" id="textColorPicker" class="textColor fullwidth"/></td></tr>\n\
 		</tbody>\n\
-		<tr><td>Fill Color</td><td><input type="checkbox" class="fillColorEnable"/><input type="text" class="fillColor" style="width:60%"/></td></tr>\n\
+		<tr><td>Fill Color</td><td><input type="checkbox" class="fillColorEnable" data-key="fillColorEnable"/><input type="text" id="fillColorPicker" class="fillColor" style="width:60%"/></td></tr>\n\
 		<tr><td>Padding</td><td><input type="number" class="padding fullwidth"/></td></tr>\n\
 		';
 
@@ -3182,6 +3182,14 @@ function Designer() {
 					designer.currentSelectedElement.elem.find('span.content').css('text-decoration', '');
 				}
 				designer.currentSelectedElement.fontUnderline = value;
+			
+			} else if (propertyKey === 'fillColorEnable') {
+				if (value === true) {
+					designer.currentSelectedElement.elem.css('background-color', designer.currentSelectedElement.fillColor);
+				} else {
+					designer.currentSelectedElement.elem.css('background-color', '');
+				}
+				designer.currentSelectedElement.fillColorEnable = value;
 			}
 		});
 
@@ -3269,6 +3277,60 @@ function Designer() {
 		this.propertiesGrid.hide();
 
 		$(this.layout.cells('d').cell).on('click', function(e){
+			e.stopPropagation();
+		});
+
+
+		// color picker init (text color)
+		var textColorPicker = new dhtmlXColorPicker();
+		textColorPicker.linkTo('textColorPicker');
+		
+		textColorPicker.attachEvent('onHide', function(color){
+			var color = textColorPicker.getSelectedColor()[0];
+
+			// warna tulisan pada input properties
+			var colorType = designer.GetColorLightOrDark(color);
+			if (colorType === 'dark') {
+				$('#textColorPicker').css('color', '#fff');
+			} else {
+				$('#textColorPicker').css('color', '#333');
+			}
+
+			designer.currentSelectedElement.elem.find('span.content').css('color',color);
+
+			// #setter
+			designer.currentSelectedElement.textColor = color;
+		});
+
+		$(textColorPicker._globalNode).on('click', function(e){
+			e.stopPropagation();
+		});
+
+
+		// color picker init (fill color)
+		var fillColorPicker = new dhtmlXColorPicker();
+		fillColorPicker.linkTo('fillColorPicker');
+		
+		fillColorPicker.attachEvent('onHide', function(color){
+			var color = fillColorPicker.getSelectedColor()[0];
+
+			// warna tulisan pada input properties
+			var colorType = designer.GetColorLightOrDark(color);
+			if (colorType === 'dark') {
+				$('#fillColorPicker').css('color', '#fff');
+			} else {
+				$('#fillColorPicker').css('color', '#333');
+			}
+
+			if (designer.currentSelectedElement.fillColorEnable) {
+				designer.currentSelectedElement.elem.css('background-color',color);
+			}
+
+			// #setter
+			designer.currentSelectedElement.fillColor = color;
+		});
+
+		$(fillColorPicker._globalNode).on('click', function(e){
 			e.stopPropagation();
 		});
 	};
@@ -3625,5 +3687,21 @@ function Designer() {
 		var rest = array.slice((to || from) + 1 || array.length);
 		array.length = from < 0 ? array.length + from : from;
 		return array.push.apply(array, rest);
+	};
+
+	// detect light vs dark color
+	Designer.prototype.GetColorLightOrDark = function(c){
+		var c = c.substring(1);      // strip #
+		var rgb = parseInt(c, 16);   // convert rrggbb to decimal
+		var r = (rgb >> 16) & 0xff;  // extract red
+		var g = (rgb >>  8) & 0xff;  // extract green
+		var b = (rgb >>  0) & 0xff;  // extract blue
+
+		var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+
+		if (luma > 150) return 'light';
+		if (luma > 145) return 'light';
+
+		return (luma > 150) ? 'light' : 'dark';
 	};
 }

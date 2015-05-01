@@ -25,6 +25,22 @@ class Label extends TextContainer
 		if ($this->fontItalic) $fontStyle .= 'I';
 		if ($this->fontUnderline) $fontStyle .= 'U';
 
+		// text color
+		if (!$pdf->colorLibrary[$this->textColor]) {
+			$pdf->colorLibrary[$this->textColor] = $pdf->HexToRGB($this->textColor);
+		}
+		$textColor = $pdf->colorLibrary[$this->textColor];
+		$pdf->SetTextColor($textColor[0], $textColor[1], $textColor[2]);
+
+		// fill color
+		if ($this->fillColorEnable) {
+			if (!$pdf->colorLibrary[$this->fillColor]) {
+				$pdf->colorLibrary[$this->fillColor] = $pdf->HexToRGB($this->fillColor);
+			}
+			$fillColor = $pdf->colorLibrary[$this->fillColor];
+			$pdf->SetFillColor($fillColor[0], $fillColor[1], $fillColor[2]);
+		}
+
 		// font
 		$pdf->SetFont($this->fontFamily, $fontStyle, $this->fontSize);
 
@@ -34,7 +50,7 @@ class Label extends TextContainer
 			$this->text,
 			$border=1,
 			$align='L',
-			$fill=false,
+			$fill=$this->fillColorEnable,
 			$ln=1,
 			$this->posX,
 			$this->posY,

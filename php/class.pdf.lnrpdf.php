@@ -4,6 +4,10 @@ class LNRPDF extends TCPDF
 {	
 	public $lastBandPrintedPosY2 = 0;
 
+	// store color untuk mengelakkan conversion
+	// hex to rgb berlaku banyak kali
+	public $colorLibrary = array();
+
 	public function Header(){}
 	public function Footer(){}
 
@@ -58,6 +62,23 @@ class LNRPDF extends TCPDF
 
 			if ($this->GetY() > $this->lastBandPrintedPosY2) $this->lastBandPrintedPosY2 = $this->GetY();
 		}
+	}
+
+	// http://bavotasan.com/2011/convert-hex-color-to-rgb-using-php/
+	public function HexToRGB($hex) {
+	   $hex = str_replace("#", "", $hex);
+
+	   if(strlen($hex) == 3) {
+		  $r = hexdec(substr($hex,0,1).substr($hex,0,1));
+		  $g = hexdec(substr($hex,1,1).substr($hex,1,1));
+		  $b = hexdec(substr($hex,2,1).substr($hex,2,1));
+	   } else {
+		  $r = hexdec(substr($hex,0,2));
+		  $g = hexdec(substr($hex,2,2));
+		  $b = hexdec(substr($hex,4,2));
+	   }
+	   $rgb = array($r, $g, $b);
+	   return $rgb; // returns an array with the rgb values
 	}
 }
 
