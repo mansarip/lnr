@@ -3077,42 +3077,32 @@ function Designer() {
 			<option value="fixed">Fixed</option>\n\
 			<option value="vertical">Vertical</option>\n\
 			<option value="horizontal">Horizontal</option>\n\
-			<option value="verticalHorizontal">Vertical,Horizontal</option>\n\
 			</select>\n\
 			</td>\n\
 		</tr>\n\
 		';
 
 		// element > all (Border)
-		properties += '\n\
-		<tbody class="border">\n\
-		<tr><th colspan="2">Border - All</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox" class="borderAllEnable"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="borderAllWidth fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="borderAllStyle fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="borderAllColor fullwidth"/></td></tr>\n\
-		<tr><th colspan="2">Border - Top</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox" class="borderTopEnable"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="borderTopWidth fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="borderTopStyle fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="borderTopColor fullwidth"/></td></tr>\n\
-		<tr><th colspan="2">Border - Bottom</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox" class="borderBottomEnable"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="borderBottomWidth fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="borderBottomStyle fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="borderBottomColor fullwidth"/></td></tr>\n\
-		<tr><th colspan="2">Border - Right</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox" class="borderRightEnable"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="borderRightWidth fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="borderRightStyle fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="borderRightColor fullwidth"/></td></tr>\n\
-		<tr><th colspan="2">Border - Left</th></tr>\n\
-		<tr><td>Enable</td><td><input type="checkbox" class="borderLeftEnable"/></td></tr>\n\
-		<tr><td>Width</td><td><input type="number" class="borderLeftWidth fullwidth"/></td></tr>\n\
-		<tr><td>Style</td><td><input type="text" class="borderLeftStyle fullwidth"/></td></tr>\n\
-		<tr><td>Color</td><td><input type="text" class="borderLeftColor fullwidth"/></td></tr>\n\
-		</tbody>\n\
-		';
+		var borderSide = ['All', 'Top', 'Bottom', 'Right', 'Left'];
+		properties += '<tbody class="border">';
+		for (var s=0; s<borderSide.length; s++) {
+			properties += '\n\
+			<tr><th colspan="2">Border - '+ borderSide[s] +'</th></tr>\n\
+			<tr><td>Enable</td><td><input type="checkbox" data-key="border'+ borderSide[s] +'Enable" class="border'+ borderSide[s] +'Enable"/></td></tr>\n\
+			<tr><td>Width</td><td><input type="number" data-key="border'+ borderSide[s] +'Width" class="border'+ borderSide[s] +'Width fullwidth"/></td></tr>\n\
+			<tr><td>Style</td>\n\
+				<td>\n\
+				<select data-key="border'+ borderSide[s] +'Style" class="border'+ borderSide[s] +'Style">\n\
+					<option>Solid</option>\n\
+					<option>Dashed</option>\n\
+					<option>Dotted</option>\n\
+				</select>\n\
+				</td>\n\
+			</tr>\n\
+			<tr><td>Color</td><td><input type="text" id="border'+ borderSide[s] +'Color" data-key="border'+ borderSide[s] +'Color" class="border'+ borderSide[s] +'Color fullwidth"/></td></tr>\n\
+			';
+		}
+		properties += '</tbody>';
 
 		properties += '</table>';
 		properties += '</div>';
@@ -3142,6 +3132,20 @@ function Designer() {
 			
 			} else if (propertyKey === 'elasticity') {
 				designer.currentSelectedElement.elasticity = value;
+
+			} else if (propertyKey === 'borderAllStyle') {
+				designer.currentSelectedElement.elem.css('border-style',value);
+
+				designer.propertiesGrid.find('select.borderTopStyle').val(value);
+				designer.propertiesGrid.find('select.borderBottomStyle').val(value);
+				designer.propertiesGrid.find('select.borderRightStyle').val(value);
+				designer.propertiesGrid.find('select.borderLeftStyle').val(value);
+
+				designer.currentSelectedElement.borderAlltyle = value;
+				designer.currentSelectedElement.borderTopStyle = value;
+				designer.currentSelectedElement.borderBottomStyle = value;
+				designer.currentSelectedElement.borderRightStyle = value;
+				designer.currentSelectedElement.borderLeftStyle = value;
 			}
 		});
 
@@ -3193,6 +3197,24 @@ function Designer() {
 					designer.currentSelectedElement.elem.css('background-color', '');
 				}
 				designer.currentSelectedElement.fillColorEnable = value;
+			
+			} else if (propertyKey === 'borderAllEnable') {
+				if (value === false) {
+					designer.currentSelectedElement.elem.css('border','1px dashed #b5b5b5');
+				} else {
+					designer.currentSelectedElement.elem.css('border', designer.currentSelectedElement.borderAllWidth + 'px '+ designer.currentSelectedElement.borderAllStyle +' '+ designer.currentSelectedElement.borderAllColor);
+				}
+
+				designer.propertiesGrid.find('input.borderTopEnable').prop('checked', value);
+				designer.propertiesGrid.find('input.borderBottomEnable').prop('checked', value);
+				designer.propertiesGrid.find('input.borderRightEnable').prop('checked', value);
+				designer.propertiesGrid.find('input.borderLeftEnable').prop('checked', value);
+
+				designer.currentSelectedElement.borderAllEnable = value;
+				designer.currentSelectedElement.borderTopEnable = value;
+				designer.currentSelectedElement.borderBottomEnable = value;
+				designer.currentSelectedElement.borderRightEnable = value;
+				designer.currentSelectedElement.borderLeftEnable = value;
 			}
 		});
 
@@ -3232,6 +3254,20 @@ function Designer() {
 				} else if (propertyKey === 'padding') {
 					designer.currentSelectedElement.elem.find('span.content').css('margin', value+'px');
 					designer.currentSelectedElement.padding = value;
+				
+				} else if (propertyKey === 'borderAllWidth') {
+					designer.currentSelectedElement.elem.css('border-width', value + 'px');
+
+					designer.propertiesGrid.find('input.borderTopWidth').val(value);
+					designer.propertiesGrid.find('input.borderBottomWidth').val(value);
+					designer.propertiesGrid.find('input.borderRightWidth').val(value);
+					designer.propertiesGrid.find('input.borderLeftWidth').val(value);
+
+					designer.currentSelectedElement.borderAllWidth = value;
+					designer.currentSelectedElement.borderTopWidth = value;
+					designer.currentSelectedElement.borderBottomWidth = value;
+					designer.currentSelectedElement.borderRightWidth = value;
+					designer.currentSelectedElement.borderLeftWidth = value;
 				}
 			}
 
@@ -3277,6 +3313,20 @@ function Designer() {
 				} else if (propertyKey === 'padding') {
 					designer.currentSelectedElement.elem.find('span.content').css('margin', value+'px');
 					designer.currentSelectedElement.padding = value;
+
+				} else if (propertyKey === 'borderAllWidth') {
+					designer.currentSelectedElement.elem.css('border-width', value + 'px');
+
+					designer.propertiesGrid.find('input.borderTopWidth').val(value);
+					designer.propertiesGrid.find('input.borderBottomWidth').val(value);
+					designer.propertiesGrid.find('input.borderRightWidth').val(value);
+					designer.propertiesGrid.find('input.borderLeftWidth').val(value);
+
+					designer.currentSelectedElement.borderAllWidth = value;
+					designer.currentSelectedElement.borderTopWidth = value;
+					designer.currentSelectedElement.borderBottomWidth = value;
+					designer.currentSelectedElement.borderRightWidth = value;
+					designer.currentSelectedElement.borderLeftWidth = value;
 				}
 			}
 			else if (type === 'text') {
@@ -3291,47 +3341,26 @@ function Designer() {
 			e.stopPropagation();
 		});
 
-
 		// color picker init (text color)
 		var textColorPicker = new dhtmlXColorPicker();
 		textColorPicker.linkTo('textColorPicker');
-		
 		textColorPicker.attachEvent('onHide', function(color){
 			var color = textColorPicker.getSelectedColor()[0];
-
-			// warna tulisan pada input properties
-			var colorType = designer.GetColorLightOrDark(color);
-			if (colorType === 'dark') {
-				$('#textColorPicker').css('color', '#fff');
-			} else {
-				$('#textColorPicker').css('color', '#333');
-			}
+			$('#textColorPicker').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
 
 			designer.currentSelectedElement.elem.find('span.content').css('color',color);
 
 			// #setter
 			designer.currentSelectedElement.textColor = color;
 		});
-
-		$(textColorPicker._globalNode).on('click', function(e){
-			e.stopPropagation();
-		});
-
+		$(textColorPicker._globalNode).on('click', function(e){ e.stopPropagation(); });
 
 		// color picker init (fill color)
 		var fillColorPicker = new dhtmlXColorPicker();
 		fillColorPicker.linkTo('fillColorPicker');
-		
 		fillColorPicker.attachEvent('onHide', function(color){
 			var color = fillColorPicker.getSelectedColor()[0];
-
-			// warna tulisan pada input properties
-			var colorType = designer.GetColorLightOrDark(color);
-			if (colorType === 'dark') {
-				$('#fillColorPicker').css('color', '#fff');
-			} else {
-				$('#fillColorPicker').css('color', '#333');
-			}
+			$('#fillColorPicker').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
 
 			if (designer.currentSelectedElement.fillColorEnable) {
 				designer.currentSelectedElement.elem.css('background-color',color);
@@ -3340,10 +3369,70 @@ function Designer() {
 			// #setter
 			designer.currentSelectedElement.fillColor = color;
 		});
+		$(fillColorPicker._globalNode).on('click', function(e){ e.stopPropagation(); });
 
-		$(fillColorPicker._globalNode).on('click', function(e){
-			e.stopPropagation();
+		// border all color pickers
+		var borderAllColorPicker = new dhtmlXColorPicker();
+		borderAllColorPicker.linkTo('borderAllColor');
+		borderAllColorPicker.attachEvent('onHide', function(){
+			var color = borderAllColorPicker.getSelectedColor()[0];
+			$('#borderAllColor').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
+
+			designer.currentSelectedElement.elem.css('border-color', color);
+
+			//apply pada semua
+			$('#borderTopColor').val(color).css('background-color', color);
+			$('#borderBottomColor').val(color).css('background-color', color);
+			$('#borderRightColor').val(color).css('background-color', color);
+			$('#borderLeftColor').val(color).css('background-color', color);
+
+			designer.currentSelectedElement.borderAllColor = color;
+			designer.currentSelectedElement.borderTopColor = color;
+			designer.currentSelectedElement.borderBottomColor = color;
+			designer.currentSelectedElement.borderRightColor = color;
+			designer.currentSelectedElement.borderLeftColor = color;
 		});
+		$(borderAllColorPicker._globalNode).on('click', function(e){ e.stopPropagation(); });
+
+		// border top color pickers
+		var borderTopColorPicker = new dhtmlXColorPicker();
+		borderTopColorPicker.linkTo('borderTopColor');
+		borderTopColorPicker.attachEvent('onHide', function(){
+			var color = borderTopColorPicker.getSelectedColor()[0];
+			$('#borderTopColor').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
+			designer.currentSelectedElement.borderTopColor = color;
+		});
+		$(borderTopColorPicker._globalNode).on('click', function(e){ e.stopPropagation(); });
+
+		// border bottom color pickers
+		var borderBottomColorPicker = new dhtmlXColorPicker();
+		borderBottomColorPicker.linkTo('borderBottomColor');
+		borderBottomColorPicker.attachEvent('onHide', function(){
+			var color = borderBottomColorPicker.getSelectedColor()[0];
+			$('#borderBottomColor').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
+			designer.currentSelectedElement.borderBottomColor = color;
+		});
+		$(borderBottomColorPicker._globalNode).on('click', function(e){ e.stopPropagation(); });
+
+		// border right color pickers
+		var borderRightColorPicker = new dhtmlXColorPicker();
+		borderRightColorPicker.linkTo('borderRightColor');
+		borderRightColorPicker.attachEvent('onHide', function(){
+			var color = borderRightColorPicker.getSelectedColor()[0];
+			$('#borderRightColor').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
+			designer.currentSelectedElement.borderRightColor = color;
+		});
+		$(borderRightColorPicker._globalNode).on('click', function(e){ e.stopPropagation(); });
+
+		// border left color pickers
+		var borderLeftColorPicker = new dhtmlXColorPicker();
+		borderLeftColorPicker.linkTo('borderLeftColor');
+		borderLeftColorPicker.attachEvent('onHide', function(){
+			var color = borderLeftColorPicker.getSelectedColor()[0];
+			$('#borderLeftColor').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
+			designer.currentSelectedElement.borderLeftColor = color;
+		});
+		$(borderLeftColorPicker._globalNode).on('click', function(e){ e.stopPropagation(); });
 	};
 
 	Designer.prototype.DrawElement = function(event, ui){

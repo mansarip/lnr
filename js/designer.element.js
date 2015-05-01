@@ -172,30 +172,13 @@ function Element() {
 		propertiesElem.find('input.padding').val(this.padding);
 		propertiesElem.find('select.elasticity').val(this.elasticity);
 
-		propertiesElem.find('input.borderAllEnable').prop('checked', this.borderAllEnable);
-		propertiesElem.find('input.borderAllWidth').val(this.borderAllWidth);
-		propertiesElem.find('input.borderAllStyle').val(this.borderAllStyle);
-		propertiesElem.find('input.borderAllColor').val(this.borderAllColor);
-
-		propertiesElem.find('input.borderTopEnable').prop('checked', this.borderTopEnable);
-		propertiesElem.find('input.borderTopWidth').val(this.borderTopWidth);
-		propertiesElem.find('input.borderTopStyle').val(this.borderTopStyle);
-		propertiesElem.find('input.borderTopColor').val(this.borderTopColor);
-
-		propertiesElem.find('input.borderBottomEnable').prop('checked', this.borderBottomEnable);
-		propertiesElem.find('input.borderBottomWidth').val(this.borderBottomWidth);
-		propertiesElem.find('input.borderBottomStyle').val(this.borderBottomStyle);
-		propertiesElem.find('input.borderBottomColor').val(this.borderBottomColor);
-
-		propertiesElem.find('input.borderRightEnable').prop('checked', this.borderRightEnable);
-		propertiesElem.find('input.borderRightWidth').val(this.borderRightWidth);
-		propertiesElem.find('input.borderRightStyle').val(this.borderRightStyle);
-		propertiesElem.find('input.borderRightColor').val(this.borderRightColor);
-
-		propertiesElem.find('input.borderLeftEnable').prop('checked', this.borderLeftEnable);
-		propertiesElem.find('input.borderLeftWidth').val(this.borderLeftWidth);
-		propertiesElem.find('input.borderLeftStyle').val(this.borderLeftStyle);
-		propertiesElem.find('input.borderLeftColor').val(this.borderLeftColor);
+		var borderSide = ['All', 'Top', 'Bottom', 'Right', 'Left'];
+		for (var s=0; s<borderSide.length; s++) {
+			propertiesElem.find('input.border'+ borderSide[s] +'Enable').prop('checked', this['border'+ borderSide[s] +'Enable']);
+			propertiesElem.find('input.border'+ borderSide[s] +'Width').val(this['border'+ borderSide[s] +'Width']);
+			propertiesElem.find('input.border'+ borderSide[s] +'Style').val(this['border'+ borderSide[s] +'Style']);
+			propertiesElem.find('input.border'+ borderSide[s] +'Color').val(this['border'+ borderSide[s] +'Color']).css({'background-color' : this['border'+ borderSide[s] +'Color'], 'color' : (designer.GetColorLightOrDark(this['border'+ borderSide[s] +'Color']) === 'dark' ? '#fff' : '#333') });	
+		};
 
 		this.propertiesItems.show();
 		designer.propertiesGrid.show();

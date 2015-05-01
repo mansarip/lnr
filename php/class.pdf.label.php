@@ -65,11 +65,18 @@ class Label extends TextContainer
 			}
 		}
 
+		// border
+		if ($this->borderAllEnable) {
+			$border = 1;
+		} else {
+			$border = 0;
+		}
+
 		$pdf->MultiCell(
 			$width,
 			$this->height,
 			$this->text,
-			$border=1,
+			$border,
 			$align='L',
 			$fill=$this->fillColorEnable,
 			$ln=1,
