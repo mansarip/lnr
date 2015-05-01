@@ -3065,7 +3065,7 @@ function Designer() {
 			<tr><td>Text Color</td><td><input type="text" id="textColorPicker" class="textColor fullwidth"/></td></tr>\n\
 		</tbody>\n\
 		<tr><td>Fill Color</td><td><input type="checkbox" class="fillColorEnable" data-key="fillColorEnable"/><input type="text" id="fillColorPicker" class="fillColor" style="width:60%"/></td></tr>\n\
-		<tr><td>Padding</td><td><input type="number" class="padding fullwidth"/></td></tr>\n\
+		<tr><td>Padding</td><td><input type="number" class="padding fullwidth" data-key="padding"/></td></tr>\n\
 		';
 
 		// element > label, field (Printing)
@@ -3073,7 +3073,7 @@ function Designer() {
 		<tr><th colspan="2">Printing</th></tr>\n\
 		<tr><td>Elasticity</td>\n\
 			<td>\n\
-			<select class="elasticity">\n\
+			<select class="elasticity" data-key="elasticity">\n\
 			<option value="fixed">Fixed</option>\n\
 			<option value="vertical">Vertical</option>\n\
 			<option value="horizontal">Horizontal</option>\n\
@@ -3139,6 +3139,9 @@ function Designer() {
 			if (propertyKey === 'fontFamily') {
 				designer.currentSelectedElement.elem.find('span.content').css('font-family', value);
 				designer.currentSelectedElement.fontFamily = value;
+			
+			} else if (propertyKey === 'elasticity') {
+				designer.currentSelectedElement.elasticity = value;
 			}
 		});
 
@@ -3225,6 +3228,10 @@ function Designer() {
 				} else if (propertyKey === 'fontSize') {
 					designer.currentSelectedElement.elem.find('span.content').css('font-size', value+'px');
 					designer.currentSelectedElement.fontSize = value;
+				
+				} else if (propertyKey === 'padding') {
+					designer.currentSelectedElement.elem.find('span.content').css('margin', value+'px');
+					designer.currentSelectedElement.padding = value;
 				}
 			}
 
@@ -3266,6 +3273,10 @@ function Designer() {
 				} else if (propertyKey === 'fontSize') {
 					designer.currentSelectedElement.elem.find('span.content').css('font-size', value+'px');
 					designer.currentSelectedElement.fontSize = value;
+				
+				} else if (propertyKey === 'padding') {
+					designer.currentSelectedElement.elem.find('span.content').css('margin', value+'px');
+					designer.currentSelectedElement.padding = value;
 				}
 			}
 			else if (type === 'text') {

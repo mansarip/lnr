@@ -16,6 +16,9 @@ class Label extends TextContainer
 	public function Display() {
 		global $pdf;
 
+		// width
+		$width = $this->width;
+
 		// line height
 		$pdf->setCellHeightRatio($this->lineHeight);
 
@@ -44,8 +47,26 @@ class Label extends TextContainer
 		// font
 		$pdf->SetFont($this->fontFamily, $fontStyle, $this->fontSize);
 
+		// padding
+		$pdf->SetCellPadding($this->padding / 2.5);
+
+		// elasticity
+		if ($this->elasticity == 'fixed') {
+			$maxh = $this->height;
+		
+		} elseif ($this->elasticity == 'vertical') {
+			$maxh = 0;
+		} elseif ($this->elasticity == 'horizontal') {
+			$width = $pdf->GetStringWidth($this->text, $this->fontFamily, $this->fontStyle, $this->fontSize);
+			$line = $pdf->getNumLines($this->text, $width, true, false, $this->padding, $border=1);
+
+			while ($line > 1) {
+				$line = $pdf->getNumLines($this->text, $width++, true, false, $this->padding, $border=1);
+			}
+		}
+
 		$pdf->MultiCell(
-			$this->width,
+			$width,
 			$this->height,
 			$this->text,
 			$border=1,
@@ -56,7 +77,9 @@ class Label extends TextContainer
 			$this->posY,
 			$reseth=true,
 			$stretch=0,
-			$this->isHTML
+			$this->isHTML,
+			$autopadding=false,
+			$maxh
 		);
 	}
 }

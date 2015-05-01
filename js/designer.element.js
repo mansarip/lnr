@@ -162,7 +162,11 @@ function Element() {
 		propertiesElem.find('input.fontBold').prop('checked', this.fontBold);
 		propertiesElem.find('input.fontItalic').prop('checked', this.fontItalic);
 		propertiesElem.find('input.fontUnderline').prop('checked', this.fontUnderline);
-		propertiesElem.find('input.textColor').val(this.textColor).css({'background-color' : this.textColor, 'color' : (designer.GetColorLightOrDark(this.textColor) === 'dark' ? '#fff' : '#333') });
+
+		if (this.type === 'label' || this.type === 'field') {
+			propertiesElem.find('input.textColor').val(this.textColor).css({'background-color' : this.textColor, 'color' : (designer.GetColorLightOrDark(this.textColor) === 'dark' ? '#fff' : '#333') });
+		}
+
 		propertiesElem.find('input.fillColorEnable').prop('checked', this.fillColorEnable);
 		propertiesElem.find('input.fillColor').val(this.fillColor).css({'background-color' : this.fillColor, 'color' : (designer.GetColorLightOrDark(this.fillColor) === 'dark' ? '#fff' : '#333') });
 		propertiesElem.find('input.padding').val(this.padding);
