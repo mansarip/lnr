@@ -67,7 +67,38 @@ class Label extends TextContainer
 
 		// border
 		if ($this->borderAllEnable) {
-			$border = 1;
+
+			$color = $pdf->HexToRGB($this->borderAllColor);
+			$border = '{
+				"TBRL":{
+					"width":'. ($this->borderAllWidth * 0.25) .',
+					"cap":"butt",
+					"join":"miter",
+					"dash":'. ($this->borderAllStyle === 'solid' ? '0' : ($this->borderAllStyle === 'dashed' ? ($this->borderAllWidth * 3) : ($this->borderAllWidth * 0.9) )) .',
+					"color":['. $color[0] .', '. $color[1] .', '. $color[2] .']
+				}
+			}';
+
+			$border = json_decode($border, true);
+
+		} elseif ($this->borderTopEnable || $this->borderBottomEnable || $this->borderRightEnable || $this->borderLeftEnable) {
+			
+			$border = '{';
+
+			if ($this->borderTopEnable) {
+				$border .= '
+				"T":{
+					"width":0.2,
+					"cap":"butt",
+					"join":"miter",
+					"dash":0,
+					"color":[0,0,0]
+				}';
+			}
+
+			$border .= '}';
+			$border = json_decode($border, true);
+
 		} else {
 			$border = 0;
 		}
@@ -85,7 +116,7 @@ class Label extends TextContainer
 			$reseth=true,
 			$stretch=0,
 			$this->isHTML,
-			$autopadding=false,
+			$autopadding=true,
 			$maxh
 		);
 	}

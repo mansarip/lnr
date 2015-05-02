@@ -3093,9 +3093,9 @@ function Designer() {
 			<tr><td>Style</td>\n\
 				<td>\n\
 				<select data-key="border'+ borderSide[s] +'Style" class="border'+ borderSide[s] +'Style">\n\
-					<option>Solid</option>\n\
-					<option>Dashed</option>\n\
-					<option>Dotted</option>\n\
+					<option value="solid">Solid</option>\n\
+					<option value="dashed">Dashed</option>\n\
+					<option value="dotted">Dotted</option>\n\
 				</select>\n\
 				</td>\n\
 			</tr>\n\
@@ -3141,7 +3141,7 @@ function Designer() {
 				designer.propertiesGrid.find('select.borderRightStyle').val(value);
 				designer.propertiesGrid.find('select.borderLeftStyle').val(value);
 
-				designer.currentSelectedElement.borderAlltyle = value;
+				designer.currentSelectedElement.borderAllStyle = value;
 				designer.currentSelectedElement.borderTopStyle = value;
 				designer.currentSelectedElement.borderBottomStyle = value;
 				designer.currentSelectedElement.borderRightStyle = value;
