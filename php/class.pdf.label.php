@@ -149,12 +149,25 @@ class Label extends TextContainer
 			$border = 0;
 		}
 
+		// text align
+		if     ($this->textAlign === 'left')    { $textAlign = 'L'; }
+		elseif ($this->textAlign === 'center')  { $textAlign = 'C'; }
+		elseif ($this->textAlign === 'right')   { $textAlign = 'R'; }
+		elseif ($this->textAlign === 'justify') { $textAlign = 'J'; }
+		else   { $textAlign = 'L'; }
+
+		// vertical align
+		if     ($this->verticalAlign === 'top')    { $vAlign = 'T'; }
+		elseif ($this->verticalAlign === 'middle') { $vAlign = 'M'; }
+		elseif ($this->verticalAlign === 'bottom') { $vAlign = 'B'; }
+		else   { $vAlign = 'T'; }
+
 		$pdf->MultiCell(
 			$width,
 			$this->height,
 			$this->text,
 			$border,
-			$align='L',
+			$textAlign,
 			$fill=$this->fillColorEnable,
 			$ln=1,
 			$this->posX,
@@ -163,7 +176,8 @@ class Label extends TextContainer
 			$stretch=0,
 			$this->isHTML,
 			$autopadding=true,
-			$maxh
+			$maxh,
+			$vAlign
 		);
 	}
 }

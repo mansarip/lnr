@@ -3062,6 +3062,25 @@ function Designer() {
 			<tr><td>Font Bold</td><td><input type="checkbox" class="fontBold" data-key="fontBold"/></tr>\n\
 			<tr><td>Font Italic</td><td><input type="checkbox" class="fontItalic" data-key="fontItalic"/></tr>\n\
 			<tr><td>Font Underline</td><td><input type="checkbox" class="fontUnderline" data-key="fontUnderline"/></tr>\n\
+			<tr><td>Text Align</td>\n\
+				<td>\n\
+				<select class="textAlign" data-key="textAlign">\n\
+				<option value="left">Left</option>\n\
+				<option value="center">Center</option>\n\
+				<option value="right">Right</option>\n\
+				<option value="justify">Justify</option>\n\
+				</select>\n\
+				</td>\n\
+			</tr>\n\
+			<tr><td>Vertical Align</td>\n\
+				<td>\n\
+				<select class="verticalAlign" data-key="verticalAlign">\n\
+				<option value="top">Top</option>\n\
+				<option value="middle">Middle</option>\n\
+				<option value="bottom">Bottom</option>\n\
+				</select>\n\
+				</td>\n\
+			</tr>\n\
 			<tr><td>Text Color</td><td><input type="text" id="textColorPicker" class="textColor fullwidth"/></td></tr>\n\
 		</tbody>\n\
 		<tr><td>Fill Color</td><td><input type="checkbox" class="fillColorEnable" data-key="fillColorEnable"/><input type="text" id="fillColorPicker" class="fillColor" style="width:60%"/></td></tr>\n\
@@ -3170,6 +3189,43 @@ function Designer() {
 					designer.currentSelectedElement.elem.css('border-left-style', value);
 				}
 				designer.currentSelectedElement.borderLeftStyle = value;
+
+			} else if (propertyKey === 'textAlign') {
+				designer.currentSelectedElement.elem.css('text-align', value);
+				designer.currentSelectedElement.textAlign = value;
+			
+			} else if (propertyKey === 'verticalAlign') {
+				var content = designer.currentSelectedElement.elem.find('span.content');
+
+				if (value === 'top') {
+					content.css({
+						'position':'',
+						'top':'',
+						'bottom':''
+					});
+				} else if (value === 'middle') {
+					var contentHeight = content.height();
+					var top = (designer.currentSelectedElement.elem.height() / 2) - (contentHeight / 2);
+
+					// jika ada padding, remove padding atas bawah, kekalkan kiri kanan
+					if (designer.currentSelectedElement.padding > 0) {
+						content.css('margin', '0 ' + designer.currentSelectedElement.padding + 'px');
+					} 
+
+					content.css({
+						'position':'absolute',
+						'bottom':'',
+						'top':top
+					});
+				} else if (value === 'bottom') {
+					content.css({
+						'position':'absolute',
+						'top':'',
+						'bottom':0
+					});
+				}
+
+				designer.currentSelectedElement.verticalAlign = value;
 			} 
 		});
 
@@ -3316,7 +3372,12 @@ function Designer() {
 					designer.currentSelectedElement.fontSize = value;
 				
 				} else if (propertyKey === 'padding') {
-					designer.currentSelectedElement.elem.find('span.content').css('margin', value+'px');
+					if (designer.currentSelectedElement.verticalAlign === 'top') {
+						designer.currentSelectedElement.elem.find('span.content').css('margin', value+'px');
+					} else {
+						designer.currentSelectedElement.elem.find('span.content').css('margin', '0 ' + value + 'px');
+					}
+
 					designer.currentSelectedElement.padding = value;
 				
 				} else if (propertyKey === 'borderAllWidth') {
@@ -3399,7 +3460,12 @@ function Designer() {
 					designer.currentSelectedElement.fontSize = value;
 				
 				} else if (propertyKey === 'padding') {
-					designer.currentSelectedElement.elem.find('span.content').css('margin', value+'px');
+					if (designer.currentSelectedElement.verticalAlign === 'top' || designer.currentSelectedElement.verticalAlign === 'bottom') {
+						designer.currentSelectedElement.elem.find('span.content').css('margin', value+'px');
+					} else if (designer.currentSelectedElement.verticalAlign === 'middle') {
+						designer.currentSelectedElement.elem.find('span.content').css('margin', '0 ' + value + 'px');
+					}
+
 					designer.currentSelectedElement.padding = value;
 
 				} else if (propertyKey === 'borderAllWidth') {

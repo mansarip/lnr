@@ -66,6 +66,7 @@ function Element() {
 				var band = designer.details.app.band[bandName];
 				designer.UpdateBandMinHeight(band);
 				self.UpdateSize();
+				self.UpdatePosition();
 				$( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
 			}
 		});
@@ -187,6 +188,8 @@ function Element() {
 	Element.prototype.UpdatePosition = function(){
 		this.posY = this.elem.position().top;
 		this.posX = this.elem.position().left;
+		$('#properties input.left').val(this.posX);
+		$('#properties input.top').val(this.posY);
 	};
 
 	Element.prototype.UpdateSize = function(){
