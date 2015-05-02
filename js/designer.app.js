@@ -3146,7 +3146,31 @@ function Designer() {
 				designer.currentSelectedElement.borderBottomStyle = value;
 				designer.currentSelectedElement.borderRightStyle = value;
 				designer.currentSelectedElement.borderLeftStyle = value;
-			}
+			
+			} else if (propertyKey === 'borderTopStyle') {
+				if (!designer.currentSelectedElement.borderAllEnable) {
+					designer.currentSelectedElement.elem.css('border-top-style', value);
+				}
+				designer.currentSelectedElement.borderTopStyle = value;
+			
+			} else if (propertyKey === 'borderBottomStyle') {
+				if (!designer.currentSelectedElement.borderAllEnable) {
+					designer.currentSelectedElement.elem.css('border-bottom-style', value);
+				}
+				designer.currentSelectedElement.borderBottomStyle = value;
+
+			} else if (propertyKey === 'borderRightStyle') {
+				if (!designer.currentSelectedElement.borderAllEnable) {
+					designer.currentSelectedElement.elem.css('border-right-style', value);
+				}
+				designer.currentSelectedElement.borderRightStyle = value;
+
+			} else if (propertyKey === 'borderLeftStyle') {
+				if (!designer.currentSelectedElement.borderAllEnable) {
+					designer.currentSelectedElement.elem.css('border-left-style', value);
+				}
+				designer.currentSelectedElement.borderLeftStyle = value;
+			} 
 		});
 
 		// event register, on change (checkbox)
@@ -3215,6 +3239,46 @@ function Designer() {
 				designer.currentSelectedElement.borderBottomEnable = value;
 				designer.currentSelectedElement.borderRightEnable = value;
 				designer.currentSelectedElement.borderLeftEnable = value;
+			
+			} else if (propertyKey === 'borderTopEnable') {
+				if (!designer.currentSelectedElement.borderAllEnable) {
+					if (value === false) {
+						designer.currentSelectedElement.elem.css('border-top', '1px dashed #b5b5b5');
+					} else {
+						designer.currentSelectedElement.elem.css('border-top', designer.currentSelectedElement.borderTopWidth + 'px '+ designer.currentSelectedElement.borderTopStyle +' '+ designer.currentSelectedElement.borderTopColor);
+					}
+				}
+				designer.currentSelectedElement.borderTopEnable = value;
+			
+			} else if (propertyKey === 'borderBottomEnable') {
+				if (!designer.currentSelectedElement.borderAllEnable) {
+					if (value === false) {
+						designer.currentSelectedElement.elem.css('border-bottom', '1px dashed #b5b5b5');
+					} else {
+						designer.currentSelectedElement.elem.css('border-bottom', designer.currentSelectedElement.borderBottomWidth + 'px '+ designer.currentSelectedElement.borderBottomStyle +' '+ designer.currentSelectedElement.borderBottomColor);
+					}
+				}
+				designer.currentSelectedElement.borderBottomEnable = value;
+
+			} else if (propertyKey === 'borderRightEnable') {
+				if (!designer.currentSelectedElement.borderAllEnable) {
+					if (value === false) {
+						designer.currentSelectedElement.elem.css('border-right', '1px dashed #b5b5b5');
+					} else {
+						designer.currentSelectedElement.elem.css('border-right', designer.currentSelectedElement.borderRightWidth + 'px '+ designer.currentSelectedElement.borderRightStyle +' '+ designer.currentSelectedElement.borderRightColor);
+					}
+				}
+				designer.currentSelectedElement.borderRightEnable = value;
+
+			} else if (propertyKey === 'borderLeftEnable') {
+				if (!designer.currentSelectedElement.borderAllEnable) {
+					if (value === false) {
+						designer.currentSelectedElement.elem.css('border-left', '1px dashed #b5b5b5');
+					} else {
+						designer.currentSelectedElement.elem.css('border-left', designer.currentSelectedElement.borderLeftWidth + 'px '+ designer.currentSelectedElement.borderLeftStyle +' '+ designer.currentSelectedElement.borderLeftColor);
+					}
+				}
+				designer.currentSelectedElement.borderLeftEnable = value;
 			}
 		});
 
@@ -3267,6 +3331,30 @@ function Designer() {
 					designer.currentSelectedElement.borderTopWidth = value;
 					designer.currentSelectedElement.borderBottomWidth = value;
 					designer.currentSelectedElement.borderRightWidth = value;
+					designer.currentSelectedElement.borderLeftWidth = value;
+				
+				} else if (propertyKey === 'borderTopWidth') {
+					if (!designer.currentSelectedElement.borderAllEnable) {
+						designer.currentSelectedElement.elem.css('border-top-width', value + 'px');
+					}
+					designer.currentSelectedElement.borderTopWidth = value;
+
+				} else if (propertyKey === 'borderBottomWidth') {
+					if (!designer.currentSelectedElement.borderAllEnable) {
+						designer.currentSelectedElement.elem.css('border-bottom-width', value + 'px');
+					}
+					designer.currentSelectedElement.borderBottomWidth = value;
+
+				} else if (propertyKey === 'borderRightWidth') {
+					if (!designer.currentSelectedElement.borderAllEnable) {
+						designer.currentSelectedElement.elem.css('border-right-width', value + 'px');
+					}
+					designer.currentSelectedElement.borderRightWidth = value;
+
+				} else if (propertyKey === 'borderLeftWidth') {
+					if (!designer.currentSelectedElement.borderAllEnable) {
+						designer.currentSelectedElement.elem.css('border-left-width', value + 'px');
+					}
 					designer.currentSelectedElement.borderLeftWidth = value;
 				}
 			}
@@ -3326,6 +3414,30 @@ function Designer() {
 					designer.currentSelectedElement.borderTopWidth = value;
 					designer.currentSelectedElement.borderBottomWidth = value;
 					designer.currentSelectedElement.borderRightWidth = value;
+					designer.currentSelectedElement.borderLeftWidth = value;
+				
+				} else if (propertyKey === 'borderTopWidth') {
+					if (!designer.currentSelectedElement.borderAllEnable) {
+						designer.currentSelectedElement.elem.css('border-top-width', value + 'px');
+					}
+					designer.currentSelectedElement.borderTopWidth = value;
+
+				} else if (propertyKey === 'borderBottomWidth') {
+					if (!designer.currentSelectedElement.borderAllEnable) {
+						designer.currentSelectedElement.elem.css('border-bottom-width', value + 'px');
+					}
+					designer.currentSelectedElement.borderBottomWidth = value;
+
+				} else if (propertyKey === 'borderRightWidth') {
+					if (!designer.currentSelectedElement.borderAllEnable) {
+						designer.currentSelectedElement.elem.css('border-right-width', value + 'px');
+					}
+					designer.currentSelectedElement.borderRightWidth = value;
+
+				} else if (propertyKey === 'borderLeftWidth') {
+					if (!designer.currentSelectedElement.borderAllEnable) {
+						designer.currentSelectedElement.elem.css('border-left-width', value + 'px');
+					}
 					designer.currentSelectedElement.borderLeftWidth = value;
 				}
 			}
@@ -3399,6 +3511,11 @@ function Designer() {
 		borderTopColorPicker.linkTo('borderTopColor');
 		borderTopColorPicker.attachEvent('onHide', function(){
 			var color = borderTopColorPicker.getSelectedColor()[0];
+
+			if (!designer.currentSelectedElement.borderAllEnable) {
+				designer.currentSelectedElement.elem.css('border-top-color', color);	
+			}
+
 			$('#borderTopColor').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
 			designer.currentSelectedElement.borderTopColor = color;
 		});
@@ -3409,6 +3526,11 @@ function Designer() {
 		borderBottomColorPicker.linkTo('borderBottomColor');
 		borderBottomColorPicker.attachEvent('onHide', function(){
 			var color = borderBottomColorPicker.getSelectedColor()[0];
+
+			if (!designer.currentSelectedElement.borderAllEnable) {
+				designer.currentSelectedElement.elem.css('border-bottom-color', color);	
+			}
+
 			$('#borderBottomColor').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
 			designer.currentSelectedElement.borderBottomColor = color;
 		});
@@ -3419,6 +3541,11 @@ function Designer() {
 		borderRightColorPicker.linkTo('borderRightColor');
 		borderRightColorPicker.attachEvent('onHide', function(){
 			var color = borderRightColorPicker.getSelectedColor()[0];
+
+			if (!designer.currentSelectedElement.borderAllEnable) {
+				designer.currentSelectedElement.elem.css('border-right-color', color);	
+			}
+
 			$('#borderRightColor').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
 			designer.currentSelectedElement.borderRightColor = color;
 		});
@@ -3429,6 +3556,11 @@ function Designer() {
 		borderLeftColorPicker.linkTo('borderLeftColor');
 		borderLeftColorPicker.attachEvent('onHide', function(){
 			var color = borderLeftColorPicker.getSelectedColor()[0];
+
+			if (!designer.currentSelectedElement.borderAllEnable) {
+				designer.currentSelectedElement.elem.css('border-left-color', color);	
+			}
+
 			$('#borderLeftColor').css('color', (designer.GetColorLightOrDark(color) === 'dark' ? '#fff' : '#333'));
 			designer.currentSelectedElement.borderLeftColor = color;
 		});
