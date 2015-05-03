@@ -39,6 +39,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
 		$return['message'] = 'Successfully login.';
 		$_SESSION['logged'] = true;
 		$_SESSION['username'] = $username;
+		$_SESSION['designerId'] = uniqid();
 	}
 
 	echo json_encode($return);

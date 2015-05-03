@@ -24,6 +24,7 @@ function Designer() {
 	this.currentSelectedElement = null;
 	this.currentWindowOpen = null;
 	this.currentTreeSelected = null;
+	this.sessionId = null;
 
 	Designer.prototype.CheckLogin = function(proceedFunc) {
 		var request = $.ajax({
@@ -125,6 +126,11 @@ function Designer() {
 				band:{}
 			}
 		};
+
+		// dapatkan session id
+		$.ajax({
+			url:designer.phpPath + 'designer.getsessionid.php'
+		}).done(function(id){ designer.sessionId = id; });
 	};
 
 	Designer.prototype.InitUI = function() {
@@ -188,7 +194,8 @@ function Designer() {
 				{id:1, text:'File', items:[
 					{id:1.1, text:'_New'},
 					{id:1.2, text:'_Open'},
-					{id:1.3, text:'_Save'},
+					{id:1.3, text:'Save'},
+					{id:1.31, text:'_Save to local'},
 					{id:1.4, type:'separator'},
 					{id:1.5, text:'Preview'},
 					{id:1.6, text:'_Publish'},
@@ -236,6 +243,7 @@ function Designer() {
 			else if (id === '1.5') { designer.Preview(); }
 			else if (id === '1.9') { designer.Logout(); }
 			else if (id === '3.4') { designer.Refresh(); }
+			else if (id === '1.3') { designer.Save(); }
 		});
 	};
 
@@ -245,6 +253,7 @@ function Designer() {
 			{id:1, type:"button", title:"New", img:"document.png"},
 			{id:2, type:"button", title:"Open", img:"folder-horizontal-open.png"},
 			{id:3, type:"button", title:"Save", img:"disk-return-black.png"},
+			{id:19, type:"button", title:"Save To Local", img:"save-to-local.png"},
 			{id:4, type:"separator"},
 
 			// data management
@@ -273,9 +282,13 @@ function Designer() {
 		// event register
 		this.toolbar.attachEvent('onClick', function(id){
 
-			// new
-			if (id === '1') {
-
+			// save
+			if (id === '3') {
+				designer.Save();
+			}
+			// save
+			else if (id === '19') {
+				designer.SaveToLocal();
 			}
 			// source window
 			else if (id === '9') {
@@ -3856,6 +3869,50 @@ function Designer() {
 			// clear yang lain
 			designer.tree.structure.clearSelection();
 			designer.tree.data.clearSelection();
+		});
+	};
+
+	Designer.prototype.Save = function(callback) {
+		this.statusBar.setText('Saving....');
+		this.GenerateReportDetails();
+
+		var phpPath = this.phpPath;
+		var content = JSON.stringify(this.details.report);
+
+		$.ajax({
+			url:phpPath + 'designer.save.php',
+			data:{content:content},
+			type:'post',
+			dataType:'json'
+		})
+		.done(function(response){
+			designer.statusBar.setText('');
+
+			if (response.status === 0) {
+				dhtmlx.alert({
+					title:'Save Error',
+					style:'alert-info',
+					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
+				});
+				return false;
+			}
+			else if (response.status === 1) {
+				designer.statusBar.setText(response.message);
+				setTimeout(function(){
+					designer.statusBar.setText('');
+				}, 1200);
+			}
+
+			if (callback) callback();
+		});
+	};
+
+	Designer.prototype.SaveToLocal = function() {
+		designer.Save(function(){
+			$('iframe#savetolocal').attr('src', designer.phpPath + 'designer.savetolocal.php?file=' + designer.details.report.general.name + '&id=' + designer.sessionId);
+			setTimeout(function(){
+				$('iframe#savetolocal').attr('src','');
+			}, 3000);
 		});
 	};
 
