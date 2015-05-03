@@ -259,7 +259,21 @@ function Label() {
 		});
 	};
 
+	Label.prototype.ApplyText = function(text){
+		// #setter
+		this.text = text;
+
+		if (!this.isHTML) {
+			this.elem.find('span.content').html(this.text.replace(/\r\n|\r|\n/g,"<br />"));
+		}
+		// jika html
+		else {
+			this.elem.find('span.content').html(this.text);
+		}
+	};
+
 	Label.prototype.OpenTextWindow = function(button, x, y){
+		var self = this;
 		var windows = new dhtmlXWindows();
 		windows.attachViewportTo('app');
 
@@ -301,17 +315,15 @@ function Label() {
 		}
 
 		textWin.attachEvent('onClose', function(){
-			// #setter
-			if (!designer.currentSelectedElement.isHTML) {
-				var labelTextValue = $(designer.currentWindowOpen.cell).find('textarea.labelText').val();
-				designer.currentSelectedElement.text = labelTextValue;
-				designer.currentSelectedElement.elem.find('span.content').html(labelTextValue.replace(/\r\n|\r|\n/g,"<br />"));
+			var text;
+
+			if (!self.isHTML) {
+				text = $(designer.currentWindowOpen.cell).find('textarea.labelText').val();	
+			} else {
+				text = editor.getContent();
 			}
-			// jika html
-			else {
-				designer.currentSelectedElement.text = editor.getContent();
-				designer.currentSelectedElement.elem.find('span.content').html(designer.currentSelectedElement.text);
-			}
+			
+			self.ApplyText(text);
 
 			designer.currentWindowOpen = null;
 			button.prop('disabled', false);

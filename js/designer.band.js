@@ -21,8 +21,12 @@ function Band(source) {
 	};
 
 	Band.prototype.ApplyResize = function(){
+		var self = this;
 		this.elem.find('.area').resizable({
-			handles:'s'
+			handles:'s',
+			stop:function(){
+				self.height = $(this).height();
+			}
 		});
 	};
 

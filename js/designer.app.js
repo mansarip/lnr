@@ -76,7 +76,7 @@ function Designer() {
 				"QR Code" : {"icon":"barcode-2d.png"},
 				"Barcode" : {"icon":"barcode.png"}
 			},
-			margin : {
+			margin : { //mm
 				"top" : 7,
 				"left" : 7,
 				"right" : 7,
@@ -193,9 +193,9 @@ function Designer() {
 			items:[
 				{id:1, text:'File', items:[
 					{id:1.1, text:'_New'},
-					{id:1.2, text:'_Open'},
+					{id:1.2, text:'Open'},
 					{id:1.3, text:'Save'},
-					{id:1.31, text:'_Save to local'},
+					{id:1.31, text:'Save to local'},
 					{id:1.4, type:'separator'},
 					{id:1.5, text:'Preview'},
 					{id:1.6, text:'_Publish'},
@@ -244,6 +244,8 @@ function Designer() {
 			else if (id === '1.9') { designer.Logout(); }
 			else if (id === '3.4') { designer.Refresh(); }
 			else if (id === '1.3') { designer.Save(); }
+			else if (id === '1.31') { designer.SaveToLocal(); }
+			else if (id === '1.2') { designer.Open(); }
 		});
 	};
 
@@ -286,9 +288,13 @@ function Designer() {
 			if (id === '3') {
 				designer.Save();
 			}
-			// save
+			// save to local
 			else if (id === '19') {
 				designer.SaveToLocal();
+			}
+			// open
+			else if (id === '2') {
+				designer.Open();
 			}
 			// source window
 			else if (id === '9') {
@@ -555,7 +561,7 @@ function Designer() {
 					dhtmlx.alert({
 						title:(response.status === 0 ? 'Failure' : 'Success'),
 						style:"alert-info",
-						text:(response.status === 0 ? response.message : 'Successfully connected!')
+						text:(response.status === 0 ? '<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message : 'Successfully connected!')
 					});
 				})
 				.fail(function(){
@@ -779,6 +785,7 @@ function Designer() {
 			$(layout.base).off('click', '.buttonPlaceholder input.test');
 			$(layout.base).off('click', '.buttonPlaceholder input.reset');
 			$(layout.base).off('click', '.buttonPlaceholder input.save');
+			designer.currentWindowOpen = null;
 			return true;
 		});
 	};
@@ -1066,6 +1073,7 @@ function Designer() {
 		parameterWin.attachEvent('onClose', function(){
 			$(layout.base).find('input.reset').unbind();
 			$(layout.base).find('input.add').unbind();
+			designer.currentWindowOpen = null;
 			return true;
 		});
 	};
@@ -1224,13 +1232,16 @@ function Designer() {
 		// close window button
 		$(tabbar.base).find('input.close').click(function(){
 			preferences.close();
+			designer.currentWindowOpen = null;
 			windows.unload();
 		});
 
 		// tag : preferences #setter
 
 		// save then close window button
-		$(tabbar.base).find('input.save').click(function(){
+		$(tabbar.base).find('input.save').click(function(e){
+
+			e.stopPropagation();
 
 			var preferencesGeneral = $('#preferencesGeneral');
 			var preferencesFormat = $('#preferencesFormat');
@@ -1249,6 +1260,8 @@ function Designer() {
 			}
 
 			// band size
+			bandSize -= (margin.left * 3);
+			bandSize -= (margin.right * 3);
 			$('#workspace .band').width(bandSize);
 
 			designer.details.app.general.reportTitle = reportTitle;
@@ -1262,6 +1275,7 @@ function Designer() {
 			designer.details.app.margin.footer = (isNaN(margin.footer)) ? 0 : margin.footer;
 
 			preferences.close();
+			designer.currentWindowOpen = null;
 			windows.unload();
 		});
 
@@ -1269,6 +1283,7 @@ function Designer() {
 		preferences.attachEvent('onClose', function(){
 			$(tabbar.base).find('input.close').unbind();
 			$(tabbar.base).find('input.save').unbind();
+			designer.currentWindowOpen = null;
 			return true;
 		});
 	};
@@ -2152,6 +2167,7 @@ function Designer() {
 			$('body').off('click', '#groupAddNew img.arrow');
 			$('body').off('click', '#groupAddNew input.cancel');
 			$('body').off('click', '#groupAddNew input.save');
+			designer.currentWindowOpen = null;
 			return true;
 		});
 	};
@@ -2277,12 +2293,12 @@ function Designer() {
 				<tr>\n\
 					<td>Data Source Name</td>\n\
 					<td>:</td>\n\
-					<td><input type="text" class="name fullwidth" data-key="name" value="zzz"/></td>\n\
+					<td><input type="text" class="name fullwidth" data-key="name" value=""/></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td>Main</td>\n\
 					<td>:</td>\n\
-					<td><input type="checkbox" class="main" data-key="main" checked/></td>\n\
+					<td><input type="checkbox" class="main" data-key="main"/></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td>Query</td>\n\
@@ -2290,7 +2306,7 @@ function Designer() {
 					<td></td>\n\
 				</tr>\n\
 				<tr>\n\
-					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;">select * from test.peribadi</textarea></td>\n\
+					<td colspan="3"><textarea class="query" data-key="query" style="width:97%; height:120px; outline:none; resize:none; font-family:\'Consolas\', monospace;"></textarea></td>\n\
 				</tr>\n\
 				<tr>\n\
 					<td><small>Max Preview Records</small></td>\n\
@@ -2865,6 +2881,7 @@ function Designer() {
 		dataSourceWin.attachEvent('onClose', function(){
 			$(layout.base).off('click', '.buttonPlaceholder input.preview');
 			$(layout.base).off('click', '.buttonPlaceholder input.save');
+			designer.currentWindowOpen = null;
 			return true;
 		});
 	};
@@ -3770,7 +3787,8 @@ function Designer() {
 					connection : this.details.app.dataSource[dataSourceName].connection,
 					active : true,
 					main : this.details.app.dataSource[dataSourceName].main,
-					group : this.details.app.dataSource[dataSourceName].group
+					group : this.details.app.dataSource[dataSourceName].group,
+					type : this.details.app.dataSource[dataSourceName].type
 				};
 			}
 		}
@@ -3794,6 +3812,11 @@ function Designer() {
 			
 			// declare
 			designer.details.report.layout.band[bandName] = {
+				title:band.title,
+				treeId:band.treeStructureId,
+				height:band.height,
+				minHeight:band.minHeight,
+				width:band.width,
 				element:[]
 			};
 
@@ -3914,6 +3937,174 @@ function Designer() {
 				$('iframe#savetolocal').attr('src','');
 			}, 3000);
 		});
+	};
+
+	Designer.prototype.Open = function(){
+		var iframe = $('<iframe style="display:none" name="openFile" src=""></iframe>');
+		var form = $('<form style="display:none" method="post" enctype="multipart/form-data" action="'+ this.phpPath + 'designer.open.php' +'" target="openFile"></form>');
+		var inputUpload = $('<input name="source" type="file"/>');
+		inputUpload.appendTo(form);
+		iframe.appendTo('body');
+		form.appendTo('body');
+
+		inputUpload.on('change', function(){
+			form.submit();
+		});
+
+		iframe.on('load', function(){
+			var content = $(this).contents().find('#loadedContent').text();
+			if (content) {
+				content = JSON.parse(content);
+				designer.ApplyLoadedData(content);
+				form.remove();
+				iframe.remove();
+			}
+		});
+
+		inputUpload.click();
+	};
+
+	Designer.prototype.ApplyLoadedData = function(source) {
+		// reset details
+		this.details = {};
+		this.InitDetails();
+
+		// preferences
+		this.details.app.general.author = source.general.author;
+		this.details.app.general.reportTitle = source.general.name;
+		this.details.app.format.orientation = source.layout.general.orientation;
+		this.details.app.format.paper = source.layout.general.format;
+		this.details.app.margin.top = source.layout.general.margin.top;
+		this.details.app.margin.bottom = source.layout.general.margin.bottom;
+		this.details.app.margin.right = source.layout.general.margin.right;
+		this.details.app.margin.left = source.layout.general.margin.left;
+		this.details.app.margin.footer = source.layout.general.margin.footer;
+
+		// connection
+		for (var connectionName in source.data.connection) {
+			this.details.app.connection[connectionName] = $.extend(true, {}, source.data.connection[connectionName]);
+			this.tree.data.insertNewItem(4, '4:::' + connectionName, connectionName, null, 'document.png', 'document.png', 'document.png'); // letak prefix parent id
+		}
+
+		// data source
+		for (var dataSourceName in source.data.query) {
+			this.details.app.dataSource[dataSourceName] = {
+				name : dataSourceName,
+				connection : source.data.query[dataSourceName].connection,
+				group : $.extend(true, {}, source.data.query[dataSourceName].group),
+				main : source.data.query[dataSourceName].main,
+				type : source.data.query[dataSourceName].type,
+				query : source.data.query[dataSourceName].sql
+			};
+
+			if (source.data.query[dataSourceName].main) this.mainQuery = this.details.app.dataSource[dataSourceName];
+			this.tree.data.insertNewItem(1, '1:::' + dataSourceName, dataSourceName, null, 'document.png', 'document.png', 'document.png');
+		}
+
+		var workspace = $('#workspace');
+		var properties = $('#properties');
+		var inputWidth = properties.find('input.width');
+		var inputHeight = properties.find('input.height');
+		var inputName = properties.find('input.name');
+		var inputLeft = properties.find('input.left');
+		var inputTop = properties.find('input.top');
+		var inputIsHTML = properties.find('input.ishtml');
+		var inputLineHeight = properties.find('input.lineHeight');
+		var selectFontFamily = properties.find('select.fontFamily');
+		var inputFontSize = properties.find('input.fontSize');
+		var inputFontBold = properties.find('input.fontBold');
+		var inputFontItalic = properties.find('input.fontItalic');
+		var inputFontUnderline = properties.find('input.fontUnderline');
+		var selectTextAlign = properties.find('select.textAlign');
+		var selectVerticalAlign = properties.find('select.verticalAlign');
+		var inputTextColor = properties.find('input.textColor');
+		var inputFillColorEnable = properties.find('input.fillColorEnable');
+		var inputFillColor = properties.find('input.fillColor');
+		var inputPadding = properties.find('input.padding');
+
+		// clear all band
+		workspace.empty();
+		this.details.app.band = {};
+
+		// band loading
+		for (var bandName in source.layout.band) {
+			var band = new Band({title : source.layout.band[bandName].title});
+			band.elem.appendTo(workspace);
+			band.RegisterTreeId(source.layout.band[bandName].treeId);
+			band.ApplyResize();
+			band.height = source.layout.band[bandName].height;
+			
+			var area = band.elem.find('.area');
+			area.height(band.height);
+
+			// element
+			for (var i=0; i<source.layout.band[bandName].element.length; i++) {
+				var element = source.layout.band[bandName].element[i];
+				var object;
+				console.log(element);
+
+				if (element.type === 'label') {
+					object = new Label();
+				} else if (element.type === 'field') {
+					object = new Field();
+				} else if (element.type === 'rectangle') {
+					object = new Rectangle();
+				} else if (element.type === 'image') {
+					object = new Image();
+				} else if (element.type === 'svg') {
+					object = new Svg();
+				} else if (element.type === 'qrcode') {
+					object = new QRCode();
+				} else if (element.type === 'barcode') {
+					object = new Barcode();
+				}
+
+				object.parentBand = band;
+				object.SetPosition(element.posX, element.posY);
+				object.Draw(area);
+				object.ApplyDrag();
+				object.ApplyResize();
+				object.RegisterTree();
+				object.AttachToParent();
+				object.UpdatePosition();
+
+				this.currentSelectedElement = object;
+
+				inputName.val(element.name).blur();
+				inputWidth.val(element.width * 3).change();
+				inputHeight.val(element.height * 3).change();
+				inputLeft.val(element.posX * 3).change();
+				inputTop.val(element.posY * 3).change();
+				inputLineHeight.val(element.lineHeight).change();
+				selectFontFamily.val(element.fontFamily).change();
+				inputFontSize.val(element.fontSize).change();
+				inputFontBold.prop('checked', element.fontBold);
+				inputFontItalic.prop('checked', element.fontItalic);
+				inputFontUnderline.prop('checked', element.fontUnderline);
+				selectTextAlign.val(element.textAlign).change();
+				selectVerticalAlign.val(element.verticalAlign).change();
+				inputTextColor.val(element.textColor).change();
+				inputFillColorEnable.prop('checked', element.fillColorEnable).change();
+				inputFillColor.val(element.fillColor).change();
+				inputPadding.val(element.padding).change();
+
+				if (object.type === 'label') {
+					object.ApplyText(element.text);
+					inputIsHTML.prop('checked', element.isHTML).change();
+				}
+			}
+
+			this.details.app.band[source.layout.band[bandName].title] = band;
+		}
+
+		this.currentSelectedElement = null;
+		this.tree.structure.clearSelection();		
+
+		// views :
+		// tree structure
+		// tree data
+		// band width
+		// band available
 	};
 
 	Designer.prototype.Logout = function(){

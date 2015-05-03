@@ -1,6 +1,8 @@
 <?php
 
-echo file_get_contents('../designer/temp/temp_5545afebd15ce.lnre');
+$file = 'contoh report.lnre';
+
+echo substr($file, -5);
 
 
 ?>

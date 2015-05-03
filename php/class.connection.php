@@ -48,6 +48,8 @@ class Connection
 	 */
 	public function TestConnect() {
 
+		error_reporting(0);
+
 		if ($this->type == 'mysql') {
 			
 			// kita akan connect guna mysqli

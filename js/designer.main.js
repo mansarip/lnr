@@ -21,7 +21,7 @@ $(function(){
 		designer.KeyboardBinding();
 
 		// test script 2
-		designer.details.app.connection['test'] = {
+		/*designer.details.app.connection['test'] = {
 			host: "localhost",
 			name: "testconnection",
 			pass: "",
@@ -31,7 +31,7 @@ $(function(){
 			socket: "",
 			type: "mysql",
 			user: "root"
-		};
+		};*/
 
 		// designer.OpenDataSourceWindow();
 
