@@ -3215,13 +3215,19 @@ function Designer() {
 					content.css({
 						'position':'absolute',
 						'bottom':'',
-						'top':top
+						'top':top,
+						'left':0, 'right':0
 					});
 				} else if (value === 'bottom') {
+					if (designer.currentSelectedElement.padding > 0) {
+						content.css('margin', designer.currentSelectedElement.padding + 'px');
+					}
+
 					content.css({
 						'position':'absolute',
 						'top':'',
-						'bottom':0
+						'bottom':0,
+						'left':0, 'right':0
 					});
 				}
 
@@ -3372,9 +3378,9 @@ function Designer() {
 					designer.currentSelectedElement.fontSize = value;
 				
 				} else if (propertyKey === 'padding') {
-					if (designer.currentSelectedElement.verticalAlign === 'top') {
+					if (designer.currentSelectedElement.verticalAlign === 'top' || designer.currentSelectedElement.verticalAlign === 'bottom') {
 						designer.currentSelectedElement.elem.find('span.content').css('margin', value+'px');
-					} else {
+					} else if (designer.currentSelectedElement.verticalAlign === 'middle') {
 						designer.currentSelectedElement.elem.find('span.content').css('margin', '0 ' + value + 'px');
 					}
 

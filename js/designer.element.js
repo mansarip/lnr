@@ -67,9 +67,21 @@ function Element() {
 				designer.UpdateBandMinHeight(band);
 				self.UpdateSize();
 				self.UpdatePosition();
+				self.ResetContentPosition();
 				$( event.toElement ).one('click', function(e){ e.stopImmediatePropagation(); } );
 			}
 		});
+	};
+
+	Element.prototype.ResetContentPosition = function(){
+		if (this.type === 'label') {
+			if (this.verticalAlign === 'middle') {
+				var content = this.elem.find('span.content');
+				var contentHeight = content.height();
+				var top = (this.elem.height() / 2) - (contentHeight / 2);
+				content.css('top',top);
+			}
+		}
 	};
 
 	Element.prototype.AttachToParent = function(){
@@ -217,8 +229,8 @@ function TextContainer() {
 	this.fontUnderline = false;     //bool
 	this.fontStriketrough = false;  //bool
 	this.textColor = '#333333';     //string
-	this.textAlign = 'L';           //string
-	this.verticalAlign = 'T';       //string
+	this.textAlign = 'left';        //string
+	this.verticalAlign = 'top';     //string
 	this.elasticity = 'fixed';      //string
 }
 
