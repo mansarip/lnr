@@ -3775,11 +3775,18 @@ function Designer() {
 		parameterWin.button('park').hide();
 		parameterWin.setText('Preview');
 		//parameterWin.maximize();
+		
+		this.currentWindowOpen = parameterWin;
 
 		// generate report details
 		this.GenerateReportDetails();
 
 		parameterWin.attachURL(this.phpPath + 'designer.preview.php', null, {data:JSON.stringify(this.details.report) });
+
+		parameterWin.attachEvent('onClose', function(){
+			this.currentWindowOpen = null;
+			return true;
+		});
 	};
 
 	Designer.prototype.GenerateReportDetails = function() {
@@ -4225,19 +4232,19 @@ function Designer() {
 
 	Designer.prototype.KeyboardBinding = function(){
 		// open
-		Mousetrap.bind('command+o', function(event){
+		Mousetrap.bind(['command+o', 'ctrl+o'], function(event){
 			event.preventDefault();
 			designer.Open();
 		});
 
 		// save
-		Mousetrap.bind('command+s', function(event){
+		Mousetrap.bind(['command+s', 'ctrl+s'], function(event){
 			event.preventDefault();
 			designer.Save();
 		});
 
 		// save to local
-		Mousetrap.bind('command+shift+s', function(event){
+		Mousetrap.bind(['command+shift+s', 'ctrl+shift+s'], function(event){
 			event.preventDefault();
 			designer.SaveToLocal();
 		});
@@ -4249,6 +4256,24 @@ function Designer() {
 				designer.DeleteElement();
 			}
 		});
+
+		// delete
+		Mousetrap.bind(['command+r', 'ctrl+r'], function(event){
+			event.preventDefault();
+			designer.Refresh();
+		});
+
+		// preview
+		Mousetrap.bind(['command+p', 'ctrl+p'], function(event){
+			event.preventDefault();
+			designer.Preview();
+		});
+
+		// escape
+		Mousetrap.bind('esc', function(event){
+			event.preventDefault();
+			if (designer.currentWindowOpen !== null) designer.currentWindowOpen.close();
+		});		
 
 		Mousetrap.bind('up', function(event){
 			
