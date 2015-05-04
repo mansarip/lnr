@@ -4224,6 +4224,32 @@ function Designer() {
 	};
 
 	Designer.prototype.KeyboardBinding = function(){
+		// open
+		Mousetrap.bind('command+o', function(event){
+			event.preventDefault();
+			designer.Open();
+		});
+
+		// save
+		Mousetrap.bind('command+s', function(event){
+			event.preventDefault();
+			designer.Save();
+		});
+
+		// save to local
+		Mousetrap.bind('command+shift+s', function(event){
+			event.preventDefault();
+			designer.SaveToLocal();
+		});
+
+		// delete
+		Mousetrap.bind(['backspace', 'delete'], function(event){
+			event.preventDefault();
+			if (designer.currentSelectedElement !== null) {
+				designer.DeleteElement();
+			}
+		});
+
 		Mousetrap.bind('up', function(event){
 			
 			// gerakkan element dalam workspace (atas)
