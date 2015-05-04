@@ -346,8 +346,127 @@ function Field() {
 	this.type = 'field';
 	this.treeIcon = 'ui-text-field.png';
 	this.propertiesItems = $('#properties table tbody.' + this.type);
+	this.source = null;
 
-	Field.prototype.PostInit = function(){};
+	Field.prototype.PostInit = function(){
+		var field = this;
+		this.elem.append('<span class="content" style="font-family:'+ this.fontFamily +'; font-size:'+ this.fontSize +'px; display:block; line-height:'+ (this.lineHeight * 12) +'px"></span>');
+
+		// dbl click
+		this.elem.on('dblclick', function(e){
+			var button = $('#properties input.source');
+			field.OpenSourceFieldWindow(button, e.pageX, e.pageY);
+		});
+	};
+
+	Field.prototype.OpenSourceFieldWindow = function(button, x, y){
+		var self = this;
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var sourceFieldWin = windows.createWindow({
+			id:"sourceField",
+			width:300,
+			height:200,
+			left:x,
+			top:y
+		});
+		sourceFieldWin.button('minmax').hide();
+		sourceFieldWin.button('park').hide();
+		sourceFieldWin.setText('Source Field');
+
+		// disable button supaya tak boleh bukak 2 kali
+		button.prop('disabled', true);
+
+		designer.currentWindowOpen = sourceFieldWin;
+
+		var sourceHTML = $('\n\
+		<select style="outline:none; width:100%; height:100%" size="10">\n\
+			<option value="___none___">None</option>\n\
+			<optgroup label="Column">\n\
+			</optgroup>\n\
+			<optgroup label="User Parameter">\n\
+			</optgroup>\n\
+			<optgroup label="System">\n\
+				<option value="SYS11">SYS11 :: Report Title</option>\n\
+				<option value="SYS12">SYS12 :: Report Author</option>\n\
+				<option value="SYS21">SYS21 :: Paper Format</option>\n\
+				<option value="SYS22">SYS22 :: Paper Orientation</option>\n\
+				<option value="SYS31">SYS31 :: Margin Top</option>\n\
+				<option value="SYS32">SYS32 :: Margin Bottom</option>\n\
+				<option value="SYS33">SYS33 :: Margin Right</option>\n\
+				<option value="SYS34">SYS34 :: Margin Left</option>\n\
+				<option value="SYS35">SYS35 :: Margin Footer</option>\n\
+				<option value="SYS41">SYS41 :: Page Number</option>\n\
+			</optgroup>\n\
+			<optgroup label="Current Date">\n\
+				<option value="DATE11">DATE11 :: 01122015</option>\n\
+				<option value="DATE12">DATE12 :: 01 12 2015</option>\n\
+				<option value="DATE13">DATE13 :: 01-12-2015</option>\n\
+				<option value="DATE14">DATE14 :: 01/12/2015</option>\n\
+				<option value="DATE15">DATE15 :: 01 December 2015</option>\n\
+				<option value="DATE16">DATE16 :: 1 12 2015</option>\n\
+				<option value="DATE17">DATE17 :: 1-12-2015</option>\n\
+				<option value="DATE18">DATE18 :: 1/12/2015</option>\n\
+				<option value="DATE19">DATE19 :: 1 December 2015</option>\n\
+				<option value="DATE21">DATE21 :: 12012015</option>\n\
+				<option value="DATE22">DATE22 :: 12 01 2015</option>\n\
+				<option value="DATE23">DATE23 :: 12-01-2015</option>\n\
+				<option value="DATE24">DATE24 :: 12/01/2015</option>\n\
+				<option value="DATE25">DATE25 :: December 01 2015</option>\n\
+				<option value="DATE26">DATE26 :: 12 1 2015</option>\n\
+				<option value="DATE27">DATE27 :: 12-1-2015</option>\n\
+				<option value="DATE28">DATE28 :: 12/1/2015</option>\n\
+				<option value="DATE29">DATE29 :: December 1 2015</option>\n\
+				<option value="DATE31">DATE31 :: 01 (day)</option>\n\
+				<option value="DATE32">DATE32 :: 1 (day)</option>\n\
+				<option value="DATE41">DATE41 :: December</option>\n\
+				<option value="DATE42">DATE42 :: 12 (month)</option>\n\
+				<option value="DATE51">DATE51 :: 2015</option>\n\
+				<option value="DATE52">DATE52 :: 15 (year)</option>\n\
+			</optgroup>\n\
+			<optgroup label="Current Time">\n\
+				<option value="TIME11">TIME11 :: 2:21</option>\n\
+				<option value="TIME12">TIME12 :: 2:21AM</option>\n\
+				<option value="TIME13">TIME13 :: 2:21am</option>\n\
+				<option value="TIME14">TIME14 :: 2:21 AM</option>\n\
+				<option value="TIME15">TIME15 :: 2:21 am</option>\n\
+				<option value="TIME21">TIME21 :: 02:21</option>\n\
+				<option value="TIME22">TIME22 :: 02:21AM</option>\n\
+				<option value="TIME23">TIME23 :: 02:21am</option>\n\
+				<option value="TIME24">TIME24 :: 02:21 AM</option>\n\
+				<option value="TIME25">TIME25 :: 02:21 am</option>\n\
+				<option value="TIME31">TIME31 :: 1821</option>\n\
+				<option value="TIME32">TIME32 :: 18:21</option>\n\
+			</optgroup>\n\
+		</select>\n\
+		');
+
+		// # getter
+		sourceHTML.val(this.source === null ? '___none___' : this.source);
+
+		sourceFieldWin.attachObject(sourceHTML[0]);
+
+		sourceHTML.on('click', function(e){
+			e.stopPropagation();
+		});
+
+		sourceHTML.find('option').on('dblclick', function(){
+			sourceFieldWin.close();	
+		});
+		
+		sourceFieldWin.attachEvent('onClose', function(){
+			self.source = sourceHTML.val();
+			designer.currentSelectedElement.elem.find('span.content').text(self.source);
+
+			sourceHTML.off('click');
+			sourceHTML.find('option').off('dblclick');
+
+			designer.currentWindowOpen = null;
+			button.prop('disabled', false);
+			return true;
+		});
+	};
 }
 
 /**

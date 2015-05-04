@@ -25,6 +25,8 @@ function Designer() {
 	this.currentWindowOpen = null;
 	this.currentTreeSelected = null;
 	this.sessionId = null;
+	this.actionHistoryCursor = -1;
+	this.actionHistory = [];
 
 	Designer.prototype.CheckLogin = function(proceedFunc) {
 		var request = $.ajax({
@@ -338,10 +340,20 @@ function Designer() {
 			else if (id === '27') {
 				designer.DeleteElement();
 			}
+			// undo
+			else if (id === '21') {
+				designer.Undo();
+			}
+		});
+
+		$(this.toolbar.base).find('.dhx_toolbar_btn[title="Undo"]').on('click', function(event){
+			event.stopPropagation();
 		});
 	};
 
 	Designer.prototype.OpenConnectionWindow = function(selectItemId) {
+		this.DeselectCurrentElement();
+
 		var mode = null;
 		var editName = null;
 		var windows = new dhtmlXWindows();
@@ -805,6 +817,8 @@ function Designer() {
 	};
 
 	Designer.prototype.OpenParameterWindow = function() {
+		this.DeselectCurrentElement();
+
 		var windows = new dhtmlXWindows();
 		windows.attachViewportTo('app');
 
@@ -1116,6 +1130,8 @@ function Designer() {
 	};
 
 	Designer.prototype.OpenPreferencesWindow = function() {
+		this.DeselectCurrentElement();
+
 		var windows = new dhtmlXWindows();
 		windows.attachViewportTo('app');
 		
@@ -1303,6 +1319,8 @@ function Designer() {
 	};
 
 	Designer.prototype.OpenGroupWindow = function(){
+		this.DeselectCurrentElement();
+
 		var mode = null;
 		var editName = null;
 		var windows = new dhtmlXWindows();
@@ -2187,6 +2205,8 @@ function Designer() {
 	};
 
 	Designer.prototype.OpenDataSourceWindow = function(selectItemId) {
+		this.DeselectCurrentElement();
+
 		var editName = null;
 		var mode = null;
 		var windows = new dhtmlXWindows();
@@ -2962,8 +2982,8 @@ function Designer() {
 			item:[
 				{id:4, text:"Connection", im0:"lightning.png", im1:"lightning.png", im2:"lightning.png"},
 				{id:1, text:"Data Source", im0:"database-network.png", im1:"database-network.png", im2:"database-network.png"},
-				{id:2, text:"User Parameter", im0:"paper-plane.png", im1:"paper-plane.png", im2:"paper-plane.png"},
-				{id:3, text:"System Parameter", im0:"monitor-window-flow.png", im1:"monitor-window-flow.png", im2:"monitor-window-flow.png"},
+				{id:2, text:"User Parameter", im0:"paper-plane.png", im1:"paper-plane.png", im2:"paper-plane.png"}/*,
+				{id:3, text:"System Parameter", im0:"monitor-window-flow.png", im1:"monitor-window-flow.png", im2:"monitor-window-flow.png"},*/
 			]
 		};
 
@@ -3050,7 +3070,7 @@ function Designer() {
 		properties += '\n\
 		<tbody class="field particular">\n\
 		<tr><th colspan="2">Content</th></tr>\n\
-		<tr><td>Field</td><td><input type="button" value="..."/></td></tr>\n\
+		<tr><td>Field</td><td><input type="button" class="source" data-key="source" value="..."/></td></tr>\n\
 		<tbody>\n\
 		';
 
@@ -3181,7 +3201,13 @@ function Designer() {
 				var x = e.pageX - 300;
 				var y = e.pageY - 200;
 				designer.currentSelectedElement.OpenTextWindow(button, x, y);
+			
+			} else if (propertyKey === 'source') {
+				var x = e.pageX - 300;
+				var y = e.pageY - 200;
+				designer.currentSelectedElement.OpenSourceFieldWindow(button, x, y);
 			}
+
 		});
 
 		// event register, on change (dropdown)
@@ -3842,9 +3868,9 @@ function Designer() {
 			};
 
 			// proses setiap element yang ada dalam band
-			// kecuali element 'undefined' yang telah diremove
+			// kecuali element 'undefined' yang telah diremove (deleted = true)
 			for (var i=0; i<band.element.length; i++) {
-				if (band.element[i] !== undefined) {
+				if (!band.element[i].deleted) {
 					var element = $.extend({}, band.element[i]);
 
 					// convert px to unit (pdf)
@@ -4185,22 +4211,67 @@ function Designer() {
 
 	Designer.prototype.DeleteElement = function(){
 		// buang elem view
-		this.currentSelectedElement.elem.remove();		
+		this.currentSelectedElement.elem.hide();		
 
 		// buang dari tree structure
 		this.tree.structure.deleteItem(this.currentSelectedElement.id);
 
 		// buang dari parent children
 		var index = this.currentSelectedElement.elem.attr('data-index');
-		delete this.currentSelectedElement.parentBand.element[index];
+		//delete this.currentSelectedElement.parentBand.element[index];
+		this.currentSelectedElement.parentBand.element[index].deleted = true;
+
+		// save history
+		this.SaveHistory({
+			action : 'delete',
+			element : this.currentSelectedElement.parentBand.element[index],
+			band : null
+		});
+
+		this.DeselectCurrentElement();
 
 		// resetkan current selected element
 		this.currentSelectedElement = null;
 	};
 
-	Designer.prototype.SaveHistory = function() {
+	Designer.prototype.SaveHistory = function(detail) {
 		// action : move, delete, resize, cut
 		// element : element yang terlibat
+
+		// maksimum 6. kalau dah sampai limit, buang yang first, anjak ke depan
+		if (this.actionHistory.length === 6) {
+			this.actionHistory.splice(0,1);
+		}
+
+		this.actionHistory.push({
+			action : detail.action,
+			element : detail.element,
+			band : detail.band
+		});
+
+		this.actionHistoryCursor += 1;
+		if (this.actionHistoryCursor > 6) this.actionHistoryCursor = 6;
+	};
+
+	Designer.prototype.Undo = function(){
+		//var lastAction = this.actionHistory[this.actionHistory.length - 1];
+
+		if (this.actionHistoryCursor > -1) {
+			var detail = this.actionHistory[this.actionHistoryCursor];
+			var actionCommited = detail.action;
+			
+			if (actionCommited === 'delete' && detail.element !== null) {
+				var index = detail.element.elem.attr('data-index');
+				detail.element.elem.show();
+				detail.element.parentBand.element[index].deleted = false;
+				this.DeselectCurrentElement();
+				this.currentSelectedElement = detail.element.parentBand.element[index];
+				this.currentSelectedElement.Select();
+				this.actionHistoryCursor -= 1;
+			}
+
+			if (this.actionHistoryCursor < -1) this.actionHistoryCursor = -1;
+		}
 	};
 
 	Designer.prototype.Logout = function(){
@@ -4347,6 +4418,10 @@ function Designer() {
 
 		// jika semasa labelText sedang dibuka
 		if (designer.currentWindowOpen !== null && designer.currentWindowOpen.getId() === 'labelText') {
+			designer.currentWindowOpen.close();
+
+		// jika semasa sourceField sedang dibuka
+		} else if (designer.currentWindowOpen !== null && designer.currentWindowOpen.getId() === 'sourceField') {
 			designer.currentWindowOpen.close();
 
 		// normal

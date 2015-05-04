@@ -1,6 +1,7 @@
 <?php
 
 error_reporting(0);
+date_default_timezone_set('Asia/Kuala_Lumpur');
 $source = json_decode($_POST['data'], true);
 
 /*=============================================
