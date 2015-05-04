@@ -4021,6 +4021,32 @@ function Designer() {
 		var inputFillColorEnable = properties.find('input.fillColorEnable');
 		var inputFillColor = properties.find('input.fillColor');
 		var inputPadding = properties.find('input.padding');
+		var selectElasticity = properties.find('select.elasticity');
+		
+		var inputBorderAllEnable = properties.find('input.borderAllEnable');
+		var inputBorderAllWidth = properties.find('input.borderAllWidth');
+		var selectBorderAllStyle = properties.find('select.borderAllStyle');
+		var inputBorderAllColor = properties.find('input.borderAllColor');
+
+		var inputBorderTopEnable = properties.find('input.borderTopEnable');
+		var inputBorderTopWidth = properties.find('input.borderTopWidth');
+		var selectBorderTopStyle = properties.find('select.borderTopStyle');
+		var inputBorderTopColor = properties.find('input.borderTopColor');
+
+		var inputBorderBottomEnable = properties.find('input.borderBottomEnable');
+		var inputBorderBottomWidth = properties.find('input.borderBottomWidth');
+		var selectBorderBottomStyle = properties.find('select.borderBottomStyle');
+		var inputBorderBottomColor = properties.find('input.borderBottomColor');
+
+		var inputBorderRightEnable = properties.find('input.borderRightEnable');
+		var inputBorderRightWidth = properties.find('input.borderRightWidth');
+		var selectBorderRightStyle = properties.find('select.borderRightStyle');
+		var inputBorderRightColor = properties.find('input.borderRightColor');
+
+		var inputBorderLeftEnable = properties.find('input.borderLeftEnable');
+		var inputBorderLeftWidth = properties.find('input.borderLeftWidth');
+		var selectBorderLeftStyle = properties.find('select.borderLeftStyle');
+		var inputBorderLeftColor = properties.find('input.borderLeftColor');
 
 		// clear all band
 		workspace.empty();
@@ -4087,6 +4113,32 @@ function Designer() {
 				inputFillColorEnable.prop('checked', element.fillColorEnable).change();
 				inputFillColor.val(element.fillColor).change();
 				inputPadding.val(element.padding).change();
+				selectElasticity.val(element.elasticity).change();
+
+				inputBorderAllEnable.prop('checked', element.borderAllEnable).change();
+				inputBorderAllWidth.val(element.borderAllWidth).change();
+				selectBorderAllStyle.val(element.borderAllStyle).change();
+				inputBorderAllColor.val(element.borderAllColor).change();
+				
+				inputBorderTopEnable.prop('checked', element.borderTopEnable).change();
+				inputBorderTopWidth.val(element.borderTopWidth).change();
+				selectBorderTopStyle.val(element.borderTopStyle).change();
+				inputBorderTopColor.val(element.borderTopColor).change();
+				
+				inputBorderBottomEnable.prop('checked', element.borderBottomEnable).change();
+				inputBorderBottomWidth.val(element.borderBottomWidth).change();
+				selectBorderBottomStyle.val(element.borderBottomStyle).change();
+				inputBorderBottomColor.val(element.borderBottomColor).change();
+				
+				inputBorderRightEnable.prop('checked', element.borderRightEnable).change();
+				inputBorderRightWidth.val(element.borderRightWidth).change();
+				selectBorderRightStyle.val(element.borderRightStyle).change();
+				inputBorderRightColor.val(element.borderRightColor).change();
+				
+				inputBorderLeftEnable.prop('checked', element.borderLeftEnable).change();
+				inputBorderLeftWidth.val(element.borderLeftWidth).change();
+				selectBorderLeftStyle.val(element.borderLeftStyle).change();
+				inputBorderLeftColor.val(element.borderLeftColor).change();
 
 				if (object.type === 'label') {
 					object.ApplyText(element.text);
