@@ -1,47 +1,44 @@
 # L&R
 Lime & Rose Reporting Tool
 
+### Version
+0.1 Nightly Build (unstable)
+
 ### External Libraries
 Tidak disertakan sekali
 * TCPDF
 * DHTMLX
 
-#### To-do list
-1. ~~User parameter, sync dengan tree data~~
-2. Senaraikan system parameter yang ada pada tree data
-3. ~~Buat window untuk group management~~
-4. Save function : user akan download file .lnre dan simpan ke local system
-5. Open function : baca .lnre dan apply pada application
-6. Publish function : generate .lnre dan simpan dalam publish folder
-7. Letak logo L&R mana2
-8. ~~Install mousetrap.js~~
-9. ~~Move element guna keyboard~~
-10. ~~Logout button, kembali pada home~~
-11. New function : refresh window
-12. Buat object untuk setiap element
-    - ~~label~~
-    - field
-    - picture
-    - rectangle
-    - qr code
-    - barcode
-    - svg
-13. Buat properties untuk setiap element
-    - label
-    - field
-    - picture
-    - rectangle
-    - qr code
-    - barcode
-    - svg
-14. Delete function, untuk remove element dari workspace dan details
-15. Simpan history untuk tujuan undo redo
-16. Selectable element guna mouse
-17. Selectable element guna shift + click
-18. Wizard function : predefined report design
-19. ~~Tutup window dengan ctrl/cmd + w~~ *NOT POSSIBLE SEBAB CHROME TAK BAGI OVERWRITE
-20. Copy, cut, paste element di workspace (termasuk keyboard bind)
-21. Max preview record, belum dapat baca dari input
-22. ~~Proses re-fetch column dan susun kembali pada group, bila user re-execute query~~
-23. ~~Update tree, lepas execute query untuk kali pertama~~
-24. Update tree, lepas re-arrange group
+### To-do list
+##### User Experience
+1. Multiple elements selection guna mouse
+2. Multiple elements selection guna mouse klik + shift
+3. Boleh ubah properties untuk multiple element
+4. Snap atau distribute element
+5. Shortcut button untuk ubah properties pada toolbar
+6. Function copy single element
+7. Function paste single element
+8. Function cut single element
+9. Function undo action
+10. Function redo action
+11. Function delete element
+12. Zoom in/out
+13. Report wizard
+
+##### Process Flow
+1. Save to server (temporary)
+2. Save to local (download)
+3. Load data dari save file
+4. Function new report
+5. Function publish report
+6. System parameter belum ada pada tree data
+7. Max preview record masih belum berfungsi
+
+##### Elements
+1. Label (~~create~~, ~~save~~, load, view)
+2. Field (create, save, load, view)
+3. Rectangle (create, save, load, view)
+4. Image (create, save, load, view)
+5. SVG (create, save, load, view)
+6. QR Code (create, save, load, view)
+7. Barcode (create, save, load, view)

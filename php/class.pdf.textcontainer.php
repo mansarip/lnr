@@ -13,6 +13,7 @@ class TextContainer extends Box
 	public $textColor;
 	public $verticalElasticity;
 	public $horizontalElasticity;
+	public $fontStyle = '';
 
 	public function Width() {
 		return $this->width;
@@ -28,7 +29,7 @@ class TextContainer extends Box
 		if ($this->fontBold) $fontStyle .= 'B';
 		if ($this->fontItalic) $fontStyle .= 'I';
 		if ($this->fontUnderline) $fontStyle .= 'U';
-		return $fontStyle;
+		$this->fontStyle = $fontStyle;
 	}
 
 	public function ApplyTextColor() {
@@ -53,7 +54,7 @@ class TextContainer extends Box
 
 	public function SetFont() {
 		global $pdf;
-		$pdf->SetFont($this->fontFamily, $fontStyle, $this->fontSize);
+		$pdf->SetFont($this->fontFamily, $this->fontStyle, $this->fontSize);
 	}
 
 	public function SetCellPadding() {

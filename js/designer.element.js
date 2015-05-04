@@ -175,6 +175,8 @@ function Element() {
 		propertiesElem.find('input.fontBold').prop('checked', this.fontBold);
 		propertiesElem.find('input.fontItalic').prop('checked', this.fontItalic);
 		propertiesElem.find('input.fontUnderline').prop('checked', this.fontUnderline);
+		propertiesElem.find('select.textAlign').val(this.textAlign);
+		propertiesElem.find('select.verticalAlign').val(this.verticalAlign);
 
 		if (this.type === 'label' || this.type === 'field') {
 			propertiesElem.find('input.textColor').val(this.textColor).css({'background-color' : this.textColor, 'color' : (designer.GetColorLightOrDark(this.textColor) === 'dark' ? '#fff' : '#333') });

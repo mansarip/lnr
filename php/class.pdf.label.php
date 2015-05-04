@@ -23,7 +23,7 @@ class Label extends TextContainer
 		$this->SetLineHeight($this->lineHeight);
 
 		// font style
-		$fontStyle = $this->ApplyFontStyle();
+		$this->ApplyFontStyle();
 
 		// text color
 		$this->ApplyTextColor();
