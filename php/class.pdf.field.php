@@ -16,7 +16,7 @@ class Field extends TextContainer
 	}
 
 	public function Display() {
-		global $pdf, $layout, $source;
+		global $pdf, $layout, $source, $query, $res;
 
 		// replace source dengan real data
 		switch ($this->source) {
@@ -68,6 +68,10 @@ class Field extends TextContainer
 			case 'TIME25': $text = date('h:i a'); break;
 			case 'TIME31': $text = date('Hi'); break;
 			case 'TIME32': $text = date('H:i'); break;
+
+			default:
+				$text = $res[$this->source];
+			break;
 		}
 
 		// width

@@ -380,11 +380,20 @@ function Field() {
 
 		designer.currentWindowOpen = sourceFieldWin;
 
+		// generate html dari senarai column
+		var columnList = '';
+		if (designer.mainQuery) {
+			for (var groupName in designer.mainQuery.group) {
+				for (var columName in designer.mainQuery.group[groupName].column) {
+					columnList += '<option value="'+ columName +'">'+ columName +'</option>';
+				}
+			}
+		}
+
 		var sourceHTML = $('\n\
 		<select style="outline:none; width:100%; height:100%" size="10">\n\
 			<option value="___none___">None</option>\n\
-			<optgroup label="Column">\n\
-			</optgroup>\n\
+			<optgroup label="Column">'+ columnList +'</optgroup>\n\
 			<optgroup label="User Parameter">\n\
 			</optgroup>\n\
 			<optgroup label="System">\n\

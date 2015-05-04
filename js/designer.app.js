@@ -3810,7 +3810,7 @@ function Designer() {
 		parameterWin.attachURL(this.phpPath + 'designer.preview.php', null, {data:JSON.stringify(this.details.report) });
 
 		parameterWin.attachEvent('onClose', function(){
-			this.currentWindowOpen = null;
+			designer.currentWindowOpen = null;
 			return true;
 		});
 	};
@@ -4113,6 +4113,16 @@ function Designer() {
 			
 			var area = band.elem.find('.area');
 			area.height(band.height);
+
+			// apply droppable
+			area.droppable({
+				accept : '.standartTreeRow',
+				hoverClass : 'hoverDrop',
+				drop : function(event, ui){
+					designer.DeselectCurrentElement();
+					designer.DrawElement(event, ui);
+				}
+			});
 
 			// element
 			for (var i=0; i<source.layout.band[bandName].element.length; i++) {
