@@ -86,6 +86,7 @@ function Element() {
 
 	Element.prototype.AttachToParent = function(){
 		this.parentBand.element.push(this);
+		this.elem.attr('data-index', (this.parentBand.element.length - 1));
 	};
 
 	Element.prototype.Deselect = function(){
@@ -96,7 +97,7 @@ function Element() {
 	};
 
 	Element.prototype.Draw = function(area){
-		this.elem = $('<div class="element '+ this.type +'" style="'+ this.GenerateStyle() +'"></div>');
+		this.elem = $('<div class="element '+ this.type +'" style="'+ this.GenerateStyle() +'" data-index=""></div>');
 		this.elem.uniqueId();
 		this.elem.appendTo(area);
 

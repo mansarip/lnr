@@ -276,6 +276,16 @@ function Designer() {
 
 			// logout
 			{id:18, type:"button", title:"Logout", img:"door-open-out.png"},
+
+			// ux
+			{id:20, type:"separator"},
+			{id:21, type:"button", title:"Undo", img:"arrow-curve-180-left.png"},
+			{id:22, type:"button", title:"Redo", img:"arrow-curve.png"},
+			{id:23, type:"separator"},
+			{id:24, type:"button", title:"Copy", img:"document-copy.png"},
+			{id:25, type:"button", title:"Cut", img:"scissors-blue.png"},
+			{id:26, type:"button", title:"Paste", img:"clipboard-paste-document-text.png"},
+			{id:27, type:"button", title:"Delete", img:"cross-script.png"},
 		];
 
 		this.toolbar.setIconsPath(this.fugueIconPath);
@@ -323,6 +333,10 @@ function Designer() {
 			// group window
 			else if (id === '5') {
 				designer.OpenGroupWindow();
+			}
+			// delete
+			else if (id === '27') {
+				designer.DeleteElement();
 			}
 		});
 	};
@@ -3820,22 +3834,26 @@ function Designer() {
 				element:[]
 			};
 
+			// proses setiap element yang ada dalam band
+			// kecuali element 'undefined' yang telah diremove
 			for (var i=0; i<band.element.length; i++) {
-				var element = $.extend({}, band.element[i]);
+				if (band.element[i] !== undefined) {
+					var element = $.extend({}, band.element[i]);
 
-				// convert px to unit (pdf)
-				element.width = element.width / 3;
-				element.height = element.height / 3;
-				element.posX = element.posX / 3;
-				element.posY = element.posY / 3;
+					// convert px to unit (pdf)
+					element.width = element.width / 3;
+					element.height = element.height / 3;
+					element.posX = element.posX / 3;
+					element.posY = element.posY / 3;
 
-				// remove key yang tak perlu
-				delete element.style;
-				delete element.elem;
-				delete element.parentBand;
-				delete element.propertiesItems;
+					// remove key yang tak perlu
+					delete element.style;
+					delete element.elem;
+					delete element.parentBand;
+					delete element.propertiesItems;
 
-				designer.details.report.layout.band[bandName].element.push(element);
+					designer.details.report.layout.band[bandName].element.push(element);
+				}
 			}
 		});
 	};
@@ -4067,7 +4085,6 @@ function Designer() {
 			for (var i=0; i<source.layout.band[bandName].element.length; i++) {
 				var element = source.layout.band[bandName].element[i];
 				var object;
-				console.log(element);
 
 				if (element.type === 'label') {
 					object = new Label();
@@ -4157,6 +4174,26 @@ function Designer() {
 		// tree data
 		// band width
 		// band available
+	};
+
+	Designer.prototype.DeleteElement = function(){
+		// buang elem view
+		this.currentSelectedElement.elem.remove();		
+
+		// buang dari tree structure
+		this.tree.structure.deleteItem(this.currentSelectedElement.id);
+
+		// buang dari parent children
+		var index = this.currentSelectedElement.elem.attr('data-index');
+		delete this.currentSelectedElement.parentBand.element[index];
+
+		// resetkan current selected element
+		this.currentSelectedElement = null;
+	};
+
+	Designer.prototype.SaveHistory = function() {
+		// action : move, delete, resize, cut
+		// element : element yang terlibat
 	};
 
 	Designer.prototype.Logout = function(){
