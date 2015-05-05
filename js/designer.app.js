@@ -1720,6 +1720,20 @@ function Designer() {
 						return false;
 					}
 
+					// tukar band title dan update band data
+					if (designer.details.app.band['Group Header : ' + oldGroupName]) {
+						designer.details.app.band['Group Header : ' + groupName] = $.extend(true, {}, designer.details.app.band['Group Header : ' + oldGroupName]);
+						designer.details.app.band['Group Footer : ' + groupName] = $.extend(true, {}, designer.details.app.band['Group Footer : ' + oldGroupName]);
+
+						// title property
+						designer.details.app.band['Group Header : ' + groupName].title = 'Group Header : ' + groupName;
+						designer.details.app.band['Group Footer : ' + groupName].title = 'Group Footer : ' + groupName;
+
+						// remove yang lama
+						delete designer.details.app.band['Group Header : ' + oldGroupName];
+						delete designer.details.app.band['Group Footer : ' + oldGroupName];
+					}
+
 					// #setter
 					var originalGroups = Object.keys(designer.mainQuery.group);
 					var changedGroupIndex = originalGroups.indexOf(oldGroupName);
@@ -1735,7 +1749,7 @@ function Designer() {
 
 					// update tree
 					tree.changeItemId(oldGroupName, groupName);
-					tree.setItemText(groupName, groupName);
+					tree.setItemText(groupName, groupName);					
 
 					// update band title, band data-name
 					var groupNameArray = Object.keys(designer.mainQuery.group);
@@ -1755,6 +1769,13 @@ function Designer() {
 					bandFooter.find('.title p').text(bandTitleFooter);
 					if (groupNumber > 0) { // attr data-name untuk header tidak berubah
 						bandFooter.attr('data-name', bandTitleFooter);
+					}
+
+					// update band data
+					if (groupNumber > 0) {
+						//console.log(oldGroupName);
+						// designer.details.app.band['Group Header : ' + groupName] = $.extend(true, {}, );
+						// designer.details.app.band['Group Footer : ' + groupName] = {};
 					}
 
 					// update tree structure
@@ -1871,6 +1892,48 @@ function Designer() {
 				toolbar.enableItem(3);
 				toolbar.enableItem(5);
 				toolbar.enableItem(7);
+
+
+				// update tree structure (label)
+				var groups = Object.keys(designer.mainQuery.group);
+				var bands = $('#workspace .band');
+				var totalBand = bands.length;
+
+				for (var i=0; i < groups.length; i++) {
+					var groupName = groups[i];
+
+					if (i === 0) {
+						designer.tree.structure.setItemText('header', 'Header <small class="grouplabel">'+ groupName +'</small>');
+						designer.tree.structure.setItemText('footer', 'Footer <small class="grouplabel">'+ groupName +'</small>');
+						$('#workspace .band[data-name="Header"] .title p').text('Header : ' + groupName);
+						$('#workspace .band[data-name="Footer"] .title p').text('Footer : ' + groupName);
+					} else {
+						designer.tree.structure.setItemText('_group' + i, 'Group <small class="grouplabel">'+ groupName +'</small>');
+
+						// group header & footer menggunakan nombor
+						// kiraan dari atas dan bawah
+						var groupHeaderIndex = i + 2;
+						var groupFooterindex = totalBand - groupHeaderIndex - 1;
+						var bandGroupHeader = $(bands[groupHeaderIndex]);
+						var bandGroupFooter = $(bands[groupFooterindex]);
+
+						// header
+						var oldGroupHeaderName = bandGroupHeader.attr('data-name');
+						bandGroupHeader.attr('data-name', 'Group Header : ' + groupName);
+						bandGroupHeader.find('.title p').text('Group Header : ' + groupName);
+						designer.details.app.band['Group Header : ' + groupName] = $.extend(true, {}, designer.details.app.band[oldGroupHeaderName]);
+						designer.details.app.band['Group Header : ' + groupName].title = 'Group Header : ' + groupName;
+						delete designer.details.app.band[oldGroupHeaderName];
+
+						// footer
+						var oldGroupFooterName = bandGroupFooter.attr('data-name');
+						$(bands[groupFooterindex]).attr('data-name', 'Group Footer : ' + groupName);
+						$(bands[groupFooterindex]).find('.title p').text('Group Footer : ' + groupName);
+						designer.details.app.band['Group Footer : ' + groupName] = $.extend(true, {}, designer.details.app.band[oldGroupFooterName]);
+						designer.details.app.band['Group Footer : ' + groupName].title = 'Group Footer : ' + groupName;
+						delete designer.details.app.band[oldGroupFooterName];
+					}
+				}
 			});
 
 			// save button (move column)
@@ -3856,6 +3919,9 @@ function Designer() {
 			// contoh : 'Report Header' kepada 'reportHeader'
 			bandName = bandName.replace(/\s/g, '');
 			bandName = bandName.charAt(0).toLowerCase() + bandName.slice(1);
+
+			// remove nama group dari band title
+			//band.title = band.title.split(':')[0].trim();
 			
 			// declare
 			designer.details.report.layout.band[bandName] = {
@@ -4062,8 +4128,6 @@ function Designer() {
 				if (i === 0) {
 					this.tree.structure.setItemText('header', 'Header <small class="grouplabel">'+ groupName +'</small>');
 					this.tree.structure.setItemText('footer', 'Footer <small class="grouplabel">'+ groupName +'</small>');
-					$('#workspace .band[data-name="Header"] .title p').text('Header : ' + groupName);
-					$('#workspace .band[data-name="Footer"] .title p').text('Footer : ' + groupName);
 				} else if (i === 1) {
 					this.tree.structure.insertNewNext('header', '_group' + i, 'Group <small class="grouplabel">'+ groupName +'</small>', null, 'zones-stack.png', 'zones-stack.png', 'zones-stack.png');
 					this.tree.structure.insertNewChild('_group' + i, 'groupHeader' + i, 'Group Header', null, 'zone.png', 'zone.png', 'zone.png');
@@ -4077,10 +4141,6 @@ function Designer() {
 				}
 			}
 		}
-
-		/*for (var groupName in this.mainQuery.group) {
-			this.tree.structure.setItemText('header');
-		}*/
 
 		var workspace = $('#workspace');
 		var properties = $('#properties');
@@ -4140,6 +4200,13 @@ function Designer() {
 			band.RegisterTreeId(source.layout.band[bandName].treeId);
 			band.ApplyResize();
 			band.height = source.layout.band[bandName].height;
+
+			// ubah title untuk header dan footer
+			if (bandName === 'header') {
+				band.elem.find('.title p').text('Header : ' + Object.keys(this.mainQuery.group)[0]);
+			} else if (bandName === 'footer') {
+				band.elem.find('.title p').text('Footer : ' + Object.keys(this.mainQuery.group)[0]);
+			}
 			
 			var area = band.elem.find('.area');
 			area.height(band.height);
