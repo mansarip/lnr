@@ -42,3 +42,6 @@ Tidak disertakan sekali
 5. SVG (create, save, load, view)
 6. QR Code (create, save, load, view)
 7. Barcode (create, save, load, view)
+
+### Known Bugs
+1. Bila remove sebuah data source, tree structure masih mempunyai nama group pada label

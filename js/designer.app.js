@@ -4052,6 +4052,36 @@ function Designer() {
 			this.tree.data.insertNewItem(1, '1:::' + dataSourceName, dataSourceName, null, 'document.png', 'document.png', 'document.png');
 		}
 
+		// apply group name pada tree structure
+		if (this.mainQuery) {
+			var groups = Object.keys(this.mainQuery.group);
+
+			for (var i=0; i < groups.length; i++) {
+				var groupName = groups[i];
+
+				if (i === 0) {
+					this.tree.structure.setItemText('header', 'Header <small class="grouplabel">'+ groupName +'</small>');
+					this.tree.structure.setItemText('footer', 'Footer <small class="grouplabel">'+ groupName +'</small>');
+					$('#workspace .band[data-name="Header"] .title p').text('Header : ' + groupName);
+					$('#workspace .band[data-name="Footer"] .title p').text('Footer : ' + groupName);
+				} else if (i === 1) {
+					this.tree.structure.insertNewNext('header', '_group' + i, 'Group <small class="grouplabel">'+ groupName +'</small>', null, 'zones-stack.png', 'zones-stack.png', 'zones-stack.png');
+					this.tree.structure.insertNewChild('_group' + i, 'groupHeader' + i, 'Group Header', null, 'zone.png', 'zone.png', 'zone.png');
+					this.tree.structure.moveItem('detail', 'item_child', '_group' + i);
+					this.tree.structure.insertNewChild('_group' + i, 'groupFooter' + i, 'Group Footer', null, 'zone.png', 'zone.png', 'zone.png');
+				} else {
+					this.tree.structure.insertNewNext('groupHeader' + (i-1), '_group' + i, 'Group <small class="grouplabel">'+ groupName +'</small>', null, 'zones-stack.png', 'zones-stack.png', 'zones-stack.png');
+					this.tree.structure.insertNewChild('_group' + i, 'groupHeader' + i, 'Group Header', null, 'zone.png', 'zone.png', 'zone.png');
+					this.tree.structure.moveItem('detail', 'item_child', '_group' + i);
+					this.tree.structure.insertNewChild('_group' + i, 'groupFooter' + i, 'Group Footer', null, 'zone.png', 'zone.png', 'zone.png');
+				}
+			}
+		}
+
+		/*for (var groupName in this.mainQuery.group) {
+			this.tree.structure.setItemText('header');
+		}*/
+
 		var workspace = $('#workspace');
 		var properties = $('#properties');
 		var inputWidth = properties.find('input.width');
