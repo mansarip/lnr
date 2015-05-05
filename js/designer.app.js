@@ -4253,6 +4253,15 @@ function Designer() {
 
 				this.currentSelectedElement = object;
 
+				if (object.type === 'label') {
+					inputIsHTML.prop('checked', element.isHTML).change();
+					object.ApplyText(element.text);
+				}
+				else if (object.type === 'field') {
+					object.source = element.source;
+					object.elem.find('span.content').text(object.source);
+				}
+
 				inputName.val(element.name).blur();
 				inputWidth.val(element.width * 3).change();
 				inputHeight.val(element.height * 3).change();
@@ -4261,9 +4270,9 @@ function Designer() {
 				inputLineHeight.val(element.lineHeight).change();
 				selectFontFamily.val(element.fontFamily).change();
 				inputFontSize.val(element.fontSize).change();
-				inputFontBold.prop('checked', element.fontBold);
-				inputFontItalic.prop('checked', element.fontItalic);
-				inputFontUnderline.prop('checked', element.fontUnderline);
+				inputFontBold.prop('checked', element.fontBold).change();
+				inputFontItalic.prop('checked', element.fontItalic).change();
+				inputFontUnderline.prop('checked', element.fontUnderline).change();
 				selectTextAlign.val(element.textAlign).change();
 				selectVerticalAlign.val(element.verticalAlign).change();
 				inputTextColor.val(element.textColor).change();
@@ -4276,31 +4285,31 @@ function Designer() {
 				inputBorderAllWidth.val(element.borderAllWidth).change();
 				selectBorderAllStyle.val(element.borderAllStyle).change();
 				inputBorderAllColor.val(element.borderAllColor).change();
+				if (!element.borderAllEnable) object.elem.css('border-style','dashed');
 				
 				inputBorderTopEnable.prop('checked', element.borderTopEnable).change();
 				inputBorderTopWidth.val(element.borderTopWidth).change();
 				selectBorderTopStyle.val(element.borderTopStyle).change();
 				inputBorderTopColor.val(element.borderTopColor).change();
+				if (!element.borderTopEnable) object.elem.css('border-top-style','dashed');
 				
 				inputBorderBottomEnable.prop('checked', element.borderBottomEnable).change();
 				inputBorderBottomWidth.val(element.borderBottomWidth).change();
 				selectBorderBottomStyle.val(element.borderBottomStyle).change();
 				inputBorderBottomColor.val(element.borderBottomColor).change();
+				if (!element.borderBottomEnable) object.elem.css('border-bottom-style','dashed');
 				
 				inputBorderRightEnable.prop('checked', element.borderRightEnable).change();
 				inputBorderRightWidth.val(element.borderRightWidth).change();
 				selectBorderRightStyle.val(element.borderRightStyle).change();
 				inputBorderRightColor.val(element.borderRightColor).change();
+				if (!element.borderRightEnable) object.elem.css('border-right-style','dashed');
 				
 				inputBorderLeftEnable.prop('checked', element.borderLeftEnable).change();
 				inputBorderLeftWidth.val(element.borderLeftWidth).change();
 				selectBorderLeftStyle.val(element.borderLeftStyle).change();
 				inputBorderLeftColor.val(element.borderLeftColor).change();
-
-				if (object.type === 'label') {
-					object.ApplyText(element.text);
-					inputIsHTML.prop('checked', element.isHTML).change();
-				}
+				if (!element.borderLeftEnable) object.elem.css('border-left-style','dashed');
 			}
 
 			this.details.app.band[source.layout.band[bandName].title] = band;
