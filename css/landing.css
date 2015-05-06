@@ -19,6 +19,9 @@ body{
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#feffff', endColorstr='#d2ebf9',GradientType=1 );
 
 }
+a{
+	color:blue;
+}
 .topbar{
 	position: absolute;
 	top: 0;

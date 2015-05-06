@@ -61,6 +61,10 @@ class Band
 					$field = new Field($elem);
 					$field->AttachToBand($this);
 				}
+				elseif ($elemType == 'rectangle') {
+					$rect = new Rectangle($elem);
+					$rect->AttachToBand($this);
+				}
 			}
 
 			unset($this->elements);

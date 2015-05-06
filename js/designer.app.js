@@ -36,7 +36,7 @@ function Designer() {
 		// jika butiran login tiada, patah balik ke landing page
 		request.done(function(response){
 			if (response === '0') {
-				designer.GoBackHome();
+				designer.GoBackHomeWithError();
 			} else {
 				proceedFunc();
 			}
@@ -202,7 +202,7 @@ function Designer() {
 					{id:1.5, text:'Preview'},
 					{id:1.6, text:'_Publish'},
 					{id:1.7, type:'separator'},
-					{id:1.8, text:'_Back To Home'},
+					{id:1.8, text:'Back To Home'},
 					{id:1.9, text:'Logout'}
 				]},
 				{id:2, text:'Edit', items:[
@@ -248,6 +248,7 @@ function Designer() {
 			else if (id === '1.3') { designer.Save(); }
 			else if (id === '1.31') { designer.SaveToLocal(); }
 			else if (id === '1.2') { designer.Open(); }
+			else if (id === '1.8') { designer.GoBackHome(); }
 		});
 	};
 
@@ -3216,6 +3217,7 @@ function Designer() {
 
 		// element > label, field (Printing)
 		properties += '\n\
+		<tbody class="label field particular">\n\
 		<tr><th colspan="2">Printing</th></tr>\n\
 		<tr><td>Elasticity</td>\n\
 			<td>\n\
@@ -3226,6 +3228,7 @@ function Designer() {
 			</select>\n\
 			</td>\n\
 		</tr>\n\
+		</tbody>\n\
 		';
 
 		// element > all (Border)
@@ -3832,8 +3835,12 @@ function Designer() {
 		band.elem.find('.area').resizable('option', 'minHeight', band.minHeight);
 	};
 
-	Designer.prototype.GoBackHome = function() {
+	Designer.prototype.GoBackHomeWithError = function() {
 		window.location.href = '../?error=permission&page=designer';
+	};
+
+	Designer.prototype.GoBackHome = function() {
+		window.location.href = '../';
 	};
 
 	Designer.prototype.DeselectCurrentElement = function() {
