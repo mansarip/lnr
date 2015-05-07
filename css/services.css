@@ -1,7 +1,60 @@
 body{
 	margin: 0;
+	font-family: 'Montserrat', sans-serif;
 }
 #app{
 	position: absolute;
 	top:0; bottom:0; left:0; right:0;
+}
+#logo{
+	width: 86px;
+	height: 21px;
+	background-color: red;
+	position: absolute;
+	top: 4px; left:10px;
+	background: url('../img/logoservices.png');
+}
+.content{
+	padding: 10px;
+	font-size: 11px;
+	position: absolute;
+	top: 0; bottom: 0; left: 0; right: 0;
+	overflow-y: auto;
+}
+.content h1.title{
+	font-size: 14px;
+}
+.content table{
+	width: 98%;
+	border-collapse: collapse;
+	border:1px solid #bbb;
+}
+.content table th{
+	background-color: #F2F2F2;
+	background: linear-gradient(#F2F2F2, #EBEBEB);
+	filter: progid:DXImageTransform.Microsoft.Gradient(gradientType=0, startColorStr=#f2f2f2, endColorStr=#ebebeb) progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+}
+.content table th,
+.content table td{
+	font-weight: normal;
+	padding: 4px;
+	border-color: #bbb;
+}
+.content table td.center{
+	text-align: center;
+}
+.content .panel{
+	border: 1px solid #BBB;
+	margin-bottom: 12px;
+}
+.content .panel h2.title{
+	margin: 0;
+	font-size: 11px;
+	padding: 3px;
+	background-color: #EDEDED;
+	font-weight: normal;
+	border-bottom: 1px solid #BBB;
+}
+.content .panel .content{
+	position: relative;
 }

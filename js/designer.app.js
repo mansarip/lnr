@@ -1,7 +1,6 @@
 function Designer() {
 
 	this.phpPath = '../php/';
-	//this.fugueIconPath = '../libs/fugue_icons/';
 	this.fugueIconPath = '../img/icons/';
 	this.dhtmlxImagePath = '../libs/dhtmlx/imgs/';
 	this.layout = null;
@@ -3142,8 +3141,8 @@ function Designer() {
 		properties += '\n\
 		<tbody class="image particular">\n\
 		<tr><th colspan="2">Content</th></tr>\n\
-		<tr><td>Source</td><td><input type="text" value=""/></td></tr>\n\
-		<tr><td>Dpi</td><td><input type="number" value="72"/></td></tr>\n\
+		<tr><td>Source</td><td><input type="text" data-key="imgSource" class="imgSource fullwidth" value=""/></td></tr>\n\
+		<tr><td>Dpi</td><td><input type="number" data-key="dpi" class="dpi fullwidth" value="72"/></td></tr>\n\
 		<tbody>\n\
 		';
 
