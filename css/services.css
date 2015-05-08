@@ -2,6 +2,11 @@ body{
 	margin: 0;
 	font-family: 'Montserrat', sans-serif;
 }
+hr{
+	border: none;
+	height: 1px;
+	background-color: #C3C3C3;
+}
 #app{
 	position: absolute;
 	top:0; bottom:0; left:0; right:0;
@@ -57,4 +62,13 @@ body{
 }
 .content .panel .content{
 	position: relative;
+}
+.content p{
+	line-height: 1.4em;
+}
+input.reloadSource{
+	margin: 10px 0;
+}
+input{
+	outline: none;
 }
