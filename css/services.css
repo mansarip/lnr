@@ -72,3 +72,24 @@ input.reloadSource{
 input{
 	outline: none;
 }
+table.windowForm{
+	font-family: 'Montserrat', sans-serif;
+	font-size: 11px;
+	width: 93%;
+	margin: 5px auto;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+table.windowForm td{
+	padding: 3px;
+}
+table.windowForm td input,
+table.windowForm td select{
+	outline: none;
+}
+table.windowForm td input.fullwidth{
+	width: 90%;
+}
+table.windowForm textarea{
+	font-size: 12px;
+}

@@ -1,12 +1,14 @@
 $(function(){
 	window.services = new Services();
 	
-	services.CheckLogin(function(){
+	services.CheckLogin(function(response){
+		services.source = response.source;
 		services.InitUI();
 		services.InitEvent();
+		services.LoadGlobalConnection();
 		//services.LoadServicesAccount();
-		// services.LoadHome();
-		services.LoadWizard();
+		//services.LoadHome();
+		//services.LoadWizard();
 	});
 });
 
@@ -18,6 +20,7 @@ function Services() {
 	this.layout;
 	this.toolbar;
 	this.currentView;
+	this.source = null;
 
 	Services.prototype.InitUI = function() {
 		this.layout = new dhtmlXLayoutObject({
@@ -81,7 +84,7 @@ function Services() {
 				} else if (id === 'Encryption Key') {
 
 				} else if (id === 'Exit without Logout') {
-					
+					services.GoBackHome();
 				} else if (id === 'Logout') {
 
 				} else if (id === 'Wizard') {
@@ -220,7 +223,8 @@ function Services() {
 			{id:1, type:"button", text:"New Account", img:"plus.png", imgdis:"plus.png"},
 			{id:2, type:"separator"},
 			{id:3, type:"button", text:"Remove", img:"cross.png", imgdis:"cross.png"},
-			{id:4, type:"separator"}
+			{id:4, type:"separator"},
+			{id:5, type:"button", text:"Table Binding", img:"application-table.png", imgdis:"application-table.png"}
 		]);
 		this.layout.cells('b').showToolbar();
 
@@ -235,22 +239,22 @@ function Services() {
 					<col></col>\n\
 					<tr>\n\
 						<th>#</th>\n\
-						<th>Connection Name</th>\n\
-						<th>Source Type</th>\n\
+						<th>Username</th>\n\
+						<th>Type</th>\n\
 						<th><input type="checkbox" class="selectAll"/></th>\n\
 						<th>Details</th>\n\
 					</tr>\n\
 					<tr>\n\
 						<td>1.</td>\n\
-						<td>%Nama Connection%</td>\n\
-						<td class="center">Database</td>\n\
+						<td>admin</td>\n\
+						<td class="center">Native</td>\n\
 						<td class="center"><input type="checkbox" class="select"/></td>\n\
 						<td class="center"><input type="button" class="details" value="View"/></td>\n\
 					</tr>\n\
 					<tr>\n\
 						<td>2.</td>\n\
-						<td>%Nama Connection%</td>\n\
-						<td class="center">Database</td>\n\
+						<td>penghulu</td>\n\
+						<td class="center">Native</td>\n\
 						<td class="center"><input type="checkbox" class="select"/></td>\n\
 						<td class="center"><input type="button" class="details" value="View"/></td>\n\
 					</tr>\n\
@@ -279,6 +283,23 @@ function Services() {
 		]);
 		this.layout.cells('b').showToolbar();
 
+		var data = '';
+
+		if (!$.isEmptyObject(services.source.globalConnection)) {
+			var number = 1;
+			for (var connName in services.source.globalConnection) {
+				data += '<tr data-connection="'+ connName +'">\n\
+				<td>'+ (number++) +'.</td>\n\
+				<td>'+ connName +'</td>\n\
+				<td class="center">'+ services.source.globalConnection[connName].type +'</td>\n\
+				<td class="center"><input type="checkbox" class="select"/></td>\n\
+				<td class="center"><input type="button" class="viewDetails" value="View"/></td>\n\
+				</tr>';
+			}
+		} else {
+			data += '<tr><td colspan="5" class="center" style="padding:20px">No connection available.</td></tr>';
+		}
+
 		var html = '<div id="globalConnection" class="content">\n\
 			<div class="content">\n\
 				<table border="1">\n\
@@ -294,27 +315,7 @@ function Services() {
 						<th><input type="checkbox" class="selectAll"/></th>\n\
 						<th>Details</th>\n\
 					</tr>\n\
-					<tr>\n\
-						<td>1.</td>\n\
-						<td>%Nama Connection%</td>\n\
-						<td class="center">Database</td>\n\
-						<td class="center"><input type="checkbox" class="select"/></td>\n\
-						<td class="center"><input type="button" class="details" value="View"/></td>\n\
-					</tr>\n\
-					<tr>\n\
-						<td>2.</td>\n\
-						<td>%Nama Connection%</td>\n\
-						<td class="center">Database</td>\n\
-						<td class="center"><input type="checkbox" class="select"/></td>\n\
-						<td class="center"><input type="button" class="details" value="View"/></td>\n\
-					</tr>\n\
-					<tr>\n\
-						<td>3.</td>\n\
-						<td>%Nama Connection%</td>\n\
-						<td class="center">Database</td>\n\
-						<td class="center"><input type="checkbox" class="select"/></td>\n\
-						<td class="center"><input type="button" class="details" value="View"/></td>\n\
-					</tr>\n\
+					'+ data +'\n\
 				</table>\n\
 			</div>\n\
 		</div>\n\
@@ -365,22 +366,118 @@ function Services() {
 			stepElem.hide();
 			$('#wizard div.step[data-step="'+ (step-1) +'"]').show();
 		});
+
+		// global connection > view details
+		$('body').on('click', '#globalConnection input.viewDetails', function(){
+			var win = new dhtmlXWindows();
+			win.attachViewportTo('app');
+
+			var connectionWin = win.createWindow({
+				id:"connection",
+				width:550,
+				height:430,
+				center:true,
+				modal:true,
+				resize:false
+			});
+			connectionWin.button('minmax').hide();
+			connectionWin.button('park').hide();
+			connectionWin.setText('Connection');
+
+			var closingButton = '\n\
+			<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
+				<input type="button" class="test" style="padding:6px 35px" value="Test"/>\n\
+				<input type="button" class="save" style="padding:6px 35px" value="Save"/>\n\
+				<input type="button" class="reset" value="Reset"/>\n\
+			</div>';
+
+			var editConnection = '\n\
+			<table border="0" class="windowForm">\n\
+			<col style="width:120px"></col>\n\
+			<col style="width:10px"></col>\n\
+			<col></col>\n\
+			<tr>\n\
+				<td colspan="3"><b>Connection Details</b></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Connection Name</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="connectionName fullwidth" data-key="name" value="" autofocus="autofocus"/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Type</td>\n\
+				<td>:</td>\n\
+				<td>\n\
+					<select class="type" data-key="type">\n\
+						<option value="database">Database</option>\n\
+					</select>\n\
+				</td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Host</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="host fullwidth" data-key="host" value=""/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Username</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="username fullwidth" data-key="user" value=""/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Password</td>\n\
+				<td>:</td>\n\
+				<td><input type="password" class="password fullwidth" data-key="pass" value=""/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Database Name</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="host fullwidth" data-key="dbname" value=""/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Port</td>\n\
+				<td>:</td>\n\
+				<td><input type="number" class="port" data-key="port" value=""/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>SID</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="sid fullwidth" data-key="sid" value=""/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Service Name</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="serviceName fullwidth" data-key="serviceName" value=""/></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Socket</td>\n\
+				<td>:</td>\n\
+				<td><input type="text" class="socket fullwidth" data-key="socket" value=""/></td>\n\
+			</tr>\n\
+			</table>\n\
+			';
+
+			connectionWin.attachHTMLString(editConnection);
+		});
 	};
 
 	Services.prototype.CheckLogin = function(proceedFunction) {
 		var request = $.ajax({
-			url : this.phpPath + 'services.checklogin.php'/*,
-			dataType : 'json'*/
+			url : this.phpPath + 'services.checklogin.php',
+			dataType : 'json'
 		});
 
 		// jika butiran login tiada, patah balik ke landing page
 		request.done(function(response){
 			if (response.status === 0) {
 				services.GoBackHomeWithError();
-			} else {
-				proceedFunction();
+			} else if (response.status === 1) {
+				proceedFunction(response);
 			}
 		});
+	};
+
+	Services.prototype.GoBackHome = function() {
+		window.location.href = '../';
 	};
 
 	Services.prototype.GoBackHomeWithError = function() {
