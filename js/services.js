@@ -21,6 +21,7 @@ function Services() {
 	this.toolbar;
 	this.currentView;
 	this.source = null;
+	this.toolbarEvent = null;
 
 	Services.prototype.InitUI = function() {
 		this.layout = new dhtmlXLayoutObject({
@@ -274,13 +275,28 @@ function Services() {
 	};
 
 	Services.prototype.LoadGlobalConnection = function(){
-		this.toolbar.clearAll();
+		this.ToolbarReset();
 		this.toolbar.loadStruct([
 			{id:1, type:"button", text:"New Connection", img:"plus.png", imgdis:"plus.png"},
 			{id:2, type:"separator"},
 			{id:3, type:"button", text:"Remove", img:"cross.png", imgdis:"cross.png"},
 			{id:4, type:"separator"}
 		]);
+
+		this.toolbarEvent = this.toolbar.attachEvent('onClick', function(id){
+			if (id === '3') {
+				$('#globalConnection tr input.select').each(function(){
+					var isChecked = $(this).prop('checked');
+					var row = $(this).closest('tr');
+					if (isChecked) {
+						row.remove();
+					}
+				});
+
+				$('#globalConnection input.selectAll').prop('checked', false);
+			}
+		});
+
 		this.layout.cells('b').showToolbar();
 
 		var data = '';
@@ -375,7 +391,7 @@ function Services() {
 			var connectionWin = win.createWindow({
 				id:"connection",
 				width:550,
-				height:430,
+				height:380,
 				center:true,
 				modal:true,
 				resize:false
@@ -388,7 +404,6 @@ function Services() {
 			<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
 				<input type="button" class="test" style="padding:6px 35px" value="Test"/>\n\
 				<input type="button" class="save" style="padding:6px 35px" value="Save"/>\n\
-				<input type="button" class="reset" value="Reset"/>\n\
 			</div>';
 
 			var editConnection = '\n\
@@ -456,8 +471,13 @@ function Services() {
 			</table>\n\
 			';
 
-			connectionWin.attachHTMLString(editConnection);
+			connectionWin.attachHTMLString(editConnection + closingButton);
 		});
+	};
+
+	Services.prototype.ToolbarReset = function() {
+		this.toolbar.clearAll();
+		this.toolbar.detachEvent(this.toolbarEvent);
 	};
 
 	Services.prototype.CheckLogin = function(proceedFunction) {
