@@ -96,126 +96,19 @@ function Services() {
 	};
 
 	Services.prototype.LoadHome = function() {
-		var home = '<div id="home" class="content">\n\
-		<h3>Welcome to Lime & Rose Report Services</h3>\n\
-		<div class="panel">\n\
-			<h2 class="title">Application</h2>\n\
-			<div class="content">\n\
-				<table border="0" style="border:none">\n\
-					<col style="width:150px"></col>\n\
-					<col></col>\n\
-					<tr><td><b>Version</b></td><td>0.1 (Unstable)</td></tr>\n\
-					<tr><td><b>Release Date</b></td><td>May 2015</td></tr>\n\
-					<tr><td><b>Server-side Language</b></td><td>PHP</td></tr>\n\
-				</table>\n\
-			</div>\n\
-		</div>\n\
-		\n\
-		<div class="panel">\n\
-			<h2 class="title">Global Connection</h2>\n\
-			<div class="content">\n\
-				<table border="0" style="border:none">\n\
-					<col style="width:150px"></col>\n\
-					<col></col>\n\
-					<tr><td><b>Total Available</b></td><td>42  (40 Active, 2 Inactive)</td></tr>\n\
-				</table>\n\
-			</div>\n\
-		</div>\n\
-		\n\
-		<div class="panel">\n\
-			<h2 class="title">Services Account</h2>\n\
-			<div class="content">\n\
-				<table border="0" style="border:none">\n\
-					<col style="width:150px"></col>\n\
-					<col></col>\n\
-					<tr><td><b>Total Available</b></td><td>2</td></tr>\n\
-					<tr><td><b>Table Binding</b></td><td>No</td></tr>\n\
-					<tr><td><b>Table Name</b></td><td>-</td></tr>\n\
-					<tr><td><b>Column for Username</b></td><td>-</td></tr>\n\
-					<tr><td><b>Column for Password</b></td><td>-</td></tr>\n\
-					<tr><td><b>Connection</b></td><td>%Conn Name% (MySQL)</td></tr>\n\
-				</table>\n\
-			</div>\n\
-		</div>\n\
-		\n\
-		\n\
-		<div class="panel">\n\
-			<h2 class="title">Viewer Account</h2>\n\
-			<div class="content">\n\
-				<table border="0" style="border:none">\n\
-					<col style="width:150px"></col>\n\
-					<col></col>\n\
-					<tr><td><b>Total Available</b></td><td>30</td></tr>\n\
-					<tr><td><b>Table Binding</b></td><td>Yes</td></tr>\n\
-					<tr><td><b>Table Name</b></td><td>corrad.PRUSER</td></tr>\n\
-					<tr><td><b>Column for Username</b></td><td>USERNAME</td></tr>\n\
-					<tr><td><b>Column for Password</b></td><td>USERPASSWORD</td></tr>\n\
-					<tr><td><b>Connection</b></td><td>%Conn Name% (MySQL)</td></tr>\n\
-				</table>\n\
-			</div>\n\
-		</div>\n\
-		\n\
-		\n\
-		<div class="panel">\n\
-			<h2 class="title">Source</h2>\n\
-			<div class="content">\n\
-				Reload configuration data from source file.<br/>\n\
-				<input type="button" class="reloadSource" value="Reload Source"/>\n\
-			</div>\n\
-		</div>\n\
-		\n\
-		</div>\n\
-		';
-
 		this.layout.cells('b').hideToolbar();
+
+		// load view home
+		var home = this.LoadView('home');
 		this.layout.cells('b').attachHTMLString(home);
 	};
 
 	Services.prototype.LoadWizard = function() {
 		this.layout.cells('b').hideToolbar();
 
-		var html = '<div id="wizard" class="content">\n\
-			<h3>Report Configuration Wizard</h3>\n\
-			<div class="step" style="display:block" data-step="1">\n\
-				<h4>1. Select Report Files</h4>\n\
-				Step 1 of 4 &nbsp;&nbsp;&nbsp; \n\
-				<input type="button" disabled="disabled" value="&#171; Previous"/>\n\
-				<input type="button" class="next" value="Next &#187;"/><hr/>\n\
-				<p>Select report files you want to configure. You can choose one or more files.<br/>Note that, this wizard will overwrite configuration you have made on a particular files.</p>\n\
-				<div class="reportFiles" style="width:400px; height:200px; border:1px solid #bbb; position:relative; overflow-y:scroll"></div>\n\
-			</div>\n\
-			\n\
-			<div class="step" style="display:none" data-step="2">\n\
-				<h4>2. Connection</h4>\n\
-				Step 2 of 4 &nbsp;&nbsp;&nbsp; \n\
-				<input type="button" class="prev" value="&#171; Previous"/>\n\
-				<input type="button" class="next" value="Next &#187;"/><hr/>\n\
-				<p>\n\
-					<input type="radio" name="connection" checked="checked"/> Native connection \n\
-					<input type="radio" name="connection"/> Global Connection \n\
-					<input type="radio" name="connection"/> New Global Connection \n\
-				</p>\n\
-			</div>\n\
-			\n\
-			<div class="step" style="display:none" data-step="3">\n\
-				<h4>3. Decryption Key</h4>\n\
-				Step 3 of 4 &nbsp;&nbsp;&nbsp; \n\
-				<input type="button" class="prev" value="&#171; Previous"/>\n\
-				<input type="button" class="next" value="Next &#187;"/><hr/>\n\
-				<p>Every single report file is encrypted with a key. In order to view actual report, the key<br/>will be used to decrypt and read the source file. If the key is invalid, an error will appear<br/>when you run the report via Report Viewer.</p>\n\
-				Key : <input type="text"/>\n\
-			</div>\n\
-			\n\
-			<div class="step" style="display:none" data-step="4">\n\
-				<h4>4. View Permission</h4>\n\
-				Step 4 of 4 &nbsp;&nbsp;&nbsp; \n\
-				<input type="button" class="prev" value="&#171; Previous"/>\n\
-				<input type="button" disabled="disabled" value="Next &#187;"/>\n\
-				<input type="button" value="Finish"/><hr/>\n\
-			</div>\n\
-		</div>';
-
-		this.layout.cells('b').attachHTMLString(html);
+		// load view wizard
+		var wizard = this.LoadView('wizard');
+		this.layout.cells('b').attachHTMLString(wizard);
 	};
 
 	Services.prototype.LoadServicesAccount = function() {
@@ -406,72 +299,15 @@ function Services() {
 			connectionWin.button('park').hide();
 			connectionWin.setText('Connection');
 
-			var closingButton = '\n\
-			<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
-				<input type="button" class="test" style="padding:6px 25px" value="Test"/>\n\
-				<input type="button" class="edit" style="padding:6px 30px" value="Edit"/>\n\
-			</div>';
+			// buttons
+			var closingButton = (function(){
+				return services.LoadView('globalConnectionDetailsClosingButton')
+			})();
 
-			var viewConnectionDetails = '\n\
-			<table border="0" class="windowForm">\n\
-			<col style="width:120px"></col>\n\
-			<col style="width:10px"></col>\n\
-			<col></col>\n\
-			<tr>\n\
-				<td colspan="3"><b>Connection Details</b></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Connection Name</td>\n\
-				<td>:</td>\n\
-				<td><span>'+ connName +'</span></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Type</td>\n\
-				<td>:</td>\n\
-				<td>'+ conn.type +'</td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Host</td>\n\
-				<td>:</td>\n\
-				<td>'+ conn.host +'</td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Username</td>\n\
-				<td>:</td>\n\
-				<td>'+ conn.username +'</td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Password</td>\n\
-				<td>:</td>\n\
-				<td><a id="showConnectionPassword" data-connection="'+ connName +'" href="javascript:void(0);">Show Password</a></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Database Name</td>\n\
-				<td>:</td>\n\
-				<td>'+ conn.dbName +'</td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Port</td>\n\
-				<td>:</td>\n\
-				<td>'+ conn.port +'</td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>SID</td>\n\
-				<td>:</td>\n\
-				<td>'+ conn.sid +'</td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Service Name</td>\n\
-				<td>:</td>\n\
-				<td>'+ conn.serviceName +'</td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Socket</td>\n\
-				<td>:</td>\n\
-				<td>'+ conn.socket +'</td>\n\
-			</tr>\n\
-			</table>\n\
-			';
+			// connection details string
+			var viewConnectionDetails = (function(connectionName){
+				return services.LoadView('globalConnectionDetails', connectionName);
+			})(connName);
 
 			/*var editConnection = '\n\
 			<table border="0" class="windowForm">\n\
@@ -549,6 +385,50 @@ function Services() {
 		});
 	};
 
+	Services.prototype.LoadView = function(viewId, objectName) {
+
+		// view > home
+		if (viewId === 'home') {
+			return services.source.view[viewId];
+		}
+
+		// view > wizard
+		else if (viewId === 'wizard') {
+			return services.source.view[viewId];
+		}
+
+		// view > global connection details
+		else if (viewId === 'globalConnectionDetails') {
+
+			var conn = services.source.globalConnection[objectName];
+			var detail = {
+				'connectionName' : objectName,
+				'connectionType' : conn.type,
+				'connectionHost' : conn.host,
+				'connectionUsername' : conn.username,
+				'connectionDbName' : conn.dbName,
+				'connectionPort' : conn.port,
+				'connectionSID' : conn.sid,
+				'connectionServiceName' : conn.serviceName,
+				'connectionSocket' : conn.socket
+			};
+			var view = services.source.view['globalConnectionDetails'];
+
+			for (var key in detail) {
+				var find = '{{'+ key +'}}';
+				var re = new RegExp(find, 'g');
+				view = view.replace(re, detail[key]);
+			}
+
+			return view;
+		}
+
+		// view > global connection details button
+		else if (viewId === 'globalConnectionDetailsClosingButton') {
+			return services.source.view[viewId];
+		}
+	};
+
 	Services.prototype.ToolbarReset = function() {
 		this.toolbar.clearAll();
 		this.toolbar.detachEvent(this.toolbarEvent);
@@ -562,7 +442,7 @@ function Services() {
 
 		// jika butiran login tiada, patah balik ke landing page
 		request.done(function(response){
-			console.log(response.source);
+			console.log(response);
 			if (response.status === 0) {
 				services.GoBackHomeWithError();
 			} else if (response.status === 1) {

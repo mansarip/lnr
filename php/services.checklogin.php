@@ -16,6 +16,12 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 	} else {
 		$response['status'] = 1;
 		$response['source'] = $source;
+
+		// dapatkan sumber views
+		$response['source']['view']['home']                                 = trim(preg_replace('/\s+/', ' ', file_get_contents('../services/home.html')));
+		$response['source']['view']['wizard']                               = trim(preg_replace('/\s+/', ' ', file_get_contents('../services/wizard.html')));
+		$response['source']['view']['globalConnectionDetails']              = trim(preg_replace('/\s+/', ' ', file_get_contents('../services/globalconnection.details.html')));
+		$response['source']['view']['globalConnectionDetailsClosingButton'] = trim(preg_replace('/\s+/', ' ', file_get_contents('../services/globalconnection.buttons.html')));
 	}
 
 } else {

@@ -1,0 +1,40 @@
+<div id="wizard" class="content">
+	<h3>Report Configuration Wizard</h3>
+	<div class="step" style="display:block" data-step="1">
+		<h4>1. Select Report Files</h4>
+		Step 1 of 4 &nbsp;&nbsp;&nbsp; 
+		<input type="button" disabled="disabled" value="&#171; Previous"/>
+		<input type="button" class="next" value="Next &#187;"/><hr/>
+		<p>Select report files you want to configure. You can choose one or more files.<br/>Note that, this wizard will overwrite configuration you have made on a particular files.</p>
+		<div class="reportFiles" style="width:400px; height:200px; border:1px solid #bbb; position:relative; overflow-y:scroll"></div>
+	</div>
+	
+	<div class="step" style="display:none" data-step="2">
+		<h4>2. Connection</h4>
+		Step 2 of 4 &nbsp;&nbsp;&nbsp; 
+		<input type="button" class="prev" value="&#171; Previous"/>
+		<input type="button" class="next" value="Next &#187;"/><hr/>
+		<p>
+			<input type="radio" name="connection" checked="checked"/> Native connection 
+			<input type="radio" name="connection"/> Global Connection 
+			<input type="radio" name="connection"/> New Global Connection 
+		</p>
+	</div>
+	
+	<div class="step" style="display:none" data-step="3">
+		<h4>3. Decryption Key</h4>
+		Step 3 of 4 &nbsp;&nbsp;&nbsp; 
+		<input type="button" class="prev" value="&#171; Previous"/>
+		<input type="button" class="next" value="Next &#187;"/><hr/>
+		<p>Every single report file is encrypted with a key. In order to view actual report, the key<br/>will be used to decrypt and read the source file. If the key is invalid, an error will appear<br/>when you run the report via Report Viewer.</p>
+		Key : <input type="text"/>
+	</div>
+	
+	<div class="step" style="display:none" data-step="4">
+		<h4>4. View Permission</h4>
+		Step 4 of 4 &nbsp;&nbsp;&nbsp; 
+		<input type="button" class="prev" value="&#171; Previous"/>
+		<input type="button" disabled="disabled" value="Next &#187;"/>
+		<input type="button" value="Finish"/><hr/>
+	</div>
+</div>
