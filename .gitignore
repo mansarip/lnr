@@ -29,5 +29,5 @@ Temporary Items
 
 libs/dhtmlx/dhtmlx.js
 libs/dhtmlx/dhtmlx.zip
-libs/dhtmlx/imgs
+# libs/dhtmlx/imgs
 libs/tcpdf
