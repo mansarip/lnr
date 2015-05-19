@@ -385,6 +385,12 @@ function Services() {
 
 		// global connection > view details
 		$('body').on('click', '#globalConnection input.viewDetails', function(){
+			// connection name
+			var connName = $(this).closest('tr').attr('data-connection');
+
+			// connection details
+			var conn = services.source.globalConnection[connName];
+
 			var win = new dhtmlXWindows();
 			win.attachViewportTo('app');
 
@@ -402,11 +408,72 @@ function Services() {
 
 			var closingButton = '\n\
 			<div class="buttonPlaceholder" style="padding:10px 15px;">\n\
-				<input type="button" class="test" style="padding:6px 35px" value="Test"/>\n\
-				<input type="button" class="save" style="padding:6px 35px" value="Save"/>\n\
+				<input type="button" class="test" style="padding:6px 25px" value="Test"/>\n\
+				<input type="button" class="edit" style="padding:6px 30px" value="Edit"/>\n\
 			</div>';
 
-			var editConnection = '\n\
+			var viewConnectionDetails = '\n\
+			<table border="0" class="windowForm">\n\
+			<col style="width:120px"></col>\n\
+			<col style="width:10px"></col>\n\
+			<col></col>\n\
+			<tr>\n\
+				<td colspan="3"><b>Connection Details</b></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Connection Name</td>\n\
+				<td>:</td>\n\
+				<td><span>'+ connName +'</span></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Type</td>\n\
+				<td>:</td>\n\
+				<td>'+ conn.type +'</td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Host</td>\n\
+				<td>:</td>\n\
+				<td>'+ conn.host +'</td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Username</td>\n\
+				<td>:</td>\n\
+				<td>'+ conn.username +'</td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Password</td>\n\
+				<td>:</td>\n\
+				<td><a id="showConnectionPassword" data-connection="'+ connName +'" href="javascript:void(0);">Show Password</a></td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Database Name</td>\n\
+				<td>:</td>\n\
+				<td>'+ conn.dbName +'</td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Port</td>\n\
+				<td>:</td>\n\
+				<td>'+ conn.port +'</td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>SID</td>\n\
+				<td>:</td>\n\
+				<td>'+ conn.sid +'</td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Service Name</td>\n\
+				<td>:</td>\n\
+				<td>'+ conn.serviceName +'</td>\n\
+			</tr>\n\
+			<tr>\n\
+				<td>Socket</td>\n\
+				<td>:</td>\n\
+				<td>'+ conn.socket +'</td>\n\
+			</tr>\n\
+			</table>\n\
+			';
+
+			/*var editConnection = '\n\
 			<table border="0" class="windowForm">\n\
 			<col style="width:120px"></col>\n\
 			<col style="width:10px"></col>\n\
@@ -469,9 +536,16 @@ function Services() {
 				<td><input type="text" class="socket fullwidth" data-key="socket" value=""/></td>\n\
 			</tr>\n\
 			</table>\n\
-			';
+			';*/
 
-			connectionWin.attachHTMLString(editConnection + closingButton);
+			connectionWin.attachHTMLString(viewConnectionDetails + closingButton);
+		});
+
+		// global connection > show password
+		$('body').on('click', '#showConnectionPassword', function(){
+			var connName = $(this).attr('data-connection');
+			var password = services.source.globalConnection[connName].password;
+			$(this).closest('td').text(password);
 		});
 	};
 
@@ -488,6 +562,7 @@ function Services() {
 
 		// jika butiran login tiada, patah balik ke landing page
 		request.done(function(response){
+			console.log(response.source);
 			if (response.status === 0) {
 				services.GoBackHomeWithError();
 			} else if (response.status === 1) {
