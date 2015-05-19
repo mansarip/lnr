@@ -192,44 +192,7 @@ function Services() {
 
 		this.layout.cells('b').showToolbar();
 
-		var data = '';
-
-		if (!$.isEmptyObject(services.source.globalConnection)) {
-			var number = 1;
-			for (var connName in services.source.globalConnection) {
-				data += '<tr data-connection="'+ connName +'">\n\
-				<td>'+ (number++) +'.</td>\n\
-				<td>'+ connName +'</td>\n\
-				<td class="center">'+ services.source.globalConnection[connName].type +'</td>\n\
-				<td class="center"><input type="checkbox" class="select"/></td>\n\
-				<td class="center"><input type="button" class="viewDetails" value="View"/></td>\n\
-				</tr>';
-			}
-		} else {
-			data += '<tr><td colspan="5" class="center" style="padding:20px">No connection available.</td></tr>';
-		}
-
-		var html = '<div id="globalConnection" class="content">\n\
-			<div class="content">\n\
-				<table border="1">\n\
-					<col style="width:30px"></col>\n\
-					<col></col>\n\
-					<col></col>\n\
-					<col style="width:30px"></col>\n\
-					<col></col>\n\
-					<tr>\n\
-						<th>#</th>\n\
-						<th>Connection Name</th>\n\
-						<th>Source Type</th>\n\
-						<th><input type="checkbox" class="selectAll"/></th>\n\
-						<th>Details</th>\n\
-					</tr>\n\
-					'+ data +'\n\
-				</table>\n\
-			</div>\n\
-		</div>\n\
-		';
-
+		var html = this.LoadView('globalConnection');
 		this.layout.cells('b').attachHTMLString(html);
 	};
 
@@ -397,6 +360,34 @@ function Services() {
 			return services.source.view[viewId];
 		}
 
+		// view > global connection
+		else if (viewId === 'globalConnection') {
+			var dataHtml = '';
+
+			// jika ada connection
+			if (!$.isEmptyObject(services.source.globalConnection)) {
+				var number = 1;
+
+				for (var connName in services.source.globalConnection) {
+					var conn = services.source.globalConnection[connName];
+					var detail = {
+						'number' : number,
+						'connectionName' : connName,
+						'connectionType' : conn.type
+					};
+
+					dataHtml += services._ReplaceVariableView(services.source.view['globalConnectionData'], detail);
+					number++;
+				}
+			}
+			// jika tiada
+			else {
+				dataHtml += services._ReplaceVariableView(services.source.view['globalConnectionNoData']);
+			}
+
+			return services._ReplaceVariableView(services.source.view['globalConnection'], {data:dataHtml});
+		}
+
 		// view > global connection details
 		else if (viewId === 'globalConnectionDetails') {
 
@@ -412,21 +403,23 @@ function Services() {
 				'connectionServiceName' : conn.serviceName,
 				'connectionSocket' : conn.socket
 			};
-			var view = services.source.view['globalConnectionDetails'];
 
-			for (var key in detail) {
-				var find = '{{'+ key +'}}';
-				var re = new RegExp(find, 'g');
-				view = view.replace(re, detail[key]);
-			}
-
-			return view;
+			return services._ReplaceVariableView(services.source.view['globalConnectionDetails'], detail);
 		}
 
 		// view > global connection details button
 		else if (viewId === 'globalConnectionDetailsClosingButton') {
 			return services.source.view[viewId];
 		}
+	};
+
+	Services.prototype._ReplaceVariableView = function(view, variables) {
+		for (var key in variables) {
+			var find = '{{'+ key +'}}';
+			var re = new RegExp(find, 'g');
+			view = view.replace(re, variables[key]);
+		}
+		return view;
 	};
 
 	Services.prototype.ToolbarReset = function() {

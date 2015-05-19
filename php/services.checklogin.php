@@ -18,10 +18,13 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 		$response['source'] = $source;
 
 		// dapatkan sumber views
-		$response['source']['view']['home']                                 = trim(preg_replace('/\s+/', ' ', file_get_contents('../services/home.html')));
-		$response['source']['view']['wizard']                               = trim(preg_replace('/\s+/', ' ', file_get_contents('../services/wizard.html')));
-		$response['source']['view']['globalConnectionDetails']              = trim(preg_replace('/\s+/', ' ', file_get_contents('../services/globalconnection.details.html')));
-		$response['source']['view']['globalConnectionDetailsClosingButton'] = trim(preg_replace('/\s+/', ' ', file_get_contents('../services/globalconnection.buttons.html')));
+		$response['source']['view']['home']                                 = MinifySourceView('home.html');
+		$response['source']['view']['wizard']                               = MinifySourceView('wizard.html');
+		$response['source']['view']['globalConnection']                     = MinifySourceView('globalconnection.html');
+		$response['source']['view']['globalConnectionData']                 = MinifySourceView('globalconnection.data.html');
+		$response['source']['view']['globalConnectionNoData']               = MinifySourceView('globalconnection.nodata.html');
+		$response['source']['view']['globalConnectionDetails']              = MinifySourceView('globalconnection.details.html');
+		$response['source']['view']['globalConnectionDetailsClosingButton'] = MinifySourceView('globalconnection.buttons.html');
 	}
 
 } else {
@@ -29,5 +32,9 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 }
 
 echo json_encode($response);
+
+function MinifySourceView($file) {
+	return trim(preg_replace('/\s+/', ' ', file_get_contents('../services/' . $file)));
+}
 
 ?>
