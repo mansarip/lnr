@@ -26,7 +26,8 @@ function Services() {
 	this.toolbarEvent = null;
 	this.currentWindowOpen = null;
 	this.icon = {
-		error : '<img src="../img/icons/exclamation-red-frame.png"/>'
+		error : '<img src="../img/icons/exclamation-red-frame.png"/>',
+		success : '<img src="../img/icons/tick.png"/>'
 	};
 
 	Services.prototype.InitUI = function() {
@@ -321,7 +322,30 @@ function Services() {
 				wrapper.find('.buttons input.test').css('visibility','visible');
 				wrapper.find('input[data-key="host"]').focus();
 			}
-		})
+		});
+
+		// global connection > new > cancel
+		$('body').on('click', '#globalConnectionNew .buttons input.cancel', function(){
+			services.currentWindowOpen.close();
+			services.currentWindowOpen = null;
+		});
+
+		// global connection > new > test connection
+		$('body').on('click', '#globalConnectionNew .buttons input.test', function(){
+			var details = {};
+
+			$('#globalConnectionNew input, #globalConnectionNew select').each(function(){
+				var key = $(this).attr('data-key');
+				var value = $(this).val();
+
+				if (key) {
+					details[key] = value;
+				}
+			});
+
+			services.TestConnection(details);
+		});
+
 
 		// global connection > edit details
 		$('body').on('click', '#globalConnectionDetailsButton input.edit', function(){
@@ -579,23 +603,28 @@ function Services() {
 			if (services.currentWindowOpen !== null) services.currentWindowOpen.progressOff();
 			console.log(response);
 		});
+	};
 
-
-		/*if (this.currentWindowOpen !== null) this.currentWindowOpen.progressOn();
-
+	Services.prototype.TestConnection = function(data) {
 		$.ajax({
-			url : this.phpPath + 'services.write.php',
-			data : {
-				task : task,
-				data : data
-			},
-			type : 'post'
+			url:this.phpPath + 'services.testconnection.php',
+			data:data,
+			type:'post',
+			dataType:'json'
 		})
 		.done(function(response){
-			if (services.currentWindowOpen !== null) services.currentWindowOpen.progressOff();
-
-			console.log(response);
-		});*/
+			if (response.status === 0) {
+				dhtmlx.alert({
+					title : 'Error',
+					text : services.icon.error + '<p>'+ response.message +'</p>'
+				});
+			} else if (response.status === 1) {
+				dhtmlx.alert({
+					title : 'Success',
+					text : services.icon.success + '<p>Successfully connected!</p>'
+				});
+			}
+		});
 	};
 
 	Services.prototype.ToolbarReset = function() {
