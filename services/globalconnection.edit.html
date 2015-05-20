@@ -1,0 +1,69 @@
+<table border="0" class="windowForm">
+<col style="width:120px"></col>
+<col style="width:10px"></col>
+<col></col>
+<tr>
+	<td colspan="3"><b>Connection Details</b></td>
+</tr>
+<tr>
+	<td>Connection Name</td>
+	<td>:</td>
+	<td><input type="text" class="connectionName fullwidth" data-key="name" value="{{connectionName}}" autofocus="autofocus"/></td>
+</tr>
+<tr>
+	<td>Type</td>
+	<td>:</td>
+	<td>
+		<select class="type" data-key="type">
+			<option value="database">Database</option>
+		</select>
+	</td>
+</tr>
+<tr>
+	<td>Host</td>
+	<td>:</td>
+	<td><input type="text" class="host fullwidth" data-key="host" value="{{connectionHost}}"/></td>
+</tr>
+<tr>
+	<td>Username</td>
+	<td>:</td>
+	<td><input type="text" class="username fullwidth" data-key="user" value="{{connectionUsername}}"/></td>
+</tr>
+<tr>
+	<td>Password</td>
+	<td>:</td>
+	<td><input type="password" class="password fullwidth" data-key="pass" value="{{connectionPassword}}"/></td>
+</tr>
+<tr>
+	<td>Database Name</td>
+	<td>:</td>
+	<td><input type="text" class="host fullwidth" data-key="dbname" value="{{connectionDbName}}"/></td>
+</tr>
+<tr>
+	<td>Port</td>
+	<td>:</td>
+	<td><input type="number" class="port" data-key="port" value="{{connectionPort}}"/></td>
+</tr>
+<tr>
+	<td>SID</td>
+	<td>:</td>
+	<td><input type="text" class="sid fullwidth" data-key="sid" value="{{connectionSID}}"/></td>
+</tr>
+<tr>
+	<td>Service Name</td>
+	<td>:</td>
+	<td><input type="text" class="serviceName fullwidth" data-key="serviceName" value="{{connectionServiceName}}"/></td>
+</tr>
+<tr>
+	<td>Socket</td>
+	<td>:</td>
+	<td><input type="text" class="socket fullwidth" data-key="socket" value="{{connectionSocket}}"/></td>
+</tr>
+</table>
+
+<div id="globalConnectionEditButton" class="buttonPlaceholder" style="padding:10px 15px;">
+	<input type="button" class="test" style="padding:5px 25px" value="Test"/>
+	<input type="button" class="save" data-connection="{{connectionName}}" style="padding:5px 35px" value="Save"/>
+	&nbsp;&nbsp;
+	<input type="button" class="cancel" style="padding:5px 30px" value="Cancel"/>
+</div>

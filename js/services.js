@@ -22,6 +22,10 @@ function Services() {
 	this.currentView;
 	this.source = null;
 	this.toolbarEvent = null;
+	this.currentWindowOpen = null;
+	this.icon = {
+		error : '<img src="../img/icons/exclamation-red-frame.png"/>'
+	};
 
 	Services.prototype.InitUI = function() {
 		this.layout = new dhtmlXLayoutObject({
@@ -239,6 +243,68 @@ function Services() {
 			$('#wizard div.step[data-step="'+ (step-1) +'"]').show();
 		});
 
+		// global connection > edit details
+		$('body').on('click', '#globalConnectionDetailsButton input.edit', function(){
+			// dapatkan current window open
+			var connectionWin = services.currentWindowOpen;
+
+			var connName = $(this).attr('data-connection');
+
+			// view
+			var viewEditConnection = (function(connName){
+				return services.LoadView('globalConnectionEdit', connName);
+			})(connName);
+
+			connectionWin.attachHTMLString(viewEditConnection);
+		});
+
+		// global connection > edit details > button > save
+		$('body').on('click', '#globalConnectionEditButton input.save', function(){
+			var form = $(services.currentWindowOpen.cell).find('table.windowForm');
+			var detail = {};
+			var oldConnName = $(this).attr('data-connection');
+			var newConnName = form.find('input.connectionName').val();
+
+			// jika name tak berubah
+			if (newConnName === oldConnName) {
+				form.find('input, select').each(function(){
+					//console.log($(this).val());
+					var key = $(this).attr('data-key');
+					var value = $(this).val();
+
+					// convert jadi number
+					if (key === 'port') {
+						detail[key] = Number(value);
+					} else if (key !== 'name') {
+						detail[key] = value;
+					}
+				});
+
+				services.WriteSourceFile('saveGlobalConnection', detail);
+			}
+
+			// jika nama berubah DAN jika name dah ada
+			else if (newConnName !== oldConnName && services.source.globalConnection[newConnName] !== undefined) {
+				dhtmlx.alert({
+					title : 'Error',
+					text : services.icon.error + '<p>Name already exist!</p>'
+				});
+
+				return false;
+			}
+
+			// jika nama berubah DAN nama masih available
+			else if (newConnName !== oldConnName && services.source.globalConnection[newConnName] === undefined) {
+
+			}
+		});
+
+		// global connection > edit details > button > cancel
+		$('body').on('click', '#globalConnectionEditButton input.cancel', function(){
+			services.currentWindowOpen.close();
+			services.currentWindowOpen = null;
+		});
+
 		// global connection > view details
 		$('body').on('click', '#globalConnection input.viewDetails', function(){
 			// connection name
@@ -262,82 +328,15 @@ function Services() {
 			connectionWin.button('park').hide();
 			connectionWin.setText('Connection');
 
-			// buttons
-			var closingButton = (function(){
-				return services.LoadView('globalConnectionDetailsClosingButton')
-			})();
+			// register current window open
+			services.currentWindowOpen = connectionWin;
 
 			// connection details string
 			var viewConnectionDetails = (function(connectionName){
 				return services.LoadView('globalConnectionDetails', connectionName);
 			})(connName);
 
-			/*var editConnection = '\n\
-			<table border="0" class="windowForm">\n\
-			<col style="width:120px"></col>\n\
-			<col style="width:10px"></col>\n\
-			<col></col>\n\
-			<tr>\n\
-				<td colspan="3"><b>Connection Details</b></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Connection Name</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="connectionName fullwidth" data-key="name" value="" autofocus="autofocus"/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Type</td>\n\
-				<td>:</td>\n\
-				<td>\n\
-					<select class="type" data-key="type">\n\
-						<option value="database">Database</option>\n\
-					</select>\n\
-				</td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Host</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="host fullwidth" data-key="host" value=""/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Username</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="username fullwidth" data-key="user" value=""/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Password</td>\n\
-				<td>:</td>\n\
-				<td><input type="password" class="password fullwidth" data-key="pass" value=""/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Database Name</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="host fullwidth" data-key="dbname" value=""/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Port</td>\n\
-				<td>:</td>\n\
-				<td><input type="number" class="port" data-key="port" value=""/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>SID</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="sid fullwidth" data-key="sid" value=""/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Service Name</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="serviceName fullwidth" data-key="serviceName" value=""/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Socket</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="socket fullwidth" data-key="socket" value=""/></td>\n\
-			</tr>\n\
-			</table>\n\
-			';*/
-
-			connectionWin.attachHTMLString(viewConnectionDetails + closingButton);
+			connectionWin.attachHTMLString(viewConnectionDetails);
 		});
 
 		// global connection > show password
@@ -404,7 +403,26 @@ function Services() {
 				'connectionSocket' : conn.socket
 			};
 
-			return services._ReplaceVariableView(services.source.view['globalConnectionDetails'], detail);
+			return services._ReplaceVariableView(services.source.view[viewId], detail);
+		}
+
+		// view > global connection edit
+		else if (viewId === 'globalConnectionEdit') {
+			var conn = services.source.globalConnection[objectName];
+			var detail = {
+				'connectionName' : objectName,
+				'connectionType' : conn.type,
+				'connectionHost' : conn.host,
+				'connectionUsername' : conn.username,
+				'connectionPassword' : conn.password,
+				'connectionDbName' : conn.dbName,
+				'connectionPort' : conn.port,
+				'connectionSID' : conn.sid,
+				'connectionServiceName' : conn.serviceName,
+				'connectionSocket' : conn.socket
+			};
+
+			return services._ReplaceVariableView(services.source.view[viewId], detail);
 		}
 
 		// view > global connection details button
@@ -422,6 +440,43 @@ function Services() {
 		return view;
 	};
 
+	Services.prototype.ReloadSource = function(callback) {
+		$.ajax({
+			url:this.phpPath + 'services.reload.php'
+		})
+		.done(function(data){
+			try {
+				var source = JSON.parse(data);
+			} catch(e) {
+				dhtmlx.alert({
+					title : 'Reload Error',
+					text : services.icon.error + '<p>Corrupted source file!<br/>"' + e.message + '"</p>'
+				});
+
+				return false;
+			}
+
+			// simpan view
+			var view = $.extend({}, true, services.source.view);
+			services.source = source;
+			services.source.view = view;
+		});
+	};
+
+	Services.prototype.WriteSourceFile = function(task, data) {
+		$.ajax({
+			url : this.phpPath + 'services.write.php',
+			data : {
+				task : task,
+				data : data
+			},
+			type : 'post'
+		})
+		.done(function(response){
+			console.log(response);
+		});
+	};
+
 	Services.prototype.ToolbarReset = function() {
 		this.toolbar.clearAll();
 		this.toolbar.detachEvent(this.toolbarEvent);
@@ -435,7 +490,6 @@ function Services() {
 
 		// jika butiran login tiada, patah balik ke landing page
 		request.done(function(response){
-			console.log(response);
 			if (response.status === 0) {
 				services.GoBackHomeWithError();
 			} else if (response.status === 1) {

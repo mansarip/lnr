@@ -23,8 +23,8 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 		$response['source']['view']['globalConnection']                     = MinifySourceView('globalconnection.html');
 		$response['source']['view']['globalConnectionData']                 = MinifySourceView('globalconnection.data.html');
 		$response['source']['view']['globalConnectionNoData']               = MinifySourceView('globalconnection.nodata.html');
+		$response['source']['view']['globalConnectionEdit']                 = MinifySourceView('globalconnection.edit.html');
 		$response['source']['view']['globalConnectionDetails']              = MinifySourceView('globalconnection.details.html');
-		$response['source']['view']['globalConnectionDetailsClosingButton'] = MinifySourceView('globalconnection.buttons.html');
 	}
 
 } else {

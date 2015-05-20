@@ -4,7 +4,7 @@ class ServicesSource
 {
 	private static $key = 'limenrose';
 
-	private static function _Decrypt($source) {
+	public static function Decrypt($source) {
 		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5(self::$key), base64_decode($source), MCRYPT_MODE_CBC, md5(md5(self::$key))), "\0");
 	}
 
@@ -51,7 +51,7 @@ class ServicesSource
 		}
 
 		$rawContent = file_get_contents($file);
-		$data = self::_Decrypt($rawContent);
+		$data = self::Decrypt($rawContent);
 
 		return $data;
 	}
