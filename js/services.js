@@ -261,42 +261,58 @@ function Services() {
 		// global connection > edit details > button > save
 		$('body').on('click', '#globalConnectionEditButton input.save', function(){
 			var form = $(services.currentWindowOpen.cell).find('table.windowForm');
-			var detail = {};
 			var oldConnName = $(this).attr('data-connection');
 			var newConnName = form.find('input.connectionName').val();
+			var detail = {};
+			detail[newConnName] = {};
 
-			// jika name tak berubah
-			if (newConnName === oldConnName) {
-				form.find('input, select').each(function(){
-					//console.log($(this).val());
-					var key = $(this).attr('data-key');
-					var value = $(this).val();
+			// preloader
+			services.currentWindowOpen.progressOn();
 
-					// convert jadi number
-					if (key === 'port') {
-						detail[key] = Number(value);
-					} else if (key !== 'name') {
-						detail[key] = value;
-					}
-				});
+			// reload source
+			services.ReloadSource(function(){
 
-				services.WriteSourceFile('saveGlobalConnection', detail);
-			}
+				// preloader off
+				services.currentWindowOpen.progressOff();
 
-			// jika nama berubah DAN jika name dah ada
-			else if (newConnName !== oldConnName && services.source.globalConnection[newConnName] !== undefined) {
-				dhtmlx.alert({
-					title : 'Error',
-					text : services.icon.error + '<p>Name already exist!</p>'
-				});
+				// jika name tak berubah
+				if (newConnName === oldConnName) {
 
-				return false;
-			}
+					form.find('input, select').each(function(){
+						var key = $(this).attr('data-key');
+						var value = $(this).val();
 
-			// jika nama berubah DAN nama masih available
-			else if (newConnName !== oldConnName && services.source.globalConnection[newConnName] === undefined) {
+						// convert jadi number
+						if (key === 'port') {
+							detail[newConnName][key] = Number(value);
+						} else if (key !== 'name') {
+							detail[newConnName][key] = value;
+						}
+					});
 
-			}
+					delete services.source.globalConnection[newConnName];
+					services.source.globalConnection[newConnName] = detail[newConnName]; // write pada memory
+
+					//services.WriteSourceFile('saveGlobalConnection', detail); // write source file
+					services.WriteSourceFile();
+				}
+
+				// jika nama berubah DAN jika name dah ada
+				else if (newConnName !== oldConnName && services.source.globalConnection[newConnName] !== undefined) {
+					dhtmlx.alert({
+						title : 'Error',
+						text : services.icon.error + '<p>Name already exist!</p>'
+					});
+
+					return false;
+				}
+
+				// jika nama berubah DAN nama masih available
+				else if (newConnName !== oldConnName && services.source.globalConnection[newConnName] === undefined) {
+
+				}
+
+			});
 		});
 
 		// global connection > edit details > button > cancel
@@ -394,6 +410,7 @@ function Services() {
 			var detail = {
 				'connectionName' : objectName,
 				'connectionType' : conn.type,
+				'connectionDbType' : conn.dbType,
 				'connectionHost' : conn.host,
 				'connectionUsername' : conn.username,
 				'connectionDbName' : conn.dbName,
@@ -452,7 +469,6 @@ function Services() {
 					title : 'Reload Error',
 					text : services.icon.error + '<p>Corrupted source file!<br/>"' + e.message + '"</p>'
 				});
-
 				return false;
 			}
 
@@ -460,10 +476,31 @@ function Services() {
 			var view = $.extend({}, true, services.source.view);
 			services.source = source;
 			services.source.view = view;
+
+			if (callback) callback();
 		});
 	};
 
 	Services.prototype.WriteSourceFile = function(task, data) {
+		if (this.currentWindowOpen !== null) this.currentWindowOpen.progressOn();
+
+		var data = $.extend({}, true, services.source);
+		delete data.view;
+
+		$.ajax({
+			url:this.phpPath + 'services.write.php',
+			data:{data:JSON.stringify(data)},
+			type:'post',
+			dataType:'json'
+		})
+		.done(function(response){
+			if (services.currentWindowOpen !== null) services.currentWindowOpen.progressOff();
+			console.log(response);
+		});
+
+
+		/*if (this.currentWindowOpen !== null) this.currentWindowOpen.progressOn();
+
 		$.ajax({
 			url : this.phpPath + 'services.write.php',
 			data : {
@@ -473,8 +510,10 @@ function Services() {
 			type : 'post'
 		})
 		.done(function(response){
+			if (services.currentWindowOpen !== null) services.currentWindowOpen.progressOff();
+
 			console.log(response);
-		});
+		});*/
 	};
 
 	Services.prototype.ToolbarReset = function() {

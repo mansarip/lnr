@@ -8,7 +8,7 @@ class ServicesSource
 		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5(self::$key), base64_decode($source), MCRYPT_MODE_CBC, md5(md5(self::$key))), "\0");
 	}
 
-	private static function _Encrypt($source) {
+	public static function Encrypt($source) {
 		$source = trim($source);
 		$source = preg_replace('/\s+/', ' ', $source);
 		return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5(self::$key), $source, MCRYPT_MODE_CBC, md5(md5(self::$key))));
@@ -26,7 +26,7 @@ class ServicesSource
 		}
 
 		// sediakan content
-		$content = self::_Encrypt($source);
+		$content = self::Encrypt($source);
 
 		// write content
 		$handler = fopen($path.$filename, 'w');
