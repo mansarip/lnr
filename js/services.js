@@ -5,12 +5,12 @@ $(function(){
 		services.source = response.source;
 		services.InitUI();
 		services.InitEvent();
-		services.LoadGlobalConnection();
+		//services.LoadGlobalConnection();
 		//services.LoadServicesAccount();
-		//services.LoadHome();
+		services.LoadHome();
 		//services.LoadWizard();
 
-		services.NewGlobalConnection();
+		//services.NewGlobalConnection();
 	});
 });
 
@@ -346,6 +346,57 @@ function Services() {
 			services.TestConnection(details);
 		});
 
+		// global connection > new > save
+		$('body').on('click', '#globalConnectionNew .buttons input.save', function(){
+			var details = {};
+			var connName;
+
+			$('#globalConnectionNew input, #globalConnectionNew select').each(function(){
+				var key = $(this).attr('data-key');
+				var value = $(this).val();
+
+				if (key) {
+					details[key] = value;
+				}
+			});
+
+			connName = details.name;
+			delete details.name;
+
+			// jika nama empty string
+			if (connName === '') {
+				dhtmlx.alert({
+					title : 'Error',
+					text : services.icon.error + '<p>Connection name can\'t be empty!</p>'
+				});
+				return false;
+			}
+			else {
+				services.currentWindowOpen.progressOn();
+				services.ReloadSource(function(){
+					services.currentWindowOpen.progressOff();
+
+					// jika nama dah ada
+					if (services.source.globalConnection[connName] !== undefined) {
+						dhtmlx.alert({
+							title : 'Error',
+							text : services.icon.error + '<p>Connection name already exist!</p>'
+						});
+						return false;
+					}
+					else {
+						services.source.globalConnection[connName] = details;
+						services.WriteSourceFile();
+						services.currentWindowOpen.close();
+						services.currentWindowOpen = null;
+
+						services.ReloadSource(function(){
+							services.LoadGlobalConnection();
+						});
+					}
+				});
+			}
+		});
 
 		// global connection > edit details
 		$('body').on('click', '#globalConnectionDetailsButton input.edit', function(){
@@ -601,11 +652,15 @@ function Services() {
 		})
 		.done(function(response){
 			if (services.currentWindowOpen !== null) services.currentWindowOpen.progressOff();
-			console.log(response);
+			if (response.status === 1) {
+				services.DisplaySuccessMessage('New connection successfully added.', 3000);
+			}
 		});
 	};
 
 	Services.prototype.TestConnection = function(data) {
+		if (this.currentWindowOpen !== null) this.currentWindowOpen.progressOn();
+
 		$.ajax({
 			url:this.phpPath + 'services.testconnection.php',
 			data:data,
@@ -613,6 +668,8 @@ function Services() {
 			dataType:'json'
 		})
 		.done(function(response){
+			if (services.currentWindowOpen !== null) services.currentWindowOpen.progressOff();
+
 			if (response.status === 0) {
 				dhtmlx.alert({
 					title : 'Error',
@@ -645,6 +702,14 @@ function Services() {
 			} else if (response.status === 1) {
 				proceedFunction(response);
 			}
+		});
+	};
+
+	Services.prototype.DisplaySuccessMessage = function(message, timer) {
+		if (!timer) timer = 2000;
+		dhtmlx.message({
+			text:'<table border="0"><col style="width:30px"><col><tr><td><img src="../img/icons/tick.png"></td><td>'+ message +'</td></tr></table>',
+			expire:timer
 		});
 	};
 
