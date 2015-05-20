@@ -23,6 +23,7 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 		$response['source']['view']['globalConnection']                     = MinifySourceView('globalconnection.html');
 		$response['source']['view']['globalConnectionData']                 = MinifySourceView('globalconnection.data.html');
 		$response['source']['view']['globalConnectionNoData']               = MinifySourceView('globalconnection.nodata.html');
+		$response['source']['view']['globalConnectionNew']                  = MinifySourceView('globalconnection.new.html');
 		$response['source']['view']['globalConnectionEdit']                 = MinifySourceView('globalconnection.edit.html');
 		$response['source']['view']['globalConnectionDetails']              = MinifySourceView('globalconnection.details.html');
 	}
@@ -34,7 +35,7 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 echo json_encode($response);
 
 function MinifySourceView($file) {
-	return trim(preg_replace('/\s+/', ' ', file_get_contents('../services/' . $file)));
+	return @trim(preg_replace('/\s+/', ' ', file_get_contents('../services/' . $file)));
 }
 
 ?>

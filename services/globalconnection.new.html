@@ -1,0 +1,107 @@
+<div id="globalConnectionNew" class="window noselect">
+	<div class="header">
+		<div class="icon globalConnection"></div>
+		<h1 class="title">Add New Connection</h1>
+	</div>
+	<div class="content" data-current="1">
+		<div class="part" data-number="1">
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et nisi diam. Aliquam gravida rhoncus placerat. Praesent a mi risus. In sit amet fringilla nunc.</p>
+			<table class="form">
+				<col style="width:110px;"></col>
+				<col style="width:10px;"></col>
+				<col></col>
+				<tr>
+					<td>Data source type</td>
+					<td>:</td>
+					<td>
+						<select data-key="type">
+							<option value="database">Database</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>Database Type</td>
+					<td>:</td>
+					<td>
+						<select data-key="dbType">
+							<option value="mysql">MySQL</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="part" data-number="2" style="display:none">
+			<p>Quisque vel ultricies metus, vitae gravida risus. Proin a consequat ex. Nam vel euismod justo, in imperdiet massa.</p>
+			<table class="form">
+				<col style="width:110px;"></col>
+				<col style="width:10px;"></col>
+				<col></col>
+				<tr>
+					<td>Host</td>
+					<td>:</td>
+					<td><input type="text" class="fullwidth" data-key="host" value=""/></td>
+				</tr>
+				<tr>
+					<td>Username</td>
+					<td>:</td>
+					<td><input type="text" class="fullwidth" data-key="username" value=""/></td>
+				</tr>
+				<tr>
+					<td>Password</td>
+					<td>:</td>
+					<td><input type="password" class="fullwidth" data-key="password" value=""/></td>
+				</tr>
+				<tr>
+					<td>Database Name</td>
+					<td>:</td>
+					<td><input type="text" class="fullwidth" data-key="dbName" value=""/></td>
+				</tr>
+				<tr>
+					<td>Port</td>
+					<td>:</td>
+					<td><input type="text" class="fullwidth" data-key="port" value=""/></td>
+				</tr>
+				<tr>
+					<td>SID</td>
+					<td>:</td>
+					<td><input type="text" class="fullwidth" data-key="sid" value=""/></td>
+				</tr>
+				<tr>
+					<td>Service Name</td>
+					<td>:</td>
+					<td><input type="text" class="fullwidth" data-key="serviceName" value=""/></td>
+				</tr>
+				<tr>
+					<td>Socket</td>
+					<td>:</td>
+					<td><input type="text" class="fullwidth" data-key="socket" value=""/></td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="part" data-number="3" style="display:none">
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec et nisi diam. Aliquam gravida rhoncus placerat. Praesent a mi risus. In sit amet fringilla nunc.</p>
+			<table class="form">
+				<col style="width:110px;"></col>
+				<col style="width:10px;"></col>
+				<col></col>
+				<tr>
+					<td>Connection Name</td>
+					<td>:</td>
+					<td><input type="text" class="fullwidth" data-key="name"/></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="buttons">
+		<input type="button" class="test" style="visibility:hidden" value="Test Connection"/>
+		&nbsp;
+		<input type="button" class="back" style="visibility:hidden" value="&#171; Back"/>
+		<input type="button" class="next" value="Next &#187;"/>
+		&nbsp;&nbsp;
+		<input type="button" class="cancel" value="Cancel"/>
+		<input type="button" class="save" style="visibility:hidden" value="Save"/>
+	</div>
+</div>

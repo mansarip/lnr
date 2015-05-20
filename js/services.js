@@ -9,6 +9,8 @@ $(function(){
 		//services.LoadServicesAccount();
 		//services.LoadHome();
 		//services.LoadWizard();
+
+		services.NewGlobalConnection();
 	});
 });
 
@@ -192,12 +194,37 @@ function Services() {
 
 				$('#globalConnection input.selectAll').prop('checked', false);
 			}
+			else if (id === '1') {
+				services.NewGlobalConnection();
+			}
 		});
 
 		this.layout.cells('b').showToolbar();
 
 		var html = this.LoadView('globalConnection');
 		this.layout.cells('b').attachHTMLString(html);
+	};
+
+	Services.prototype.NewGlobalConnection = function() {
+		var win = new dhtmlXWindows();
+		win.attachViewportTo('app');
+
+		var connectionWin = win.createWindow({
+			id:"newConnection",
+			width:550,
+			height:450,
+			center:true,
+			modal:true,
+			resize:false
+		});
+		connectionWin.button('minmax').hide();
+		connectionWin.button('park').hide();
+		connectionWin.setText('Add New Connection');
+
+		// register current window open
+		this.currentWindowOpen = connectionWin;
+
+		connectionWin.attachHTMLString(this.LoadView('globalConnectionNew'));
 	};
 
 	Services.prototype.InitEvent = function() {
@@ -243,6 +270,59 @@ function Services() {
 			$('#wizard div.step[data-step="'+ (step-1) +'"]').show();
 		});
 
+		// global connection > new > next
+		$('body').on('click', '#globalConnectionNew .buttons input.next', function(){
+			var wrapper = $('#globalConnectionNew');
+			var parts = wrapper.find('.part');
+			var currentNumber = Number(wrapper.find('.content').attr('data-current'));
+			var pageNumber = currentNumber + 1;
+			parts.hide();
+
+			wrapper.find('.part[data-number="'+ pageNumber +'"]').show();
+
+			// update current number
+			wrapper.find('.content').attr('data-current', pageNumber);
+
+			if (pageNumber === 2) {
+				wrapper.find('.buttons input.back').css('visibility','visible');
+				wrapper.find('.buttons input.test').css('visibility','visible');
+				wrapper.find('input[data-key="host"]').focus();
+
+			} else if (pageNumber === 3) {
+				wrapper.find('.buttons input.save').css('visibility','visible');
+				wrapper.find('.buttons input.next').css('visibility','hidden');
+				wrapper.find('.buttons input.test').css('visibility','hidden');
+				wrapper.find('input[data-key="name"]').focus();
+			}
+		})
+
+		// global connection > new > back
+		$('body').on('click', '#globalConnectionNew .buttons input.back', function(){
+			var wrapper = $('#globalConnectionNew');
+			var parts = wrapper.find('.part');
+			var currentNumber = Number(wrapper.find('.content').attr('data-current'));
+			var pageNumber = currentNumber - 1;
+			parts.hide();
+
+			wrapper.find('.part[data-number="'+ pageNumber +'"]').show();
+
+			// update current number
+			wrapper.find('.content').attr('data-current', pageNumber);
+
+			if (pageNumber === 1) {
+				wrapper.find('.buttons input.next').css('visibility','visible');
+				wrapper.find('.buttons input.back').css('visibility','hidden');
+				wrapper.find('.buttons input.test').css('visibility','hidden');
+				wrapper.find('.buttons input.save').css('visibility','hidden');
+
+			} else if (pageNumber === 2) {
+				wrapper.find('.buttons input.save').css('visibility','hidden');
+				wrapper.find('.buttons input.next').css('visibility','visible');
+				wrapper.find('.buttons input.test').css('visibility','visible');
+				wrapper.find('input[data-key="host"]').focus();
+			}
+		})
+
 		// global connection > edit details
 		$('body').on('click', '#globalConnectionDetailsButton input.edit', function(){
 			// dapatkan current window open
@@ -282,10 +362,7 @@ function Services() {
 						var key = $(this).attr('data-key');
 						var value = $(this).val();
 
-						// convert jadi number
-						if (key === 'port') {
-							detail[newConnName][key] = Number(value);
-						} else if (key !== 'name') {
+						if (key !== 'name') {
 							detail[newConnName][key] = value;
 						}
 					});
@@ -401,6 +478,11 @@ function Services() {
 			}
 
 			return services._ReplaceVariableView(services.source.view['globalConnection'], {data:dataHtml});
+		}
+
+		// view > global connection new
+		else if (viewId === 'globalConnectionNew') {
+			return services.source.view[viewId];
 		}
 
 		// view > global connection details
