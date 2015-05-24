@@ -1,68 +1,75 @@
-<table border="0" class="windowForm">
-<col style="width:120px"></col>
-<col style="width:10px"></col>
-<col></col>
-<tr>
-	<td colspan="3"><b>Connection Details</b></td>
-</tr>
-<tr>
-	<td>Connection Name</td>
-	<td>:</td>
-	<td><span>{{connectionName}}</span></td>
-</tr>
-<tr>
-	<td>Type</td>
-	<td>:</td>
-	<td>{{connectionType}}</td>
-</tr>
-<tr>
-	<td>Database Type</td>
-	<td>:</td>
-	<td>{{connectionDbType}}</td>
-</tr>
-<tr>
-	<td>Host</td>
-	<td>:</td>
-	<td>{{connectionHost}}</td>
-</tr>
-<tr>
-	<td>Username</td>
-	<td>:</td>
-	<td>{{connectionUsername}}</td>
-</tr>
-<tr>
-	<td>Password</td>
-	<td>:</td>
-	<td><a id="showConnectionPassword" data-connection="{{connectionName}}" href="javascript:void(0);">Show Password</a></td>
-</tr>
-<tr>
-	<td>Database Name</td>
-	<td>:</td>
-	<td>{{connectionDbName}}</td>
-</tr>
-<tr>
-	<td>Port</td>
-	<td>:</td>
-	<td>{{connectionPort}}</td>
-</tr>
-<tr>
-	<td>SID</td>
-	<td>:</td>
-	<td>{{connectionSID}}</td>
-</tr>
-<tr>
-	<td>Service Name</td>
-	<td>:</td>
-	<td>{{connectionServiceName}}</td>
-</tr>
-<tr>
-	<td>Socket</td>
-	<td>:</td>
-	<td>{{connectionSocket}}</td>
-</tr>
-</table>
+<div class="window noselect">
+	<div class="header">
+		<div class="icon globalConnection"></div>
+		<h1 class="title">Connection Details</h1>
+	</div>
+	<div class="content">
+		<table class="form">
+			<col style="width:110px;"></col>
+			<col style="width:10px;"></col>
+			<col></col>
+			<tr>
+				<td>Connection Name</td>
+				<td>:</td>
+				<td>{{connectionName}}</td>
+			</tr>
+			<tr>
+				<td>Type</td>
+				<td>:</td>
+				<td>{{connectionType}}</td>
+			</tr>
+			<tr>
+				<td>Database Type</td>
+				<td>:</td>
+				<td>{{connectionDbType}}</td>
+			</tr>
+			<tr>
+				<td>Host</td>
+				<td>:</td>
+				<td>{{connectionHost}}</td>
+			</tr>
+			<tr>
+				<td>Username</td>
+				<td>:</td>
+				<td>{{connectionUsername}}</td>
+			</tr>
+			<tr>
+				<td>Password</td>
+				<td>:</td>
+				<td><a id="showConnectionPassword" data-connection="{{connectionName}}" href="javascript:void(0);">Show Password</a></td>
+			</tr>
+			<tr>
+				<td>Database Name</td>
+				<td>:</td>
+				<td>{{connectionDbName}}</td>
+			</tr>
+			<tr>
+				<td>Port</td>
+				<td>:</td>
+				<td>{{connectionPort}}</td>
+			</tr>
+			<tr>
+				<td>SID</td>
+				<td>:</td>
+				<td>{{connectionSID}}</td>
+			</tr>
+			<tr>
+				<td>Service Name</td>
+				<td>:</td>
+				<td>{{connectionServiceName}}</td>
+			</tr>
+			<tr>
+				<td>Socket</td>
+				<td>:</td>
+				<td>{{connectionSocket}}</td>
+			</tr>
+		</table>
+	</div>
 
-<div id="globalConnectionDetailsButton" class="buttonPlaceholder" style="padding:10px 15px;">
-	<input type="button" class="test" style="padding:6px 25px" value="Test"/>
-	<input type="button" class="edit" data-connection="{{connectionName}}" style="padding:6px 30px" value="Edit"/>
+	<div id="globalConnectionDetailsButton" class="buttons">
+		<input type="button" class="test" value="Test Connection"/>
+		<input type="button" class="edit" data-connection="{{connectionName}}" value="Edit"/>
+		&nbsp;&nbsp;
+		<input type="button" class="cancel" value="Close"/>
+	</div>
 </div>

@@ -27,7 +27,8 @@ function Services() {
 	this.currentWindowOpen = null;
 	this.icon = {
 		error : '<img src="../img/icons/exclamation-red-frame.png"/>',
-		success : '<img src="../img/icons/tick.png"/>'
+		success : '<img src="../img/icons/tick.png"/>',
+		warning : '<img src="../img/icons/exclamation.png"/>'
 	};
 
 	Services.prototype.InitUI = function() {
@@ -185,15 +186,7 @@ function Services() {
 
 		this.toolbarEvent = this.toolbar.attachEvent('onClick', function(id){
 			if (id === '3') {
-				$('#globalConnection tr input.select').each(function(){
-					var isChecked = $(this).prop('checked');
-					var row = $(this).closest('tr');
-					if (isChecked) {
-						row.remove();
-					}
-				});
-
-				$('#globalConnection input.selectAll').prop('checked', false);
+				services.RemoveGlobalConnection();
 			}
 			else if (id === '1') {
 				services.NewGlobalConnection();
@@ -204,6 +197,49 @@ function Services() {
 
 		var html = this.LoadView('globalConnection');
 		this.layout.cells('b').attachHTMLString(html);
+	};
+
+	Services.prototype.RemoveGlobalConnection = function() {
+		dhtmlx.confirm({
+			title:'Remove',
+			text:services.icon.warning + "<br/>Confirm remove?",
+			callback:function(answer){
+				if (answer) {
+					var removeFlag = false;
+
+					$('#globalConnection tr input.select').each(function(){
+						var isChecked = $(this).prop('checked');
+						var row = $(this).closest('tr');
+						var connName = row.attr('data-connection');
+
+						if (isChecked) {
+							removeFlag = true;
+							row.remove();
+
+							// buang dari memory
+							delete services.source.globalConnection[connName];
+
+							// write source
+							services.WriteSourceFile(function(){
+								services.ReloadSource(function(){
+									services.LoadGlobalConnection();
+								});
+							});
+						}
+					});
+
+					// jika user tak select apa2 untuk di-remove
+					if (!removeFlag) {
+						dhtmlx.message({
+							text:'Nothing was removed'
+						});
+					}
+
+					// reset
+					$('#globalConnection input.selectAll').prop('checked', false);
+				}
+			}
+		});
 	};
 
 	Services.prototype.NewGlobalConnection = function() {
@@ -235,7 +271,7 @@ function Services() {
 			table.find('td input.select').prop('checked', value);
 
 			if (value) {
-				table.find('td').css('background-color', '#F3FFDB');
+				table.find('td').css('background-color', '#C7E4FF');
 			} else {
 				table.find('td').css('background-color', '');
 			}
@@ -245,7 +281,7 @@ function Services() {
 			var value = $(this).prop('checked');
 
 			if (value) {
-				$(this).closest('tr').find('td').css('background-color', '#F3FFDB');
+				$(this).closest('tr').find('td').css('background-color', '#C7E4FF');
 			} else {
 				$(this).closest('tr').find('td').css('background-color', '');
 			}
@@ -386,12 +422,17 @@ function Services() {
 					}
 					else {
 						services.source.globalConnection[connName] = details;
-						services.WriteSourceFile();
-						services.currentWindowOpen.close();
-						services.currentWindowOpen = null;
 
-						services.ReloadSource(function(){
-							services.LoadGlobalConnection();
+						services.WriteSourceFile(function(response){
+							if (response.status === 1) {
+								services.DisplaySuccessMessage('New connection successfully added.', 3000);
+							}
+							services.currentWindowOpen.close();
+							services.currentWindowOpen = null;
+
+							services.ReloadSource(function(){
+								services.LoadGlobalConnection();
+							});
 						});
 					}
 				});
@@ -487,7 +528,7 @@ function Services() {
 			var connectionWin = win.createWindow({
 				id:"connection",
 				width:550,
-				height:380,
+				height:430,
 				center:true,
 				modal:true,
 				resize:false
@@ -638,7 +679,7 @@ function Services() {
 		});
 	};
 
-	Services.prototype.WriteSourceFile = function(task, data) {
+	Services.prototype.WriteSourceFile = function(callback) {
 		if (this.currentWindowOpen !== null) this.currentWindowOpen.progressOn();
 
 		var data = $.extend({}, true, services.source);
@@ -652,9 +693,7 @@ function Services() {
 		})
 		.done(function(response){
 			if (services.currentWindowOpen !== null) services.currentWindowOpen.progressOff();
-			if (response.status === 1) {
-				services.DisplaySuccessMessage('New connection successfully added.', 3000);
-			}
+			if (callback) callback(response);
 		});
 	};
 
