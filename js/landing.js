@@ -109,6 +109,44 @@ $(function(){
 		loginWindow.window('login').progressOff();
 	});
 
+	$('body').on('click', '#systemCheck', function(){
+		var win = new dhtmlXWindows();
+		win.attachViewportTo('content');
+
+		var systemCheckWin = win.createWindow({
+			id:"newConnection",
+			width:450,
+			height:240,
+			center:true,
+			modal:true,
+			resize:false
+		});
+		systemCheckWin.button('minmax').hide();
+		systemCheckWin.button('park').hide();
+		systemCheckWin.setText('System Check');
+		systemCheckWin.progressOn();
+
+		$.ajax({
+			url: phpPath + 'landing.systemcheck.php',
+			dataType : 'json'
+		})
+		.done(function(response){
+			var html = '<table border="0" style="width:100%; margin:10px;">\n\
+				<col style="width:80%"></col>\n\
+				<col style="width:19%"></col>\n\
+				<tr><th style="text-align:left">Detail</th><th>Status</th></tr>\n\
+				<tr><td style="text-align:left">LNRE Library Available</td><td>'+ (response.LNRELibraryAvailable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
+				<tr><td style="text-align:left">Services Source Library Available</td><td>'+ (response.ServicesSourceLibraryAvailable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
+				<tr><td style="text-align:left">Services Source File Readable</td><td>'+ (response.ServicesSourceFileReadable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
+				<tr><td style="text-align:left">Services Source File Writable</td><td>'+ (response.ServicesSourceFileWritable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
+				<tr><td style="text-align:left">Publish Folder Readable</td><td>'+ (response.publishFolderReadable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
+				<tr><td style="text-align:left">Publish Folder Writable</td><td>'+ (response.publishFolderWritable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
+			</table>';
+			systemCheckWin.attachHTMLString(html);
+			systemCheckWin.progressOff();
+		});
+	});
+
 	// Functions
 	// =====================
 
