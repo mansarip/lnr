@@ -1,6 +1,6 @@
 body{
 	margin: 0;
-	font-family: 'Montserrat', sans-serif;
+	font-family: 'Open Sans', sans-serif;
 }
 hr{
 	border: none;
@@ -33,6 +33,7 @@ hr{
 	width: 98%;
 	border-collapse: collapse;
 	border:1px solid #bbb;
+	background-color: #FFF;
 }
 .content table th{
 	background-color: #F2F2F2;
@@ -62,6 +63,7 @@ hr{
 }
 .content .panel .content{
 	position: relative;
+	background-color: #FFF;
 }
 .content p{
 	line-height: 1.6em;
@@ -73,7 +75,7 @@ input{
 	outline: none;
 }
 table.windowForm{
-	font-family: 'Montserrat', sans-serif;
+	font-family: 'Open Sans', sans-serif;
 	font-size: 11px;
 	width: 93%;
 	margin: 5px auto;
@@ -118,7 +120,7 @@ table.windowForm textarea{
 	display:inline-block;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #ffffff;
-	font-family: 'Montserrat', sans-serif;
+	font-family: 'Open Sans', sans-serif;
 	padding: 6px 16px;
 	font-size: 11px;
 	outline: none;
@@ -181,6 +183,9 @@ table.windowForm textarea{
 	position: absolute;
 	bottom: 0;
 	right: 0;
+}
+.window .content table{
+	background-color: transparent;
 }
 .noselect {
     -webkit-touch-callout: none;
