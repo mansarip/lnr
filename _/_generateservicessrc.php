@@ -35,8 +35,18 @@ $plainSource = '{
 		"columnPassword":"",
 		"connection":"",
 		"account":{
-			"admin":"123",
-			"penghulu":"pang5"
+			"admin":{
+				"password":"123",
+				"privileges":{
+					"reportDesigner":true,
+					"servicesWizard":true,
+					"servicesGlobalConnection":true,
+					"servicesConfiguration":true,
+					"servicesServicesAccount":true,
+					"servicesViewerAccount":true,
+					"servicesLNRESourceReader":true
+				}
+			}
 		}
 	},
 	"viewerAccount":{
@@ -45,10 +55,7 @@ $plainSource = '{
 		"columnUser":"USERNAME",
 		"columnPassword":"USERPASSWORD",
 		"connection":"",
-		"account":{
-			"admin":"123",
-			"penghulu":"pang5"
-		}
+		"account":{}
 	},
 	"encryptionKey":{
 		"services":"",

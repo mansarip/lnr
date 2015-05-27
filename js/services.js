@@ -120,59 +120,25 @@ function Services() {
 	};
 
 	Services.prototype.LoadServicesAccount = function() {
-		this.toolbar.clearAll();
+		this.ToolbarReset();
 		this.toolbar.loadStruct([
 			{id:1, type:"button", text:"New Account", img:"plus.png", imgdis:"plus.png"},
 			{id:2, type:"separator"},
 			{id:3, type:"button", text:"Remove", img:"cross.png", imgdis:"cross.png"},
-			{id:4, type:"separator"},
-			{id:5, type:"button", text:"Table Binding", img:"application-table.png", imgdis:"application-table.png"}
+			{id:4, type:"separator"}
 		]);
+
+		this.toolbarEvent = this.toolbar.attachEvent('onClick', function(id){
+			if (id === '3') {
+				//services.RemoveGlobalConnection();
+			}
+			else if (id === '1') {
+				services.NewServicesAccount();
+			}
+		});
+
 		this.layout.cells('b').showToolbar();
-
-		var html = '<div id="servicesAccount" class="content">\n\
-			<div class="content">\n\
-				<h3>Services User</h3>\n\
-				<table border="1">\n\
-					<col style="width:30px"></col>\n\
-					<col></col>\n\
-					<col></col>\n\
-					<col style="width:30px"></col>\n\
-					<col></col>\n\
-					<tr>\n\
-						<th>#</th>\n\
-						<th>Username</th>\n\
-						<th>Type</th>\n\
-						<th><input type="checkbox" class="selectAll"/></th>\n\
-						<th>Details</th>\n\
-					</tr>\n\
-					<tr>\n\
-						<td>1.</td>\n\
-						<td>admin</td>\n\
-						<td class="center">Native</td>\n\
-						<td class="center"><input type="checkbox" class="select"/></td>\n\
-						<td class="center"><input type="button" class="details" value="View"/></td>\n\
-					</tr>\n\
-					<tr>\n\
-						<td>2.</td>\n\
-						<td>penghulu</td>\n\
-						<td class="center">Native</td>\n\
-						<td class="center"><input type="checkbox" class="select"/></td>\n\
-						<td class="center"><input type="button" class="details" value="View"/></td>\n\
-					</tr>\n\
-					<tr>\n\
-						<td>3.</td>\n\
-						<td>%Nama Connection%</td>\n\
-						<td class="center">Database</td>\n\
-						<td class="center"><input type="checkbox" class="select"/></td>\n\
-						<td class="center"><input type="button" class="details" value="View"/></td>\n\
-					</tr>\n\
-				</table>\n\
-			</div>\n\
-		</div>\n\
-		';
-
-		this.layout.cells('b').attachHTMLString(html);
+		this.layout.cells('b').attachHTMLString(services.LoadView('servicesAccount'));
 	};
 
 	Services.prototype.LoadGlobalConnection = function(){
@@ -262,6 +228,28 @@ function Services() {
 		this.currentWindowOpen = connectionWin;
 
 		connectionWin.attachHTMLString(this.LoadView('globalConnectionNew'));
+	};
+
+	Services.prototype.NewServicesAccount = function() {
+		var win = new dhtmlXWindows();
+		win.attachViewportTo('app');
+
+		var accountWin = win.createWindow({
+			id:"newServicesAccount",
+			width:550,
+			height:450,
+			center:true,
+			modal:true,
+			resize:false
+		});
+		accountWin.button('minmax').hide();
+		accountWin.button('park').hide();
+		accountWin.setText('Add New Account');
+
+		// register current window open
+		this.currentWindowOpen = accountWin;
+
+		accountWin.attachHTMLString(this.LoadView('servicesAccountNew'));
 	};
 
 	Services.prototype.InitEvent = function() {
@@ -591,6 +579,77 @@ function Services() {
 			var password = services.source.globalConnection[connName].password;
 			$(this).closest('td').text(password);
 		});
+
+		// services account > new > cancel
+		$('body').on('click', '#servicesConnectionNew input.cancel', function(){
+			services.currentWindowOpen.close();
+			services.currentWindowOpen = null;
+		});
+
+		// services account > new > save
+		$('body').on('click', '#servicesConnectionNew input.save', function(){
+			var wrapper = $('#servicesConnectionNew');
+			var username = wrapper.find('input.name').val();
+			var password = wrapper.find('input.password').val();
+
+			// jika nama dah ada
+			if (services.source.servicesAccount.account[username] !== undefined) {
+				dhtmlx.alert({
+					title : 'Error',
+					text : services.icon.error + '<p>Username already exists!</p>'
+				});
+				return false;
+			}
+
+			// jika password kosong
+			else if (password === '') {
+				dhtmlx.alert({
+					title : 'Error',
+					text : services.icon.error + '<p>Password cannot be empty!</p>'
+				});
+				return false;
+			}
+
+			// jika ok
+			else {
+				services.currentWindowOpen.progressOn();
+				services.ReloadSource(function(){
+					services.currentWindowOpen.progressOn();
+					var details = {};
+					details['privileges'] = {};
+					details['password'] = password;
+
+					wrapper.find('input[type="checkbox"]').each(function(){
+						var key = $(this).attr('data-key');
+						var value = $(this).prop('checked');
+						details['privileges'][key] = value;
+					});
+
+					services.source.servicesAccount.account[username] = details;
+					services.WriteSourceFile(function(response){
+						if (response.status === 1) {
+							services.DisplaySuccessMessage('New account successfully added.', 3000);
+						}
+						services.currentWindowOpen.close();
+						services.currentWindowOpen = null;
+
+						services.ReloadSource(function(){
+							services.LoadServicesAccount();
+						});
+					});
+				});
+			}
+		});
+
+		// services account > new > check all privileges
+		$('body').on('change', '#servicesConnectionNew input.checkAll', function(){
+			var value = $(this).prop('checked');
+			$('#servicesConnectionNew input[type="checkbox"]').each(function(){
+				$(this).prop('checked', value);
+			});
+		});
+
+		// Init Event End ::
 	};
 
 	Services.prototype.LoadView = function(viewId, objectName) {
@@ -679,6 +738,38 @@ function Services() {
 
 		// view > global connection details button
 		else if (viewId === 'globalConnectionDetailsClosingButton') {
+			return services.source.view[viewId];
+		}
+
+		// view > services account
+		else if (viewId === 'servicesAccount') {
+			var dataHtml = '';
+
+			// jika ada data
+			if (!$.isEmptyObject(services.source.servicesAccount.account)) {
+				var number = 1;
+
+				for (var user in services.source.servicesAccount.account) {
+					var detail = {
+						'number' : number,
+						'userName' : user,
+						'type' : 'Native'
+					};
+
+					dataHtml += services._ReplaceVariableView(services.source.view['servicesAccountData'], detail);
+					number++;
+				}
+			}
+			// jika tiada
+			else {
+				dataHtml += services._ReplaceVariableView(services.source.view['servicesAccountNoData']);
+			}
+
+			return services._ReplaceVariableView(services.source.view['servicesAccount'], {data:dataHtml});
+		}
+
+		// view > services account > new
+		else if (viewId === 'servicesAccountNew') {
 			return services.source.view[viewId];
 		}
 	};

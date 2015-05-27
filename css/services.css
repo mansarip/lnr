@@ -168,9 +168,8 @@ table.windowForm textarea{
 	margin: 6px 15px;
 	float: left;
 }
-.window .header .icon.globalConnection{
-	background:url('../img/global-connection.png') no-repeat;
-}
+.window .header .icon.globalConnection{ background:url('../img/global-connection.png') no-repeat; }
+.window .header .icon.servicesAccount{ background:url('../img/user-settings-icon.png') no-repeat; }
 .window .content{
 	clear: both;
 	position: relative;
