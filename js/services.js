@@ -454,62 +454,86 @@ function Services() {
 			connectionWin.attachHTMLString(viewEditConnection);
 		});
 
+		// global connection > edit details > button > test
+		$('body').on('click', '#globalConnectionEdit input.test', function(){
+			var details = {};
+
+			$('#globalConnectionEdit input[data-key], #globalConnectionEdit select[data-key]').each(function(){
+				var value = $(this).val();
+				var key = $(this).attr('data-key');
+				details[key] = value;
+			});
+
+			services.TestConnection(details);
+		});
+
 		// global connection > edit details > button > save
-		$('body').on('click', '#globalConnectionEditButton input.save', function(){
-			var form = $(services.currentWindowOpen.cell).find('table.windowForm');
+		$('body').on('click', '#globalConnectionEdit input.save', function(){
+			var wrapper = $('#globalConnectionEdit');
 			var oldConnName = $(this).attr('data-connection');
-			var newConnName = form.find('input.connectionName').val();
+			var newConnName = wrapper.find('input[data-key="name"]').val();
 			var detail = {};
 			detail[newConnName] = {};
 
-			// preloader
 			services.currentWindowOpen.progressOn();
-
-			// reload source
 			services.ReloadSource(function(){
-
-				// preloader off
 				services.currentWindowOpen.progressOff();
 
-				// jika name tak berubah
+				// jika nama tak berubah
 				if (newConnName === oldConnName) {
-
-					form.find('input, select').each(function(){
-						var key = $(this).attr('data-key');
+					wrapper.find('input[data-key], select[data-key]').each(function(){
 						var value = $(this).val();
-
-						if (key !== 'name') {
-							detail[newConnName][key] = value;
-						}
+						var key = $(this).attr('data-key');
+						detail[newConnName][key] = value;
 					});
 
 					delete services.source.globalConnection[newConnName];
 					services.source.globalConnection[newConnName] = detail[newConnName]; // write pada memory
 
-					//services.WriteSourceFile('saveGlobalConnection', detail); // write source file
-					services.WriteSourceFile();
+					services.WriteSourceFile(function(response){
+						if (response.status === 1) {
+							services.DisplaySuccessMessage('Connection successfully saved!');
+							services.currentWindowOpen.close();
+							services.currentWindowOpen = null;
+							services.layout.cells('b').attachHTMLString(services.LoadView('globalConnection'));
+						}
+					});
 				}
 
-				// jika nama berubah DAN jika name dah ada
+				// jika nama berubah DAN nama dah ada
 				else if (newConnName !== oldConnName && services.source.globalConnection[newConnName] !== undefined) {
 					dhtmlx.alert({
 						title : 'Error',
 						text : services.icon.error + '<p>Name already exist!</p>'
 					});
-
-					return false;
+					return false;	
 				}
 
 				// jika nama berubah DAN nama masih available
 				else if (newConnName !== oldConnName && services.source.globalConnection[newConnName] === undefined) {
+					wrapper.find('input[data-key], select[data-key]').each(function(){
+						var value = $(this).val();
+						var key = $(this).attr('data-key');
+						detail[newConnName][key] = value;
+					});
 
+					delete services.source.globalConnection[oldConnName];
+					services.source.globalConnection[newConnName] = detail[newConnName]; // write pada memory
+
+					services.WriteSourceFile(function(response){
+						if (response.status === 1) {
+							services.DisplaySuccessMessage('Connection successfully saved!');
+							services.currentWindowOpen.close();
+							services.currentWindowOpen = null;
+							services.layout.cells('b').attachHTMLString(services.LoadView('globalConnection'));
+						}
+					});
 				}
-
 			});
 		});
 
 		// global connection > edit details > button > cancel
-		$('body').on('click', '#globalConnectionEditButton input.cancel', function(){
+		$('body').on('click', '#globalConnectionEdit input.cancel', function(){
 			services.currentWindowOpen.close();
 			services.currentWindowOpen = null;
 		});
@@ -528,7 +552,7 @@ function Services() {
 			var connectionWin = win.createWindow({
 				id:"connection",
 				width:550,
-				height:430,
+				height:490,
 				center:true,
 				modal:true,
 				resize:false
@@ -546,6 +570,19 @@ function Services() {
 			})(connName);
 
 			connectionWin.attachHTMLString(viewConnectionDetails);
+		});
+
+		// global connection > view details > test connection
+		$('body').on('click', '#globalConnectionDetailsButton input.test', function(){
+			var connName = $(this).attr('data-connection');
+			var details = services.source.globalConnection[connName];
+			services.TestConnection(details);
+		});
+
+		// global connection > view details > close
+		$('body').on('click', '#globalConnectionDetailsButton input.close', function(){
+			services.currentWindowOpen.close();
+			services.currentWindowOpen = null;
 		});
 
 		// global connection > show password
@@ -652,7 +689,14 @@ function Services() {
 			var re = new RegExp(find, 'g');
 			view = view.replace(re, variables[key]);
 		}
-		return view;
+
+		// dropdown default value
+		var jqObj = $(view);
+		jqObj.find('select[data-default]').each(function(){
+			$(this).find('option[value="'+ ($(this).attr('data-default')) +'"]').attr('selected','selected');
+		});
+
+		return jqObj.prop('outerHTML');
 	};
 
 	Services.prototype.ReloadSource = function(callback) {

@@ -131,7 +131,7 @@ $(function(){
 			dataType : 'json'
 		})
 		.done(function(response){
-			var html = '<table border="0" style="width:100%; margin:10px;">\n\
+			var html = '<div style="position: absolute; top: 0; left: 0; bottom: 0; right: 0; overflow-y: scroll; padding: 5px 0px 5px 5px;"><table border="0" style="width:100%;">\n\
 				<col style="width:80%"></col>\n\
 				<col style="width:19%"></col>\n\
 				<tr><th style="text-align:left">Detail</th><th>Status</th></tr>\n\
@@ -141,7 +141,10 @@ $(function(){
 				<tr><td style="text-align:left">Services Source File Writable</td><td>'+ (response.ServicesSourceFileWritable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
 				<tr><td style="text-align:left">Publish Folder Readable</td><td>'+ (response.publishFolderReadable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
 				<tr><td style="text-align:left">Publish Folder Writable</td><td>'+ (response.publishFolderWritable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
-			</table>';
+				<tr><td style="text-align:left">PHP : MySQLi</td><td>'+ (response.phpMysqli ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
+				<tr><td style="text-align:left">PHP : OCI8</td><td>'+ (response.phpOci8 ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
+				<tr><td style="text-align:left">PHP : Sybase</td><td>'+ (response.phpSybase ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
+			</table></div>';
 			systemCheckWin.attachHTMLString(html);
 			systemCheckWin.progressOff();
 		});

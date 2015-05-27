@@ -7,6 +7,14 @@ hr{
 	height: 1px;
 	background-color: #C3C3C3;
 }
+select{
+	font-family: 'Open Sans', sans-serif;
+	font-size: 11px;
+}
+input{
+	font-size: 11px;
+	font-family: 'Open Sans', sans-serif;
+}
 #app{
 	position: absolute;
 	top:0; bottom:0; left:0; right:0;
