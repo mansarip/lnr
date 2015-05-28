@@ -62,24 +62,14 @@ $(function(){
 		})
 		.done(function(response){
 			if (response.success === 0) {
-				var htmlString = '<div style="text-align:left; padding:5px 10px;"><p style="color:red"><b>Error</b></p><p>'+ response.message +'</p><input type="button" class="btnErrorPopupClose" value="Close"/></div>';
-				loginWindow.createWindow({
-					id: 'errorPopup',
-					left: 10,
-					top:10,
-					width:240,
-					height:150,
-					center:true
-				});
-				loginWindow.window('errorPopup').setText('Login Error');
-				loginWindow.window('errorPopup').denyResize();
-				loginWindow.window('errorPopup').setModal(true);
-				loginWindow.window('errorPopup').button('park').disable();
-				loginWindow.window('errorPopup').attachHTMLString(htmlString);
 
-				loginWindow.window('errorPopup').button('close').attachEvent('onClick', function(win, button){
-					$('input.btnErrorPopupClose').click();
+				dhtmlx.alert({
+					title:'Error',
+					text:response.message
 				});
+				loginWindow.window('login').progressOff();
+				return false;
+				
 			} else if (response.success === 1) {
 				window.location.href = './';
 			}
