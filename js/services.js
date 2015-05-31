@@ -130,7 +130,7 @@ function Services() {
 
 		this.toolbarEvent = this.toolbar.attachEvent('onClick', function(id){
 			if (id === '3') {
-				//services.RemoveGlobalConnection();
+				services.RemoveServicesAccount();
 			}
 			else if (id === '1') {
 				services.NewServicesAccount();
@@ -250,6 +250,65 @@ function Services() {
 		this.currentWindowOpen = accountWin;
 
 		accountWin.attachHTMLString(this.LoadView('servicesAccountNew'));
+	};
+
+	Services.prototype.RemoveServicesAccount = function() {
+		// todo - user tidak boleh remove diri sendiri
+
+		var currentUsername;
+
+		this.layout.cells('b').progressOn();
+		$.ajax({
+			url: this.phpPath + 'services.getusername.php'
+		})
+		.done(function(name){
+			services.layout.cells('b').progressOff();
+			currentUsername = name;
+			
+			dhtmlx.confirm({
+				title:'Remove',
+				text:services.icon.warning + "<br/>Confirm remove?",
+				callback:function(answer){
+					if (answer) {
+						var removeFlag = false;
+
+						$('#servicesConnection tr input.select').each(function(){
+							var isChecked = $(this).prop('checked');
+							var row = $(this).closest('tr');
+							var username = row.attr('data-name');
+
+							if (isChecked && username !== currentUsername) {
+								removeFlag = true;
+								row.remove();
+
+								// buang dari memory
+								delete services.source.servicesAccount.account[username];
+
+								// write source
+								services.WriteSourceFile(function(){
+									services.ReloadSource(function(){
+										services.LoadServicesAccount();
+									});
+								});
+							}
+						});
+
+						// jika user tak select apa2 untuk di-remove
+						if (!removeFlag) {
+							dhtmlx.message({
+								text:'Nothing was removed'
+							});
+						}
+
+						// reset
+						$('#servicesConnection input.selectAll').prop('checked', false);
+					}
+				}
+			});
+		})
+		.fail(function(response){
+			services.layout.cells('b').progressOff();
+		});
 	};
 
 	Services.prototype.InitEvent = function() {
@@ -581,19 +640,28 @@ function Services() {
 		});
 
 		// services account > new > cancel
-		$('body').on('click', '#servicesConnectionNew input.cancel', function(){
+		$('body').on('click', '#servicesAccountNew input.cancel', function(){
 			services.currentWindowOpen.close();
 			services.currentWindowOpen = null;
 		});
 
 		// services account > new > save
-		$('body').on('click', '#servicesConnectionNew input.save', function(){
-			var wrapper = $('#servicesConnectionNew');
+		$('body').on('click', '#servicesAccountNew input.save', function(){
+			var wrapper = $('#servicesAccountNew');
 			var username = wrapper.find('input.name').val();
 			var password = wrapper.find('input.password').val();
 
+			// jika nama kosong
+			if (username === '') {
+				dhtmlx.alert({
+					title : 'Error',
+					text : services.icon.error + '<p>Username cannot be empty!</p>'
+				});
+				return false;
+			}
+
 			// jika nama dah ada
-			if (services.source.servicesAccount.account[username] !== undefined) {
+			else if (services.source.servicesAccount.account[username] !== undefined) {
 				dhtmlx.alert({
 					title : 'Error',
 					text : services.icon.error + '<p>Username already exists!</p>'
@@ -642,11 +710,72 @@ function Services() {
 		});
 
 		// services account > new > check all privileges
-		$('body').on('change', '#servicesConnectionNew input.checkAll', function(){
+		$('body').on('change', '#servicesAccountNew input.checkAll', function(){
 			var value = $(this).prop('checked');
-			$('#servicesConnectionNew input[type="checkbox"]').each(function(){
+			$('#servicesAccountNew input[type="checkbox"]').each(function(){
 				$(this).prop('checked', value);
 			});
+		});
+
+		// services account > view details
+		$('body').on('click', '#servicesConnection input.viewDetails', function(){
+			var username = $(this).closest('tr').attr('data-name');
+
+			var win = new dhtmlXWindows();
+			win.attachViewportTo('app');
+
+			var accountWin = win.createWindow({
+				id:"servicesAccount",
+				width:550,
+				height:400,
+				center:true,
+				modal:true,
+				resize:false
+			});
+			accountWin.button('minmax').hide();
+			accountWin.button('park').hide();
+			accountWin.setText('Account Details');
+
+			// register current window open
+			services.currentWindowOpen = accountWin;
+
+			// account details string
+			var viewAccountDetails = (function(username){
+				return services.LoadView('servicesAccountDetails', username);
+			})(username);
+
+			accountWin.attachHTMLString(viewAccountDetails);
+		});
+
+		// services account > details > edit
+		$('body').on('click', '#servicesAccountDetails input.edit', function(){
+			var wrapper = $('#servicesAccountDetails');
+			wrapper.find('h1.title').text('Edit Account Details');
+			wrapper.find('input').each(function(){
+				$(this).prop('disabled', false);
+				$(this).prop('readonly', false);
+			});
+
+			wrapper.find('input.name').focus();
+
+			// buttons
+			$(this).hide();
+			wrapper.find('input.close').hide();
+			wrapper.find('input.save, input.cancel, input.checkAll').show();
+		});
+
+		// services account > details > check all privileges
+		$('body').on('change', '#servicesAccountDetails input.checkAll', function(){
+			var value = $(this).prop('checked');
+			$('#servicesAccountDetails input[type="checkbox"]').each(function(){
+				$(this).prop('checked', value);
+			});
+		});
+
+		// services account > details > close
+		$('body').on('click', '#servicesAccountDetails input.close, #servicesAccountDetails input.cancel', function(){
+			services.currentWindowOpen.close();
+			services.currentWindowOpen = null;
 		});
 
 		// Init Event End ::
@@ -772,6 +901,23 @@ function Services() {
 		else if (viewId === 'servicesAccountNew') {
 			return services.source.view[viewId];
 		}
+
+		// view > services account > details
+		else if (viewId === 'servicesAccountDetails') {
+			//var details = services.source.servicesAccount.account[objectName];
+			var detail = {
+				'username' : objectName,
+				'password' : services.source.servicesAccount.account[objectName].password,
+				'reportDesigner' : (services.source.servicesAccount.account[objectName].privileges.reportDesigner ? 'checked="checked"' : ''),
+				'servicesConfiguration' : (services.source.servicesAccount.account[objectName].privileges.servicesConfiguration ? 'checked="checked"' : ''),
+				'servicesGlobalConnection' : (services.source.servicesAccount.account[objectName].privileges.servicesGlobalConnection ? 'checked="checked"' : ''),
+				'servicesLNRESourceReader' : (services.source.servicesAccount.account[objectName].privileges.servicesLNRESourceReader ? 'checked="checked"' : ''),
+				'servicesServicesAccount' : (services.source.servicesAccount.account[objectName].privileges.servicesServicesAccount ? 'checked="checked"' : ''),
+				'servicesViewerAccount' : (services.source.servicesAccount.account[objectName].privileges.servicesViewerAccount ? 'checked="checked"' : ''),
+				'servicesWizard' : (services.source.servicesAccount.account[objectName].privileges.servicesWizard ? 'checked="checked"' : '')
+			};
+			return services._ReplaceVariableView(services.source.view[viewId], detail);
+		}
 	};
 
 	Services.prototype._ReplaceVariableView = function(view, variables) {
@@ -875,6 +1021,8 @@ function Services() {
 				services.GoBackHomeWithError();
 			} else if (response.status === 1) {
 				proceedFunction(response);
+			} else if (response.status === 2) {
+				document.write('<b>Error : </b> Unable to read source file');
 			}
 		});
 	};

@@ -109,7 +109,8 @@ table.windowForm textarea{
 	padding: 15px;
 }
 .buttonPlaceholder input,
-.window .buttons input{
+.window .buttons input,
+input[type="button"].silver{
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -134,7 +135,8 @@ table.windowForm textarea{
 	outline: none;
 }
 .buttonPlaceholder input:active,
-.window .buttons input:active{
+.window .buttons input:active,
+input[type="button"].silver:active{
 	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #e9e9e9), color-stop(1, #f9f9f9));
 	background:-moz-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
 	background:-webkit-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);

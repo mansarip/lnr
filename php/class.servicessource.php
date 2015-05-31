@@ -1,8 +1,10 @@
 <?php
 
+require 'key.php';
+
 class ServicesSource
 {
-	private static $key = 'limenrose';
+	private static $key = SERVICES_KEY;
 
 	public static function Decrypt($source) {
 		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5(self::$key), base64_decode($source), MCRYPT_MODE_CBC, md5(md5(self::$key))), "\0");

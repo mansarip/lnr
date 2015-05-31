@@ -125,6 +125,8 @@ $(function(){
 				<col style="width:80%"></col>\n\
 				<col style="width:19%"></col>\n\
 				<tr><th style="text-align:left">Detail</th><th>Status</th></tr>\n\
+				<tr><td style="text-align:left">Services Key</td><td>'+ (response.servicesKeySecure ? '<span style="color:green">SECURE</span>' : '<span style="color:#FA5500">INSECURE</span>') +'</td></tr>\n\
+				<tr><td style="text-align:left">Services Key</td><td>'+ (response.designerKeySecure ? '<span style="color:green">SECURE</span>' : '<span style="color:#FA5500">INSECURE</span>') +'</td></tr>\n\
 				<tr><td style="text-align:left">LNRE Library Available</td><td>'+ (response.LNRELibraryAvailable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
 				<tr><td style="text-align:left">Services Source Library Available</td><td>'+ (response.ServicesSourceLibraryAvailable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\
 				<tr><td style="text-align:left">Services Source File Readable</td><td>'+ (response.ServicesSourceFileReadable ? '<span style="color:green">YES</span>' : '<span style="color:red">NO</span>') +'</td></tr>\n\

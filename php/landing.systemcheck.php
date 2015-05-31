@@ -1,5 +1,7 @@
 <?php
 
+require 'key.php';
+
 $result = array(
 	'LNRELibraryAvailable' => false,
 	'ServicesSourceLibraryAvailable' => false,
@@ -9,7 +11,9 @@ $result = array(
 	'publishFolderWritable' => false,
 	'phpMysqli' => false,
 	'phpOci8' => false,
-	'phpSybase' => false
+	'phpSybase' => false,
+	'servicesKeySecure' => false,
+	'designerKeySecure' => false
 );
 
 if (file_exists('../php/class.lnre.php'))           $result['LNRELibraryAvailable'] = true;
@@ -21,6 +25,8 @@ if (is_writable('../publish/'))                     $result['publishFolderWritab
 if (extension_loaded('mysqli'))                     $result['phpMysqli'] = true;
 if (extension_loaded('oci8'))                       $result['phpOci8'] = true;
 if (extension_loaded('sybase'))                     $result['phpSybase'] = true;
+if (SERVICES_KEY !== 'abc123')                      $result['servicesKeySecure'] = true;
+if (DESIGNER_KEY !== 'xyz789')                      $result['designerKeySecure'] = true;
 
 echo json_encode($result);
 

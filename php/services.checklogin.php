@@ -18,18 +18,19 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 		$response['source'] = $source;
 
 		// dapatkan sumber views
-		$response['source']['view']['home']                                 = MinifySourceView('home.html');
-		$response['source']['view']['wizard']                               = MinifySourceView('wizard.html');
-		$response['source']['view']['globalConnection']                     = MinifySourceView('globalconnection.html');
-		$response['source']['view']['globalConnectionData']                 = MinifySourceView('globalconnection.data.html');
-		$response['source']['view']['globalConnectionNoData']               = MinifySourceView('globalconnection.nodata.html');
-		$response['source']['view']['globalConnectionNew']                  = MinifySourceView('globalconnection.new.html');
-		$response['source']['view']['globalConnectionEdit']                 = MinifySourceView('globalconnection.edit.html');
-		$response['source']['view']['globalConnectionDetails']              = MinifySourceView('globalconnection.details.html');
-		$response['source']['view']['servicesAccount']                      = MinifySourceView('servicesAccount.html');
-		$response['source']['view']['servicesAccountData']                  = MinifySourceView('servicesAccount.data.html');
-		$response['source']['view']['servicesAccountNoData']                = MinifySourceView('servicesAccount.nodata.html');
-		$response['source']['view']['servicesAccountNew']                   = MinifySourceView('servicesAccount.new.html');
+		$response['source']['view']['home']                    = MinifySourceView('home.html');
+		$response['source']['view']['wizard']                  = MinifySourceView('wizard.html');
+		$response['source']['view']['globalConnection']        = MinifySourceView('globalconnection.html');
+		$response['source']['view']['globalConnectionData']    = MinifySourceView('globalconnection.data.html');
+		$response['source']['view']['globalConnectionNoData']  = MinifySourceView('globalconnection.nodata.html');
+		$response['source']['view']['globalConnectionNew']     = MinifySourceView('globalconnection.new.html');
+		$response['source']['view']['globalConnectionEdit']    = MinifySourceView('globalconnection.edit.html');
+		$response['source']['view']['globalConnectionDetails'] = MinifySourceView('globalconnection.details.html');
+		$response['source']['view']['servicesAccount']         = MinifySourceView('servicesAccount.html');
+		$response['source']['view']['servicesAccountData']     = MinifySourceView('servicesAccount.data.html');
+		$response['source']['view']['servicesAccountNoData']   = MinifySourceView('servicesAccount.nodata.html');
+		$response['source']['view']['servicesAccountNew']      = MinifySourceView('servicesAccount.new.html');
+		$response['source']['view']['servicesAccountDetails']  = MinifySourceView('servicesAccount.details.html');
 	}
 
 } else {
