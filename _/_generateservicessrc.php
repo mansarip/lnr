@@ -50,12 +50,17 @@ $plainSource = '{
 		}
 	},
 	"viewerAccount":{
-		"tableBinding":true,
-		"tableName":"corrad.pruser",
-		"columnUser":"USERNAME",
-		"columnPassword":"USERPASSWORD",
+		"tableBinding":false,
+		"tableName":"",
+		"columnUser":"",
+		"columnPassword":"",
 		"connection":"",
-		"account":{}
+		"account":{
+			"pengguna":{
+				"password":"abc",
+				"report":[]
+			}
+		}
 	},
 	"encryptionKey":{
 		"services":"",

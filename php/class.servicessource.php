@@ -1,19 +1,15 @@
 <?php
 
-require 'key.php';
-
 class ServicesSource
 {
-	private static $key = SERVICES_KEY;
-
-	public static function Decrypt($source) {
-		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5(self::$key), base64_decode($source), MCRYPT_MODE_CBC, md5(md5(self::$key))), "\0");
+	public static function Decrypt($source, $key) {
+		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($source), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
 	}
 
-	public static function Encrypt($source) {
+	public static function Encrypt($source, $key) {
 		$source = trim($source);
 		$source = preg_replace('/\s+/', ' ', $source);
-		return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5(self::$key), $source, MCRYPT_MODE_CBC, md5(md5(self::$key))));
+		return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $source, MCRYPT_MODE_CBC, md5(md5($key))));
 	}
 
 	public static function Create($source, $path, $filename) {
@@ -41,7 +37,7 @@ class ServicesSource
 		return true;
 	}
 
-	public static function Read($file) {
+	public static function Read($file, $key) {
 		// cek file wujud ke tidak
 		if (!file_exists($file)) {
 			die('<b>ServicesSource Error : </b>File not found.');
@@ -53,7 +49,7 @@ class ServicesSource
 		}
 
 		$rawContent = file_get_contents($file);
-		$data = self::Decrypt($rawContent);
+		$data = self::Decrypt($rawContent, $key);
 
 		return $data;
 	}

@@ -2,19 +2,17 @@
 
 class LNRE
 {
-	private static $key = 'limenrose';
-
-	private static function _Decrypt($source) {
-		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5(self::$key), base64_decode($source), MCRYPT_MODE_CBC, md5(md5(self::$key))), "\0");
+	private static function _Decrypt($source, $key) {
+		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($source), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
 	}
 
-	private static function _Encrypt($source) {
+	private static function _Encrypt($source, $key) {
 		$source = trim($source);
 		$source = preg_replace('/\s+/', ' ', $source);
-		return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5(self::$key), $source, MCRYPT_MODE_CBC, md5(md5(self::$key))));
+		return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $source, MCRYPT_MODE_CBC, md5(md5($key))));
 	}
 
-	public static function Create($source, $path, $filename) {
+	public static function Create($source, $path, $filename, $key) {
 		// cek path, wujud ke tidak
 		if (!file_exists($path)) {
 			die('<b>LNRE Error : </b>Path not exist.');
@@ -26,7 +24,7 @@ class LNRE
 		}
 
 		// sediakan content
-		$content = self::_Encrypt($source);
+		$content = self::_Encrypt($source, $key);
 
 		// write content
 		$handler = fopen($path.$filename.'.lnre', 'w');
@@ -39,7 +37,7 @@ class LNRE
 		return true;
 	}
 
-	public static function Open($file) {
+	public static function Open($file, $key) {
 		// cek file wujud ke tidak
 		if (!file_exists($file)) {
 			die('<b>LNRE Error : </b>File not found.');
@@ -51,7 +49,7 @@ class LNRE
 		}
 
 		$rawContent = file_get_contents($file);
-		$data = self::_Decrypt($rawContent);
+		$data = self::_Decrypt($rawContent, $key);
 
 		return $data;
 	}

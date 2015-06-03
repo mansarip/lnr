@@ -10,7 +10,7 @@ if ($_SESSION['logged']) {
 
 	// validation
 	if ($_FILES['source']['type'] == 'application/octet-stream' && $ext == '.lnre' && $_FILES['source']['error'] == 0) {
-		$content = LNRE::Open($_FILES['source']['tmp_name']);
+		$content = LNRE::Open($_FILES['source']['tmp_name'], $_SESSION['designerKey']);
 		echo '<div id="loadedContent">'.$content.'</div>';
 	}
 }

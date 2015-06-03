@@ -27,7 +27,7 @@ if ($_SESSION['logged']) {
 		exit;	
 	}
 
-	LNRE::Create($content, $tempFolder, $temporaryFileName);
+	LNRE::Create($content, $tempFolder, $temporaryFileName, $_SESSION['designerKey']);
 
 	$response['status'] = 1;
 	$response['message'] = 'Successfully saved.';

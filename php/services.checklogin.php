@@ -5,7 +5,7 @@ session_start();
 if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 
 	include('../php/class.servicessource.php');
-	$source = ServicesSource::Read('../services/services.src');
+	$source = ServicesSource::Read('../services/services.src', $_SESSION['servicesKey']);
 	$source = json_decode($source, true);
 	
 	// invalid source
@@ -26,11 +26,14 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 		$response['source']['view']['globalConnectionNew']     = MinifySourceView('globalconnection.new.html');
 		$response['source']['view']['globalConnectionEdit']    = MinifySourceView('globalconnection.edit.html');
 		$response['source']['view']['globalConnectionDetails'] = MinifySourceView('globalconnection.details.html');
-		$response['source']['view']['servicesAccount']         = MinifySourceView('servicesAccount.html');
-		$response['source']['view']['servicesAccountData']     = MinifySourceView('servicesAccount.data.html');
-		$response['source']['view']['servicesAccountNoData']   = MinifySourceView('servicesAccount.nodata.html');
-		$response['source']['view']['servicesAccountNew']      = MinifySourceView('servicesAccount.new.html');
-		$response['source']['view']['servicesAccountDetails']  = MinifySourceView('servicesAccount.details.html');
+		$response['source']['view']['servicesAccount']         = MinifySourceView('servicesaccount.html');
+		$response['source']['view']['servicesAccountData']     = MinifySourceView('servicesaccount.data.html');
+		$response['source']['view']['servicesAccountNoData']   = MinifySourceView('servicesaccount.nodata.html');
+		$response['source']['view']['servicesAccountNew']      = MinifySourceView('servicesaccount.new.html');
+		$response['source']['view']['servicesAccountDetails']  = MinifySourceView('servicesaccount.details.html');
+		$response['source']['view']['viewerAccount']           = MinifySourceView('vieweraccount.html');
+		$response['source']['view']['viewerAccountNoData']     = MinifySourceView('vieweraccount.nodata.html');
+		$response['source']['view']['viewerAccountData']       = MinifySourceView('vieweraccount.data.html');
 	}
 
 } else {

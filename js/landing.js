@@ -61,6 +61,7 @@ $(function(){
 			dataType: 'json'
 		})
 		.done(function(response){
+			console.log(response);
 			if (response.success === 0) {
 
 				dhtmlx.alert({

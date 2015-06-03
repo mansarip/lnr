@@ -7,10 +7,9 @@ session_start();
 
 if ($_SESSION['logged']) {
 	require 'class.servicessource.php';
-
+	
 	$data = $_POST['data'];
-	$data = ServicesSource::Encrypt($data);
-
+	$data = ServicesSource::Encrypt($data, $_SESSION['servicesKey']);
 	$file = '../services/services.src';
 
 	// check file exist

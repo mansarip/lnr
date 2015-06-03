@@ -89,7 +89,7 @@ function Services() {
 				} else if (id === 'Services Account') {
 					services.LoadServicesAccount();
 				} else if (id === 'Viewer Account') {
-
+					services.LoadViewerAccount();
 				} else if (id === 'Encryption Key') {
 
 				} else if (id === 'Exit without Logout') {
@@ -272,7 +272,7 @@ function Services() {
 					if (answer) {
 						var removeFlag = false;
 
-						$('#servicesConnection tr input.select').each(function(){
+						$('#servicesAccount tr input.select').each(function(){
 							var isChecked = $(this).prop('checked');
 							var row = $(this).closest('tr');
 							var username = row.attr('data-name');
@@ -301,7 +301,7 @@ function Services() {
 						}
 
 						// reset
-						$('#servicesConnection input.selectAll').prop('checked', false);
+						$('#servicesAccount input.selectAll').prop('checked', false);
 					}
 				}
 			});
@@ -309,6 +309,28 @@ function Services() {
 		.fail(function(response){
 			services.layout.cells('b').progressOff();
 		});
+	};
+
+	Services.prototype.LoadViewerAccount = function() {
+		this.ToolbarReset();
+		this.toolbar.loadStruct([
+			{id:1, type:"button", text:"New Account", img:"plus.png", imgdis:"plus.png"},
+			{id:2, type:"separator"},
+			{id:3, type:"button", text:"Remove", img:"cross.png", imgdis:"cross.png"},
+			{id:4, type:"separator"}
+		]);
+
+		this.toolbarEvent = this.toolbar.attachEvent('onClick', function(id){
+			if (id === '3') {
+				//services.RemoveServicesAccount();
+			}
+			else if (id === '1') {
+				//services.NewServicesAccount();
+			}
+		});
+
+		this.layout.cells('b').showToolbar();
+		this.layout.cells('b').attachHTMLString(services.LoadView('viewerAccount'));
 	};
 
 	Services.prototype.InitEvent = function() {
@@ -718,7 +740,7 @@ function Services() {
 		});
 
 		// services account > view details
-		$('body').on('click', '#servicesConnection input.viewDetails', function(){
+		$('body').on('click', '#servicesAccount input.viewDetails', function(){
 			var username = $(this).closest('tr').attr('data-name');
 
 			var win = new dhtmlXWindows();
@@ -783,18 +805,8 @@ function Services() {
 
 	Services.prototype.LoadView = function(viewId, objectName) {
 
-		// view > home
-		if (viewId === 'home') {
-			return services.source.view[viewId];
-		}
-
-		// view > wizard
-		else if (viewId === 'wizard') {
-			return services.source.view[viewId];
-		}
-
 		// view > global connection
-		else if (viewId === 'globalConnection') {
+		if (viewId === 'globalConnection') {
 			var dataHtml = '';
 
 			// jika ada connection
@@ -819,11 +831,6 @@ function Services() {
 			}
 
 			return services._ReplaceVariableView(services.source.view['globalConnection'], {data:dataHtml});
-		}
-
-		// view > global connection new
-		else if (viewId === 'globalConnectionNew') {
-			return services.source.view[viewId];
 		}
 
 		// view > global connection details
@@ -865,11 +872,6 @@ function Services() {
 			return services._ReplaceVariableView(services.source.view[viewId], detail);
 		}
 
-		// view > global connection details button
-		else if (viewId === 'globalConnectionDetailsClosingButton') {
-			return services.source.view[viewId];
-		}
-
 		// view > services account
 		else if (viewId === 'servicesAccount') {
 			var dataHtml = '';
@@ -897,11 +899,6 @@ function Services() {
 			return services._ReplaceVariableView(services.source.view['servicesAccount'], {data:dataHtml});
 		}
 
-		// view > services account > new
-		else if (viewId === 'servicesAccountNew') {
-			return services.source.view[viewId];
-		}
-
 		// view > services account > details
 		else if (viewId === 'servicesAccountDetails') {
 			//var details = services.source.servicesAccount.account[objectName];
@@ -917,6 +914,39 @@ function Services() {
 				'servicesWizard' : (services.source.servicesAccount.account[objectName].privileges.servicesWizard ? 'checked="checked"' : '')
 			};
 			return services._ReplaceVariableView(services.source.view[viewId], detail);
+		}
+
+		// view > viewer account
+		else if (viewId === 'viewerAccount') {
+			var dataHtml = '';
+
+			// jika ada data
+			if (!$.isEmptyObject(services.source.viewerAccount.account)) {
+				var number = 1;
+
+				for (var user in services.source.viewerAccount.account) {
+					var total = services.source.viewerAccount.account[user].report.length;
+					var detail = {
+						'number' : number,
+						'userName' : user,
+						'total' : total
+					};
+
+					dataHtml += services._ReplaceVariableView(services.source.view['viewerAccountData'], detail);
+					number++;
+				}
+			}
+			// jika tiada
+			else {
+				dataHtml += services._ReplaceVariableView(services.source.view['viewerAccountNoData']);
+			}
+
+			return services._ReplaceVariableView(services.source.view[viewId], {data:dataHtml});
+		}
+
+		// else (directly amik dari html)
+		else {
+			return services.source.view[viewId];
 		}
 	};
 
@@ -965,6 +995,8 @@ function Services() {
 
 		var data = $.extend({}, true, services.source);
 		delete data.view;
+
+		console.log(data);
 
 		$.ajax({
 			url:this.phpPath + 'services.write.php',

@@ -26,7 +26,7 @@ if ($_SESSION['logged']) {
 	}
 
 	$raw = file_get_contents($sourcefile);
-	$source = ServicesSource::Decrypt($raw);
+	$source = ServicesSource::Decrypt($raw, $_SESSION['servicesKey']);
 	echo $source;
 
 } else {
