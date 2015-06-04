@@ -8,6 +8,7 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 	// dapatkan sumber views
 	$response['view']['connectionAddNew'] = MinifySourceView('connection.new.html');
 	$response['view']['connectionEdit'] = MinifySourceView('connection.edit.html');
+	$response['view']['parameterAddNew'] = MinifySourceView('parameter.new.html');
 
 } else {
 	$response['status'] = 0;

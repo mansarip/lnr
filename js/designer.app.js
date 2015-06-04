@@ -28,7 +28,8 @@ function Designer() {
 	this.actionHistory = [];
 	this.view = {};
 	this.icon = {
-		error : '../img/icons/exclamation-red-frame.png'
+		error : '../img/icons/exclamation-red-frame.png',
+		warning : '../img/icons/exclamation.png'
 	};
 
 	Designer.prototype.CheckLogin = function(proceedFunc) {
@@ -671,75 +672,6 @@ function Designer() {
 			// show remove button
 			toolbar.showItem(3);
 
-			// display detail #getter
-			/*var editConnection = '\n\
-			<table border="0" class="windowForm" id="connectionEdit">\n\
-			<col style="width:120px">\n\
-			<col style="width:10px">\n\
-			<col>\n\
-			<tr>\n\
-				<td colspan="3"><b>Edit Connection Details</b></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Connection Name</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="connectionName fullwidth" data-key="name" value="'+ designer.details.app.connection[id].name +'" autofocus/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Type</td>\n\
-				<td>:</td>\n\
-				<td>\n\
-					<select class="type" data-key="type">\n\
-						<option value="mysql">MySQL</option>\n\
-					</select>\n\
-				</td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Host</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="host fullwidth" data-key="host" value="'+ designer.details.app.connection[id].host +'"/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Username</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="username fullwidth" data-key="user" value="'+ designer.details.app.connection[id].user +'"/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Password</td>\n\
-				<td>:</td>\n\
-				<td><input type="password" class="password fullwidth" data-key="pass" value="'+ designer.details.app.connection[id].pass +'"/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Database Name</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="host fullwidth" data-key="dbname" value="'+ designer.details.app.connection[id].dbname +'"/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Port</td>\n\
-				<td>:</td>\n\
-				<td><input type="number" class="port" data-key="port" value="'+ designer.details.app.connection[id].port +'"/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>SID</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="sid fullwidth" data-key="sid" value="'+ designer.details.app.connection[id].sid +'"/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Service Name</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="serviceName fullwidth" data-key="serviceName" value="'+ designer.details.app.connection[id].serviceName +'"/></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Socket</td>\n\
-				<td>:</td>\n\
-				<td><input type="text" class="socket fullwidth" data-key="socket" value="'+ designer.details.app.connection[id].socket +'"/></td>\n\
-			</tr>\n\
-			</table>\n\
-			';
-
-			layout.cells('b').attachHTMLString(editConnection + closingButton);*/
-
-			// #CURRENT
 			var view = designer.LoadView('connectionEdit', id);
 			layout.cells('b').attachHTMLString(view);
 		});
@@ -794,55 +726,8 @@ function Designer() {
 		layout.cells('a').hideArrow();
 		layout.cells('b').hideArrow();
 
-		var addNewContent = '\n\
-		<table border="0" class="windowForm" id="parameterAddNew">\n\
-		<col style="width:120px">\n\
-		<col style="width:10px">\n\
-		<col>\n\
-		<tr>\n\
-			<td>Parameter Name</td>\n\
-			<td>:</td>\n\
-			<td><input type="text" class="paramName fullwidth" value=""/></td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Default Value</td>\n\
-			<td>:</td>\n\
-			<td><input type="text" class="defaultValue fullwidth" value=""/></td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Data Type</td>\n\
-			<td>:</td>\n\
-			<td>\n\
-				<select class="dataType">\n\
-					<option value="string">String</option>\n\
-					<option value="number">Number</option>\n\
-				</select>\n\
-			</td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Source Type</td>\n\
-			<td>:</td>\n\
-			<td>\n\
-				<select class="sourceType">\n\
-					<option value="get">GET</option>\n\
-					<option value="post">POST</option>\n\
-					<option value="session">SESSION</option>\n\
-				</select>\n\
-			</td>\n\
-		</tr>\n\
-		</table>\n\
-		';
-
-		// closing button
-		var closingButton = '\n\
-		<div class="buttonPlaceholder" style="padding:10px 15px; left:136px">\n\
-			<input type="button" class="add" style="padding:6px 35px" value="Add"/>\n\
-			<input type="button" class="reset" value="Reset"/>\n\
-		</div>';
-
-		layout.cells('a').attachHTMLString(addNewContent + closingButton);
-		var statusBar = layout.cells('a').attachStatusBar();
-		this.parameterStatusBarBottom = layout.cells('b').attachStatusBar();
+		var view = designer.LoadView('parameterAddNew');
+		layout.cells('a').attachHTMLString(view);
 
 		// grid init
 		this.parameterListGrid = layout.cells('b').attachGrid();
@@ -949,9 +834,6 @@ function Designer() {
 			// tambah pada list
 			designer.parameterListGrid.addRow(paramName, paramName + ',' + paramDefaultValue + ',' + paramDataType + ',' + paramSourceType + ',' + '../img/icons/cross.png^Remove^javascript:designer.PromptRemoveParameter();');
 
-			// clear status text
-			statusBar.setText('');
-
 			// clear form
 			inputParamName.val('').focus();
 			inputParamDefaultValue.val('');
@@ -1055,7 +937,7 @@ function Designer() {
 		dhtmlx.confirm({
 			title:'Remove',
 			type:'alert-info',
-			text:"<img src='../img/icons/exclamation.png'/><br/>Confirm remove parameter?",
+			text:"<img src='"+ designer.icon.warning +"'/><br/>Confirm remove parameter?",
 			callback:function(answer){
 				if (answer === true) {
 					// tag : parameter remove #setter
@@ -1068,7 +950,6 @@ function Designer() {
 					// delete row
 					designer.parameterListGrid.deleteSelectedRows();
 					designer.parameterListGrid.clearSelection();
-					designer.parameterStatusBarBottom.setText('');
 				}
 			}
 		});
