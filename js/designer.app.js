@@ -26,17 +26,25 @@ function Designer() {
 	this.sessionId = null;
 	this.actionHistoryCursor = -1;
 	this.actionHistory = [];
+	this.view = {};
+	this.icon = {
+		error : '../img/icons/exclamation-red-frame.png'
+	};
 
 	Designer.prototype.CheckLogin = function(proceedFunc) {
 		var request = $.ajax({
-			url : this.phpPath + 'designer.checklogin.php'
+			url : this.phpPath + 'designer.checklogin.php',
+			dataType : 'json'
 		});
 
 		// jika butiran login tiada, patah balik ke landing page
 		request.done(function(response){
-			if (response === '0') {
+			if (response.status === 0) {
 				designer.GoBackHomeWithError();
-			} else {
+			} else if (response.status === 1) {
+				for (var key in response.view) {
+					designer.view[key] = response.view[key];
+				}
 				proceedFunc();
 			}
 		});
@@ -441,72 +449,8 @@ function Designer() {
 				toolbar.hideItem(3);
 
 				mode = 'add';
-				var addNewConnection = '\n\
-				<table border="0" class="windowForm" id="connectionAddNew">\n\
-				<col style="width:120px"></col>\n\
-				<col style="width:10px"></col>\n\
-				<col></col>\n\
-				<tr>\n\
-					<td colspan="3"><b>Add New Connection</b></td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>Connection Name</td>\n\
-					<td>:</td>\n\
-					<td><input type="text" class="connectionName fullwidth" data-key="name" value="" autofocus="autofocus"/></td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>Type</td>\n\
-					<td>:</td>\n\
-					<td>\n\
-						<select class="type" data-key="type">\n\
-							<option value="mysql">MySQL</option>\n\
-						</select>\n\
-					</td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>Host</td>\n\
-					<td>:</td>\n\
-					<td><input type="text" class="host fullwidth" data-key="host" value=""/></td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>Username</td>\n\
-					<td>:</td>\n\
-					<td><input type="text" class="username fullwidth" data-key="user" value=""/></td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>Password</td>\n\
-					<td>:</td>\n\
-					<td><input type="password" class="password fullwidth" data-key="pass" value=""/></td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>Database Name</td>\n\
-					<td>:</td>\n\
-					<td><input type="text" class="host fullwidth" data-key="dbname" value=""/></td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>Port</td>\n\
-					<td>:</td>\n\
-					<td><input type="number" class="port" data-key="port" value=""/></td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>SID</td>\n\
-					<td>:</td>\n\
-					<td><input type="text" class="sid fullwidth" data-key="sid" value=""/></td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>Service Name</td>\n\
-					<td>:</td>\n\
-					<td><input type="text" class="serviceName fullwidth" data-key="serviceName" value=""/></td>\n\
-				</tr>\n\
-				<tr>\n\
-					<td>Socket</td>\n\
-					<td>:</td>\n\
-					<td><input type="text" class="socket fullwidth" data-key="socket" value=""/></td>\n\
-				</tr>\n\
-				</table>\n\
-				';
-
-				layout.cells('b').attachHTMLString(addNewConnection + closingButton);
+				var view = designer.LoadView('connectionAddNew');
+				layout.cells('b').attachHTMLString(view);
 			}
 
 			// remove connection
@@ -562,7 +506,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Invalid host'
+					text:'<img src="'+ designer.icon.error +'"/><br/>Invalid host'
 				});
 				return false;
 
@@ -571,7 +515,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Invalid user'
+					text:'<img src="'+ designer.icon.error +'"/><br/>Invalid user'
 				});
 				return false;
 
@@ -587,7 +531,7 @@ function Designer() {
 					dhtmlx.alert({
 						title:(response.status === 0 ? 'Failure' : 'Success'),
 						style:"alert-info",
-						text:(response.status === 0 ? '<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message : 'Successfully connected!')
+						text:(response.status === 0 ? '<img src="'+ designer.icon.error +'"/><br/>' + response.message : 'Successfully connected!')
 					});
 				})
 				.fail(function(){
@@ -595,7 +539,7 @@ function Designer() {
 					dhtmlx.alert({
 						title:'Unexpected Error',
 						style:"alert-error",
-						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Failed to connect server'
+						text:'<img src="'+ designer.icon.error +'"/><br/>Failed to connect server'
 					});
 					return false;
 				});
@@ -628,7 +572,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Empty connection name'
+					text:'<img src="'+ designer.icon.error +'"/><br/>Unable to save : Empty connection name'
 				});
 				return false;
 			}
@@ -636,7 +580,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Invalid connection type'
+					text:'<img src="'+ designer.icon.error +'"/><br/>Unable to save : Invalid connection type'
 				});
 				return false;
 			}
@@ -648,7 +592,7 @@ function Designer() {
 					dhtmlx.alert({
 						title:'Error',
 						style:"alert-info",
-						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Connection name already exist'
+						text:'<img src="'+ designer.icon.error +'"/><br/>Unable to save : Connection name already exist'
 					});
 					return false;
 				}
@@ -680,7 +624,7 @@ function Designer() {
 						dhtmlx.alert({
 							title:'Error',
 							style:"alert-info",
-							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Unable to save : Connection name already exist'
+							text:'<img src="'+ designer.icon.error +'"/><br/>Unable to save : Connection name already exist'
 						});
 						return false;
 					}
@@ -728,7 +672,7 @@ function Designer() {
 			toolbar.showItem(3);
 
 			// display detail #getter
-			var editConnection = '\n\
+			/*var editConnection = '\n\
 			<table border="0" class="windowForm" id="connectionEdit">\n\
 			<col style="width:120px">\n\
 			<col style="width:10px">\n\
@@ -793,10 +737,11 @@ function Designer() {
 			</table>\n\
 			';
 
-			layout.cells('b').attachHTMLString(editConnection + closingButton);
+			layout.cells('b').attachHTMLString(editConnection + closingButton);*/
 
-			// select dropdown (type)
-			$(layout.base).find('select.type').val(designer.details.app.connection[id].type);
+			// #CURRENT
+			var view = designer.LoadView('connectionEdit', id);
+			layout.cells('b').attachHTMLString(view);
 		});
 
 		// open window, terus buka detail connection
@@ -975,7 +920,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Empty parameter name'
+					text:'<img src="'+ designer.icon.error +'"/><br/>Empty parameter name'
 				});
 				return false;
 			}
@@ -984,7 +929,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Parameter name is already exist'
+					text:'<img src="'+ designer.icon.error +'"/><br/>Parameter name is already exist'
 				});
 				return false;
 			}
@@ -993,7 +938,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Default value is not a number'
+					text:'<img src="'+ designer.icon.error +'"/><br/>Default value is not a number'
 				});
 				return false;
 			}
@@ -1058,7 +1003,7 @@ function Designer() {
 						dhtmlx.alert({
 							title:'Error',
 							style:"alert-info",
-							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Parameter name is already exist'
+							text:'<img src="'+ designer.icon.error +'"/><br/>Parameter name is already exist'
 						});
 						return false;
 					}
@@ -1077,7 +1022,7 @@ function Designer() {
 						dhtmlx.alert({
 							title:'Error',
 							style:"alert-info",
-							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Default value is not a number'
+							text:'<img src="'+ designer.icon.error +'"/><br/>Default value is not a number'
 						});
 						return false;
 					}
@@ -1705,7 +1650,7 @@ function Designer() {
 						dhtmlx.alert({
 							title:'Error',
 							style:"alert-info",
-							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Empty group name!'
+							text:'<img src="'+ designer.icon.error +'"/><br/>Empty group name!'
 						});
 						return false;
 					}
@@ -1715,7 +1660,7 @@ function Designer() {
 						dhtmlx.alert({
 							title:'Error',
 							style:"alert-info",
-							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Name already exist!'
+							text:'<img src="'+ designer.icon.error +'"/><br/>Name already exist!'
 						});
 						return false;
 					}
@@ -2135,7 +2080,7 @@ function Designer() {
 					dhtmlx.alert({
 						title:'Error',
 						style:"alert-info",
-						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Empty group name!'
+						text:'<img src="'+ designer.icon.error +'"/><br/>Empty group name!'
 					});
 					return false;
 				}
@@ -2145,7 +2090,7 @@ function Designer() {
 					dhtmlx.alert({
 						title:'Error',
 						style:"alert-info",
-						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Group name already exist!<br/>Please enter another name.'
+						text:'<img src="'+ designer.icon.error +'"/><br/>Group name already exist!<br/>Please enter another name.'
 					});
 					return false;
 				}
@@ -2458,7 +2403,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					type:'alert-info',
-					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Invalid connection.</p>'
+					text:'<img style="margin:-4px 4px;" src="'+ designer.icon.error +'"><p>Invalid connection.</p>'
 				});
 				return false;
 			}
@@ -2468,7 +2413,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					type:'alert-info',
-					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Invalid number of max preview records.</p>'
+					text:'<img style="margin:-4px 4px;" src="'+ designer.icon.error +'"><p>Invalid number of max preview records.</p>'
 				});
 				return false;
 			}
@@ -2524,7 +2469,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Invalid connection selected. Make sure you<br/>have at least one connection to select.</p>'
+					text:'<img style="margin:-4px 4px;" src="'+ designer.icon.error +'"><p>Invalid connection selected. Make sure you<br/>have at least one connection to select.</p>'
 				});
 				return false;
 			}
@@ -2533,7 +2478,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Empty data source name!</p>'
+					text:'<img style="margin:-4px 4px;" src="'+ designer.icon.error +'"><p>Empty data source name!</p>'
 				});
 				return false;
 			}
@@ -2542,7 +2487,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Empty query!</p>'
+					text:'<img style="margin:-4px 4px;" src="'+ designer.icon.error +'"><p>Empty query!</p>'
 				});
 				return false;
 			}
@@ -2554,7 +2499,7 @@ function Designer() {
 					dhtmlx.alert({
 						title:'Error',
 						style:"alert-info",
-						text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Data source with name "'+ detail.name +'" already exist.</p>'
+						text:'<img style="margin:-4px 4px;" src="'+ designer.icon.error +'"><p>Data source with name "'+ detail.name +'" already exist.</p>'
 					});
 					return false;
 				}
@@ -2578,7 +2523,7 @@ function Designer() {
 						dhtmlx.alert({
 							title:'Error',
 							style:"alert-info",
-							text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
+							text:'<img src="'+ designer.icon.error +'"/><br/>' + response.message
 						});
 
 						// reset
@@ -2644,7 +2589,7 @@ function Designer() {
 					dhtmlx.alert({
 						title:'Error',
 						style:"alert-info",
-						text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Fetching failure!'
+						text:'<img src="'+ designer.icon.error +'"/><br/>Fetching failure!'
 					});
 
 					// reset
@@ -2677,7 +2622,7 @@ function Designer() {
 							dhtmlx.alert({
 								title:'Error',
 								style:"alert-info",
-								text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Data source with name "'+ detail.name +'" already exist.</p>'
+								text:'<img style="margin:-4px 4px;" src="'+ designer.icon.error +'"><p>Data source with name "'+ detail.name +'" already exist.</p>'
 							});
 							return false;
 						}
@@ -2738,7 +2683,7 @@ function Designer() {
 										dhtmlx.alert({
 											title:'Error',
 											style:"alert-info",
-											text:'<img style="margin:-4px 4px;" src="../img/icons/exclamation-red-frame.png"><p>Data source with name "'+ detail.name +'" already exist.</p>'
+											text:'<img style="margin:-4px 4px;" src="'+ designer.icon.error +'"><p>Data source with name "'+ detail.name +'" already exist.</p>'
 										});
 										return false;
 									}
@@ -2768,7 +2713,7 @@ function Designer() {
 										dhtmlx.alert({
 											title:'Error',
 											style:"alert-info",
-											text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
+											text:'<img src="'+ designer.icon.error +'"/><br/>' + response.message
 										});
 										return false;
 
@@ -2887,7 +2832,7 @@ function Designer() {
 									dhtmlx.alert({
 										title:'Error',
 										style:"alert-info",
-										text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>Fetching failure!'
+										text:'<img src="'+ designer.icon.error +'"/><br/>Fetching failure!'
 									});
 								});
 							} 
@@ -4038,7 +3983,7 @@ function Designer() {
 				dhtmlx.alert({
 					title:'Save Error',
 					style:'alert-info',
-					text:'<img src="../img/icons/exclamation-red-frame.png"/><br/>' + response.message
+					text:'<img src="'+ designer.icon.error +'"/><br/>' + response.message
 				});
 				return false;
 			}
@@ -4558,6 +4503,43 @@ function Designer() {
 	$('body').on('click', 'td.standartTreeRow', function(e){
 		e.stopPropagation();
 	});
+
+	Designer.prototype.LoadView = function(viewId, name) {
+		if (viewId === 'connectionEdit') {
+			var conn = designer.details.app.connection[name];
+			var data = {
+				connectionName : conn.name,
+				connecitonHost : conn.host,
+				connectionUser : conn.user,
+				connectionPass : conn.pass,
+				connectionDbName : conn.dbname,
+				connectionPort : conn.port,
+				connectionSid : conn.sid,
+				connectionServiceName : conn.serviceName,
+				connectionSocket : conn.socket,
+				connectionType : conn.type
+			};
+			return designer._ReplaceVariableView(designer.view[viewId], data);
+		} else {
+			return designer.view[viewId];
+		}
+	};
+
+	Designer.prototype._ReplaceVariableView = function(view, variables) {
+		for (var key in variables) {
+			var find = '{{'+ key +'}}';
+			var re = new RegExp(find, 'g');
+			view = view.replace(re, variables[key]);
+		}
+
+		// dropdown default value
+		var jqObj = $(view);
+		jqObj.find('select[data-default]').each(function(){
+			$(this).find('option[value="'+ ($(this).attr('data-default')) +'"]').attr('selected','selected');
+		});
+
+		return jqObj.prop('outerHTML');
+	};
 
 	// http://davidwalsh.name/caret-end
 	Designer.prototype.moveCursorToEnd = function(el){

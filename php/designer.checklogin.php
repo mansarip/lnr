@@ -3,9 +3,20 @@
 session_start();
 
 if (isset($_SESSION['logged']) && $_SESSION['logged']) {
-	echo '1';
+	$response['status'] = 1;
+
+	// dapatkan sumber views
+	$response['view']['connectionAddNew'] = MinifySourceView('connection.new.html');
+	$response['view']['connectionEdit'] = MinifySourceView('connection.edit.html');
+
 } else {
-	echo '0';
+	$response['status'] = 0;
+}
+
+echo json_encode($response);
+
+function MinifySourceView($file) {
+	return @trim(preg_replace('/\s+/', ' ', file_get_contents('../designer/' . $file)));
 }
 
 ?>
