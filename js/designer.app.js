@@ -984,106 +984,18 @@ function Designer() {
 		});
 
 		// tag : preferences #getter
-
-		// closing button
-		var closingButton = '\n\
-		<div class="buttonPlaceholder">\n\
-			<input type="button" class="save" value="Save"/>\n\
-			<input type="button" class="close" value="Close"/>\n\
-		</div>';
-
+		
 		// general tab
-		var generalContent = '\n\
-		<table border="0" class="windowForm" id="preferencesGeneral">\n\
-		<col style="width:100px">\n\
-		<col style="width:10px">\n\
-		<col>\n\
-		<tr>\n\
-			<td>Report Title</td>\n\
-			<td>:</td>\n\
-			<td><input type="text" class="reportTitle fullwidth" value="'+ this.details.app.general.reportTitle +'"/></td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Author Name</td>\n\
-			<td>:</td>\n\
-			<td><input type="text" class="authorName fullwidth" value="'+ this.details.app.general.author +'"/></td>\n\
-		</tr>\n\
-		</table>\n\
-		';
-
-		tabbar.tabs(1).attachHTMLString(generalContent + closingButton);
+		var viewGeneral = designer.LoadView('preferencesGeneral');
+		tabbar.tabs(1).attachHTMLString(viewGeneral);
 
 		// format tab
-		var formatContent = '\n\
-		<table border="0" class="windowForm" id="preferencesFormat">\n\
-		<col style="width:100px">\n\
-		<col style="width:10px">\n\
-		<col>\n\
-		<tr>\n\
-			<td>Paper</td>\n\
-			<td>:</td>\n\
-			<td>\n\
-				<select class="paper">\n\
-					<option '+ (this.details.app.format.paper === 'A5' ? 'selected="selected" ' : '' ) +' value="A5">A5</option>\n\
-					<option '+ (this.details.app.format.paper === 'A4' ? 'selected="selected" ' : '' ) +' value="A4">A4</option>\n\
-					<option '+ (this.details.app.format.paper === 'A3' ? 'selected="selected" ' : '' ) +' value="A3">A3</option>\n\
-					<option '+ (this.details.app.format.paper === 'Letter' ? 'selected="selected" ' : '' ) +' value="Letter">Letter</option>\n\
-				</select>\n\
-			</td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Orientation</td>\n\
-			<td>:</td>\n\
-			<td>\n\
-				<select class="orientation">\n\
-					<option '+ (this.details.app.format.orientation === 'P' ? 'selected="selected" ' : '' ) +' value="P">Portrait</option>\n\
-					<option '+ (this.details.app.format.orientation === 'L' ? 'selected="selected" ' : '' ) +' value="L">Landscape</option>\n\
-				</select>\n\
-			</td>\n\
-		</tr>\n\
-		</table>\n\
-		';
-
-		tabbar.tabs(3).attachHTMLString(formatContent + closingButton);
+		var viewFormat = designer.LoadView('preferencesFormat');
+		tabbar.tabs(3).attachHTMLString(viewFormat);
 
 		// margin tab
-		var generalContent = '\n\
-		<table border="0" class="windowForm" id="preferencesMargin">\n\
-		<col style="width:70px">\n\
-		<col style="width:10px">\n\
-		<col>\n\
-		<tr>\n\
-			<td colspan="3">Unit in millimeter (mm)</td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Top</td>\n\
-			<td>:</td>\n\
-			<td><input type="number" min="0" class="margin top" value="'+ this.details.app.margin.top +'"/></td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Left</td>\n\
-			<td>:</td>\n\
-			<td><input type="number" min="0" class="margin left" value="'+ this.details.app.margin.left +'"/></td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Right</td>\n\
-			<td>:</td>\n\
-			<td><input type="number" min="0" class="margin right" value="'+ this.details.app.margin.right +'"/></td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Bottom</td>\n\
-			<td>:</td>\n\
-			<td><input type="number" min="0" class="margin bottom" value="'+ this.details.app.margin.bottom +'"/></td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td>Footer</td>\n\
-			<td>:</td>\n\
-			<td><input type="number" min="0" class="margin footer" value="'+ this.details.app.margin.footer +'"/></td>\n\
-		</tr>\n\
-		</table>\n\
-		';
-
-		tabbar.tabs(2).attachHTMLString(generalContent + closingButton);
+		var viewMargin = designer.LoadView('preferencesMargin');
+		tabbar.tabs(2).attachHTMLString(viewMargin);
 
 		// close window button
 		$(tabbar.base).find('input.close').click(function(){
@@ -4401,6 +4313,31 @@ function Designer() {
 				connectionType : conn.type
 			};
 			return designer._ReplaceVariableView(designer.view[viewId], data);
+
+		} else if (viewId === 'preferencesGeneral') {
+			var data = {
+				author : designer.details.app.general.author,
+				reportTitle : designer.details.app.general.reportTitle
+			};
+			return designer._ReplaceVariableView(designer.view[viewId], data);
+
+		} else if (viewId === 'preferencesFormat') {
+			var data = {
+				paper : designer.details.app.format.paper,
+				orientation : designer.details.app.format.orientation
+			};
+			return designer._ReplaceVariableView(designer.view[viewId], data);
+
+		} else if (viewId === 'preferencesMargin') {
+			var data = {
+				top : this.details.app.margin.top,
+				left : this.details.app.margin.left,
+				right : this.details.app.margin.right,
+				bottom : this.details.app.margin.bottom,
+				footer : this.details.app.margin.footer
+			};
+			return designer._ReplaceVariableView(designer.view[viewId], data);
+
 		} else {
 			return designer.view[viewId];
 		}
