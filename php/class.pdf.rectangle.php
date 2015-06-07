@@ -112,7 +112,7 @@ class Rectangle extends Box
 		if ($this->fillColorEnable) {
 			$fillColor = $pdf->HexToRGB($this->fillColor);
 		} else {
-			$fillColor = null;
+			$fillColor = array();
 		}
 
 		$pdf->Rect($this->posX, $this->posY, $this->width, $this->height, $style='F', $border, $fillColor);

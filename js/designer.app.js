@@ -634,6 +634,9 @@ function Designer() {
 					tree.changeItemId(editName, detail.name);
 					tree.setItemText(detail.name, detail.name);
 
+					// update main query
+					designer.mainQuery.connection = detail.name;
+
 					designer.tree.data.changeItemId('4:::' + editName, '4:::' + detail.name);
 					designer.tree.data.setItemText('4:::' + detail.name, detail.name);
 				}
@@ -1078,7 +1081,7 @@ function Designer() {
 
 		if (this.mainQuery === null) {
 
-			groupWin.attachHTMLString('<p style="font-family: \'Montserrat\'; font-size: 11px; line-height: 18px; text-align: center;">Unable to proceed. No main data source detected.<br/>Make sure you have one main data source.<br/><br/><img src="../img/app_1.png"/></p>');
+			groupWin.attachHTMLString(designer.LoadView('groupNoMain'));
 
 		} else {
 			var layout = groupWin.attachLayout({
@@ -1093,25 +1096,7 @@ function Designer() {
 			layout.cells('a').fixSize(true, true);
 
 			layout.cells('b').setWidth(170);
-
-			var info = '\n\
-			<table border="0" class="windowForm">\n\
-			<col style="width:100px">\n\
-			<col style="width:10px">\n\
-			<tr>\n\
-				<td>Connection</td>\n\
-				<td>:</td>\n\
-				<td><b>'+ this.mainQuery.connection +'</b></td>\n\
-			</tr>\n\
-			<tr>\n\
-				<td>Query Name</td>\n\
-				<td>:</td>\n\
-				<td><b>'+ this.mainQuery.name +'</b></td>\n\
-			</tr>\n\
-			</table>\n\
-			';
-
-			layout.cells('a').attachHTMLString(info);
+			layout.cells('a').attachHTMLString(designer.LoadView('groupInfo'));
 
 			var groups = [];
 			for (var groupName in this.mainQuery.group) {
@@ -4335,6 +4320,13 @@ function Designer() {
 				right : this.details.app.margin.right,
 				bottom : this.details.app.margin.bottom,
 				footer : this.details.app.margin.footer
+			};
+			return designer._ReplaceVariableView(designer.view[viewId], data);
+
+		} else if (viewId === 'groupInfo') {
+			var data = {
+				connection : this.mainQuery.connection,
+				queryName : this.mainQuery.name
 			};
 			return designer._ReplaceVariableView(designer.view[viewId], data);
 

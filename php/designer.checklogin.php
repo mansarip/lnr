@@ -12,6 +12,8 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 	$response['view']['preferencesGeneral'] = MinifySourceView('preferences.general.html');
 	$response['view']['preferencesFormat'] = MinifySourceView('preferences.format.html');
 	$response['view']['preferencesMargin'] = MinifySourceView('preferences.margin.html');
+	$response['view']['groupNoMain'] = MinifySourceView('group.nomain.html');
+	$response['view']['groupInfo'] = MinifySourceView('group.info.html');
 
 } else {
 	$response['status'] = 0;
