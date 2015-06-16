@@ -65,6 +65,10 @@ class Band
 					$rect = new Rectangle($elem);
 					$rect->AttachToBand($this);
 				}
+				elseif ($elemType == 'image') {
+					$rect = new Image($elem);
+					$rect->AttachToBand($this);
+				}
 			}
 
 			unset($this->elements);

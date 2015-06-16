@@ -4258,6 +4258,10 @@ function Designer() {
 		});
 	};
 
+	// ============================================================= //
+	// BODY ON CLICK - Buat Apa Yang Patut, contoh : stopPropagation //
+	// ============================================================= //
+
 	// event : body click
 	$('body').on('click', function(event){
 
@@ -4269,6 +4273,10 @@ function Designer() {
 		} else if (designer.currentWindowOpen !== null && designer.currentWindowOpen.getId() === 'sourceField') {
 			designer.currentWindowOpen.close();
 
+		} else if (designer.currentWindowOpen !== null && designer.currentWindowOpen.getId() === 'imageSource') {
+			// statement ini untuk mengecualikan window
+			// dari masuk else statement
+
 		// normal
 		} else {
 			designer.tree.structure.clearSelection();
@@ -4278,9 +4286,11 @@ function Designer() {
 		}
 	});
 
-	$('body').on('click', 'td.standartTreeRow', function(e){
+	$('body').on('click', 'td.standartTreeRow, .dhx_modal_cover, .dhtmlx_modal_box, .dhtmlx_popup_controls', function(e){
 		e.stopPropagation();
 	});
+
+	// ============================================================= //
 
 	Designer.prototype.LoadView = function(viewId, name) {
 		if (viewId === 'connectionEdit') {

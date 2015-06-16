@@ -47,10 +47,10 @@
 			</ul>
 
 			<h3 id="pemasangan">Pemasangan</h3>
-			<p>Muat turun <code>limenrose_latest.zip</code> dan <i>extract</i> folder <code>limenrose</code> ke dalam web server anda.</p>
+			<p><b>1. </b>Muat turun <code>limenrose_latest.zip</code> dan <i>extract</i> folder <code>limenrose</code> ke dalam web server anda.</p>
 			<p>[img]</p>
 			<p>Anda boleh capai <code>limenrose</code> melalui web browser anda. Sebagai contoh : <pre>http://localhost/limenrose/</pre></p>
-			<p>Anda akan tiba pada <i>landing page</i> L&R. Pada bahagian bawah, klik pada pautan <code>system_check</code>. Satu <i>popup window</i> akan dipapar.</p>
+			<p><b>2. </b>Anda akan tiba pada <i>landing page</i> L&R. Pada bahagian bawah, klik pada pautan <code>system_check</code>. Satu <i>popup window</i> akan dipapar.</p>
 			<p>[img]</p>
 			<p>Untuk keselamatan, anda perlu mengubah nilai untuk <code>servicesKey</code> dan <code>designerKey</code>. Ini adalah nilai asal bagi kedua-dua kunci tersebut : <pre>Services Key : abc123</pre><pre>Designer Key : xyz789</pre>Selagi anda tidak mengubah nilai kedua-dua kunci tersebut, L&R akan papar status <b>INSECURE</b> pada paparan <i>System Check</i>.</p>
 			<p>Untuk mengubah nilai kunci tersebut, kembali ke <i>root folder</i> L&R dan buka fail <code>config.json</code> :</p>

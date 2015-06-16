@@ -1,0 +1,32 @@
+Designer
+
+Menu :
+Konsep
+Paparan Aplikasi
+Aliran
+Struktur
+Data
+Ruang Kerja
+Elemen
+Properties
+
+Contoh Laporan 1
+Contoh Laporan 2
+Contoh Laporan 3
+
+=======================
+
+Konsep :
+L&R menggunakan konsep “Banded Report” iaitu satu konsep di mana paparan sebuah laporan dipecahkan mengikut bahagian-bahagian tertentu.
+
+Secara asalnya terdapat 8 bahagian (band) dalam sebuah laporan, mengikut susunan, iaitu :
+Report Header
+Page Header
+Header
+Detail
+No Data
+Footer
+Page Footer
+Report Footer
+
+Bahagian-bahagian ini hanya nampak terpisah hanya apabila berada dalam “design mode” (Report Designer), namun akan dipapar seperti biasa dilihat melalui “preview mode” atau melalui Report Viewer.

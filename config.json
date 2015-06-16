@@ -2,5 +2,6 @@
 	"servicesKey" : "abc123",
 	"designerKey" : "xyz789",
 	"viewerAccountLimit" : 49,
-	"servicesAccountLimit" : 49
+	"servicesAccountLimit" : 49,
+	"imageUploadMaxSize" : 2000
 }

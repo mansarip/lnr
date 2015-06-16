@@ -504,10 +504,104 @@ function Image() {
 	this.type = 'image';
 	this.treeIcon = 'picture.png';
 	this.propertiesItems = $('#properties table tbody.' + this.type);
-	this.source;
+	this.source = null;
 	this.dpi;
 
-	Image.prototype.PostInit = function(){};
+	Image.prototype.PostInit = function(){
+		var image = this;
+
+		// double click
+		this.elem.on('dblclick', function(){
+			image.OpenImageSourceWindow();
+		});
+
+		// image placeholder
+		this.elem.append('<div class="imageSource"></div>');
+
+		// resize image height, when elem resize
+		this.elem.on('resize', function(){
+			$(this).find('.imageSource img').height($(this).height());
+		});
+	};
+
+	Image.prototype.OpenImageSourceWindow = function() {
+		var image = this;
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		if (this.source === null) {
+			var imageWin = windows.createWindow({
+				id:"imageSource",
+				width:400,
+				height:200,
+				center:true,
+				modal:true,
+				resize:false
+			});
+			imageWin.button('minmax').hide();
+			imageWin.button('park').hide();
+			imageWin.setText('Image');
+			designer.currentWindowOpen = imageWin;
+
+			var tab = imageWin.attachTabbar({
+				tabs : [
+					{id:1, text:"Upload", active:true},
+					{id:2, text:"URL"}
+				]
+			});
+
+			tab.cells(1).attachHTMLString(designer.LoadView('imageUpload'));
+			var inputFile = $('#imageUpload input.file');
+			var form = $('#imageUpload form');
+			var iframe = $('#imageUpload iframe');
+
+			// register event
+			$('.dhxwin_active').on('click', '#imageUpload input.choose', function(){
+				inputFile.click();
+			});
+
+			$('.dhxwin_active').on('change', '#imageUpload input.file', function(){
+				imageWin.progressOn();
+				form.submit();
+			});
+
+			iframe.on('load', function(){
+				var response = $(this).contents().find('body').text();
+				response = JSON.parse(response);
+				imageWin.progressOff();
+
+				if (response.status === 1) {
+					imageWin.close();
+					image.elem.find('.imageSource').html('<img style="width:100%; height:'+ image.height +'px" src="'+ response.file +'"/>');
+					image.source = response.file;
+
+				} else {
+					dhtmlx.alert({
+						title:'Error',
+						style:"alert-info",
+						text:'<img src="'+ designer.icon.error +'"/><br/>' + response.message
+					});
+					
+					// reset form
+					inputFile.val('');
+
+					return false;
+				}
+			});
+
+			// prevent bubble up modal overlay click
+			$('.dhxwins_mcover, .dhxwin_active').on('click', function(e){
+				e.stopPropagation();
+			})
+
+			// close event
+			imageWin.attachEvent('onClose', function(){
+				$('.dhxwins_mcover, .dhxwin_active').off();
+				designer.currentWindowOpen = null;
+				return true;
+			});
+		}
+	};
 }
 
 /**
