@@ -1,6 +1,6 @@
 <?php
 
-class Image extends Box
+class LNRQRCode extends Box
 {
 	public function __construct($details) {
 		foreach ($details as $key => $value) {
@@ -115,8 +115,9 @@ class Image extends Box
 			$fillColor = array();
 		}
 
+		$pdf->write2DBarcode($this->code, $this->barType, $this->posX, $this->posY, $this->width, $this->height);
 		//$pdf->Rect($this->posX, $this->posY, $this->width, $this->height, $style='F', $border, $fillColor);
-		$pdf->Image($this->source, $this->posX, $this->posY, $this->width, $this->height, '', '', '', false, 300, '', false, false, $border);
+		//$pdf->Image($this->source, $this->posX, $this->posY, $this->width, $this->height, '', '', '', false, 300, '', false, false, $border);
 	}
 }
 

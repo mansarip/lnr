@@ -98,6 +98,7 @@ include('../php/class.pdf.label.php');
 include('../php/class.pdf.field.php');
 include('../php/class.pdf.rectangle.php');
 include('../php/class.pdf.image.php');
+include('../php/class.pdf.qrcode.php');
 include('../php/class.pdf.lnrpdf.php'); // extend class TCPDF
 
 // layout source

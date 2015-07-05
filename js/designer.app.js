@@ -3,6 +3,7 @@ function Designer() {
 	this.phpPath = '../php/';
 	this.fugueIconPath = '../img/icons/';
 	this.dhtmlxImagePath = '../libs/dhtmlx/imgs/';
+	this.scalePixels = 3;
 	this.layout = null;
 	this.toolbar = null;
 	this.statusBar = null;
@@ -73,6 +74,7 @@ function Designer() {
 				"Page Header" : { "treeId":'pageHeader' },
 				"Header" : { "treeId":'header' },
 				"Detail" : { "treeId":'detail' },
+				"No Data" : { "treeId":'noData' },
 				"Footer" : { "treeId":'footer' },
 				"Page Footer" : { "treeId":'pageFooter' },
 				"Report Footer" : { "treeId":'reportFooter' }
@@ -1031,8 +1033,8 @@ function Designer() {
 			}
 
 			// band size
-			bandSize -= (margin.left * 3);
-			bandSize -= (margin.right * 3);
+			bandSize -= (margin.left * designer.scalePixels);
+			bandSize -= (margin.right * designer.scalePixels);
 			$('#workspace .band').width(bandSize);
 
 			designer.details.app.general.reportTitle = reportTitle;
@@ -3992,10 +3994,10 @@ function Designer() {
 				}
 
 				inputName.val(element.name).blur();
-				inputWidth.val(element.width * 3).change();
-				inputHeight.val(element.height * 3).change();
-				inputLeft.val(element.posX * 3).change();
-				inputTop.val(element.posY * 3).change();
+				inputWidth.val(element.width * designer.scalePixels).change();
+				inputHeight.val(element.height * designer.scalePixels).change();
+				inputLeft.val(element.posX * designer.scalePixels).change();
+				inputTop.val(element.posY * designer.scalePixels).change();
 				inputLineHeight.val(element.lineHeight).change();
 				selectFontFamily.val(element.fontFamily).change();
 				inputFontSize.val(element.fontSize).change();
@@ -4267,6 +4269,10 @@ function Designer() {
 
 		// jika semasa labelText sedang dibuka
 		if (designer.currentWindowOpen !== null && designer.currentWindowOpen.getId() === 'labelText') {
+			designer.currentWindowOpen.close();
+
+		// jika semasa qrCodeText sedang dibuka
+		} else if (designer.currentWindowOpen !== null && designer.currentWindowOpen.getId() === 'qrCodeText') {
 			designer.currentWindowOpen.close();
 
 		// jika semasa sourceField sedang dibuka

@@ -72,7 +72,7 @@ table.windowForm textarea{
 #workspace .band .area{
 	border: 1px solid #AAA;
 	background-color: #fff;
-	height: 100px;
+	height: 50px;
 	position: relative;
 	overflow: hidden;
 }
@@ -84,6 +84,9 @@ table.windowForm textarea{
 	position: absolute;
 	/*box-sizing: border-box;*/
 	overflow: hidden;
+}
+#workspace .area .element.qrcode{
+	background: url('../img/icons/barcode-2d.png') no-repeat center;
 }
 .buttonPlaceholder{
 	position: absolute;
@@ -165,7 +168,8 @@ small.grouplabel{
 #properties table tbody.particular{
 	display: none;
 }
-textarea.labelText{
+textarea.labelText,
+textarea.codeText{
 	padding: 0;
 	margin: 0;
 	width: 100%;

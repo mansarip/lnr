@@ -601,6 +601,9 @@ function Image() {
 				return true;
 			});
 		}
+		else if (this.source !== null) {
+
+		}
 	};
 }
 
@@ -631,12 +634,53 @@ function QRCode() {
 	this.type = 'qrcode';
 	this.treeIcon = 'barcode-2d.png';
 	this.propertiesItems = $('#properties table tbody.' + this.type);
-	this.code;
+	this.code = "";
 	this.color;
 	this.distort;
-	this.barType;
+	this.barType = "QRCODE, M";
 
-	QRCode.prototype.PostInit = function(){};
+	QRCode.prototype.PostInit = function(){
+		var qrcode = this;
+
+		// double click
+		this.elem.on('dblclick', function(e){
+			qrcode.OpenCodeWindow(e.pageX, e.pageY);
+		});
+	};
+
+	QRCode.prototype.OpenCodeWindow = function(x, y) {
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var codeWin = windows.createWindow({
+			id:"qrCodeText",
+			width:300,
+			height:150,
+			left:x,
+			top:y
+		});
+		codeWin.button('minmax').hide();
+		codeWin.button('park').hide();
+		codeWin.setText('Code Text');
+
+		designer.currentWindowOpen = codeWin;
+
+		var textBox = $('<textarea class="codeText">'+ designer.currentSelectedElement.code +'</textarea>');
+		codeWin.attachObject(textBox[0]);
+		textBox.focus();
+		designer.moveCursorToEnd(textBox[0]);
+
+		textBox.closest('div.dhxwin_active').on('click', function(e){
+			e.stopPropagation();
+		});
+
+		codeWin.attachEvent('onClose', function(){
+			var text = $(designer.currentWindowOpen.cell).find('textarea.codeText').val();
+			designer.currentSelectedElement.code = text; // setter, refer kepada qrcode element
+			designer.currentWindowOpen = null;
+			return true;
+		});
+	};
 }
 
 /**

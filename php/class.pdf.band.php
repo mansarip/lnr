@@ -69,6 +69,10 @@ class Band
 					$rect = new Image($elem);
 					$rect->AttachToBand($this);
 				}
+				elseif ($elemType == 'qrcode') {
+					$rect = new LNRQRCode($elem);
+					$rect->AttachToBand($this);
+				}
 			}
 
 			unset($this->elements);
