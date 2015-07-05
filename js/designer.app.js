@@ -3544,6 +3544,12 @@ function Designer() {
 		object.AttachToParent();
 		object.UpdatePosition();
 
+		// resize band area vertically
+		var posY2 = object.posY + object.height + 2;
+		if (band.minHeight === null || band.minHeight < posY2) {
+			targetArea.css('height', posY2 + 'px');
+		}
+		
 		// update band min height
 		this.UpdateBandMinHeight(band);
 	};
@@ -3555,8 +3561,9 @@ function Designer() {
 			heightCollection.push(posY2);
 		});
 
+		var bandArea = band.elem.find('.area');
 		band.minHeight = Math.max.apply(null, heightCollection);
-		band.elem.find('.area').resizable('option', 'minHeight', band.minHeight);
+		bandArea.resizable('option', 'minHeight', band.minHeight);
 	};
 
 	Designer.prototype.GoBackHomeWithError = function() {
