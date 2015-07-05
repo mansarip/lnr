@@ -84,7 +84,6 @@ function Designer() {
 				"Field" : {"icon":"ui-text-field.png"},
 				"Rectangle" : {"icon":"layer-shape.png"},
 				"Image" : {"icon":"picture.png"},
-				"SVG" : {"icon":"document-text-image.png"},
 				"QR Code" : {"icon":"barcode-2d.png"},
 				"Barcode" : {"icon":"barcode.png"}
 			},
@@ -3549,7 +3548,7 @@ function Designer() {
 		if (band.minHeight === null || band.minHeight < posY2) {
 			targetArea.css('height', posY2 + 'px');
 		}
-		
+
 		// update band min height
 		this.UpdateBandMinHeight(band);
 	};
