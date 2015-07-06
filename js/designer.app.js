@@ -2882,10 +2882,10 @@ function Designer() {
 		properties += '\n\
 		<tbody class="qrcode particular">\n\
 		<tr><th colspan="2">Content</th></tr>\n\
-		<tr><td>Code</td><td><input type="text" value="" class="fullwidth"/></td></tr>\n\
+		<tr><td>Code</td><td><input type="text" value="" class="fullwidth qrcode" data-key="code"/></td></tr>\n\
 		<tr><td>Bar Type</td>\n\
 			<td>\n\
-			<select>\n\
+			<select class="qrcodetype" data-key="barType">\n\
 			<option>QRCODE, L</option>\n\
 			<option>QRCODE, M</option>\n\
 			<option>QRCODE, Q</option>\n\
@@ -3091,7 +3091,10 @@ function Designer() {
 				}
 
 				designer.currentSelectedElement.verticalAlign = value;
-			} 
+
+			} else if (propertyKey === 'barType') {
+				designer.currentSelectedElement.barType = value;
+			}
 		});
 
 		// event register, on change (checkbox)
@@ -3545,7 +3548,7 @@ function Designer() {
 
 		// resize band area vertically
 		var posY2 = object.posY + object.height + 2;
-		if (band.minHeight === null || band.minHeight < posY2) {
+		if (targetArea.height() < posY2) {
 			targetArea.css('height', posY2 + 'px');
 		}
 

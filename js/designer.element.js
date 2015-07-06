@@ -178,6 +178,7 @@ function Element() {
 		propertiesElem.find('input.fontUnderline').prop('checked', this.fontUnderline);
 		propertiesElem.find('select.textAlign').val(this.textAlign);
 		propertiesElem.find('select.verticalAlign').val(this.verticalAlign);
+		propertiesElem.find('select.qrcodetype').val(this.barType);
 
 		if (this.type === 'label' || this.type === 'field') {
 			propertiesElem.find('input.textColor').val(this.textColor).css({'background-color' : this.textColor, 'color' : (designer.GetColorLightOrDark(this.textColor) === 'dark' ? '#fff' : '#333') });
@@ -678,6 +679,9 @@ function QRCode() {
 			var text = $(designer.currentWindowOpen.cell).find('textarea.codeText').val();
 			designer.currentSelectedElement.code = text; // setter, refer kepada qrcode element
 			designer.currentWindowOpen = null;
+
+			$('#properties input.qrcode').val(text);
+
 			return true;
 		});
 	};
