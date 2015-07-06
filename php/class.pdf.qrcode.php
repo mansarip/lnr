@@ -115,9 +115,10 @@ class LNRQRCode extends Box
 			$fillColor = array();
 		}
 
-		$pdf->write2DBarcode($this->code, $this->barType, $this->posX, $this->posY, $this->width, $this->height);
-		//$pdf->Rect($this->posX, $this->posY, $this->width, $this->height, $style='F', $border, $fillColor);
-		//$pdf->Image($this->source, $this->posX, $this->posY, $this->width, $this->height, '', '', '', false, 300, '', false, false, $border);
+		$style['border'] = $border;
+		$style['padding'] = $this->padding;
+		$style['bgcolor'] = $fillColor;
+		$pdf->write2DBarcode($this->code, $this->barType, $this->posX, $this->posY, $this->width, $this->height, $style);
 	}
 }
 
