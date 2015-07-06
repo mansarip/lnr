@@ -179,6 +179,7 @@ function Element() {
 		propertiesElem.find('select.textAlign').val(this.textAlign);
 		propertiesElem.find('select.verticalAlign').val(this.verticalAlign);
 		propertiesElem.find('select.qrcodetype').val(this.barType);
+		propertiesElem.find('input.barcodeShowText').prop('checked', this.showText);
 
 		if (this.type === 'label' || this.type === 'field') {
 			propertiesElem.find('input.textColor').val(this.textColor).css({'background-color' : this.textColor, 'color' : (designer.GetColorLightOrDark(this.textColor) === 'dark' ? '#fff' : '#333') });
@@ -693,15 +694,65 @@ function QRCode() {
 Barcode.prototype = new Element();
 Barcode.prototype.constructor = Barcode;
 function Barcode() {
-	this.width = 40;
+	this.width = 70;
 	this.height = 40;
 	this.type = 'barcode';
 	this.treeIcon = 'barcode-2d.png';
 	this.propertiesItems = $('#properties table tbody.' + this.type);
-	this.code;
+	this.code = "";
 	this.color;
 	this.distort;
-	this.barType;
+	this.barType = 'C39';
+	this.showText = true;
+	this.borderAllEnable = false;
+	this.borderTopEnable = false;
+	this.borderBottomEnable = false;
+	this.borderLeftEnable = false;
+	this.borderRightEnable = false;
 
-	Barcode.prototype.PostInit = function(){};
+	Barcode.prototype.PostInit = function(){
+		var barcode = this;
+
+		// double click
+		this.elem.on('dblclick', function(e){
+			barcode.OpenCodeWindow(e.pageX, e.pageY);
+		});
+	};
+
+	Barcode.prototype.OpenCodeWindow = function(x, y) {
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var codeWin = windows.createWindow({
+			id:"barcodeText",
+			width:300,
+			height:150,
+			left:x,
+			top:y
+		});
+		codeWin.button('minmax').hide();
+		codeWin.button('park').hide();
+		codeWin.setText('Code Text');
+
+		designer.currentWindowOpen = codeWin;
+
+		var textBox = $('<textarea class="codeText">'+ designer.currentSelectedElement.code +'</textarea>');
+		codeWin.attachObject(textBox[0]);
+		textBox.focus();
+		designer.moveCursorToEnd(textBox[0]);
+
+		textBox.closest('div.dhxwin_active').on('click', function(e){
+			e.stopPropagation();
+		});
+
+		codeWin.attachEvent('onClose', function(){
+			var text = $(designer.currentWindowOpen.cell).find('textarea.codeText').val();
+			designer.currentSelectedElement.code = text; // setter, refer kepada qrcode element
+			designer.currentWindowOpen = null;
+
+			$('#properties input.barcode').val(text);
+
+			return true;
+		});
+	};
 }

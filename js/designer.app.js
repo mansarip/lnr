@@ -2895,7 +2895,24 @@ function Designer() {
 		<tbody>\n\
 		';
 
-		// element > label, field (Appearance)
+		// element > barcode (Content)
+		properties += '\n\
+		<tbody class="barcode particular">\n\
+		<tr><th colspan="2">Content</th></tr>\n\
+		<tr><td>Code</td><td><input type="text" value="" class="fullwidth barcode" data-key="code"/></td></tr>\n\
+		<tr><td>Bar Type</td>\n\
+			<td>\n\
+			<select class="barcodetype" data-key="barType">\n\
+			<option value="C39">CODE 39</option>\n\
+			<option value="C128">CODE 128</option>\n\
+			<option value="EAN13">EAN 13</option>\n\
+			<option value="UPCA">UPC-A</option>\n\
+			</select>\n\
+			</td></tr>\n\
+		<tbody>\n\
+		';
+
+		// element > (Appearance)
 		properties += '\n\
 		<tr><th colspan="2">Appearance</th></tr>\n\
 		<tbody class="label field particular">\n\
@@ -2936,6 +2953,9 @@ function Designer() {
 		</tbody>\n\
 		<tr><td>Fill Color</td><td><input type="checkbox" class="fillColorEnable" data-key="fillColorEnable"/><input type="text" id="fillColorPicker" class="fillColor" style="width:60%"/></td></tr>\n\
 		<tr><td>Padding</td><td><input type="number" class="padding fullwidth" data-key="padding"/></td></tr>\n\
+		<tbody class="barcode particular">\n\
+			<tr><tr><td>Show Text</td><td><input type="checkbox" class="barcodeShowText" data-key="showText"/></td></tr>\n\
+		</tbody>\n\
 		';
 
 		// element > label, field (Printing)
@@ -3203,6 +3223,9 @@ function Designer() {
 					}
 				}
 				designer.currentSelectedElement.borderLeftEnable = value;
+
+			} else if (propertyKey === 'showText') {
+				designer.currentSelectedElement.showText = value;
 			}
 		});
 
@@ -4282,6 +4305,10 @@ function Designer() {
 
 		// jika semasa qrCodeText sedang dibuka
 		} else if (designer.currentWindowOpen !== null && designer.currentWindowOpen.getId() === 'qrCodeText') {
+			designer.currentWindowOpen.close();
+
+		// jika semasa barcodeText sedang dibuka
+		} else if (designer.currentWindowOpen !== null && designer.currentWindowOpen.getId() === 'barcodeText') {
 			designer.currentWindowOpen.close();
 
 		// jika semasa sourceField sedang dibuka

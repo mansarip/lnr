@@ -73,6 +73,10 @@ class Band
 					$rect = new LNRQRCode($elem);
 					$rect->AttachToBand($this);
 				}
+				elseif ($elemType == 'barcode') {
+					$rect = new LNRBarcode($elem);
+					$rect->AttachToBand($this);
+				}
 			}
 
 			unset($this->elements);
