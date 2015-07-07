@@ -636,7 +636,9 @@ function Designer() {
 					tree.setItemText(detail.name, detail.name);
 
 					// update main query
-					designer.mainQuery.connection = detail.name;
+					if (designer.mainQuery !== null) {
+						designer.mainQuery.connection = detail.name;
+					}
 
 					designer.tree.data.changeItemId('4:::' + editName, '4:::' + detail.name);
 					designer.tree.data.setItemText('4:::' + detail.name, detail.name);
@@ -3965,10 +3967,12 @@ function Designer() {
 			band.height = source.layout.band[bandName].height;
 
 			// ubah title untuk header dan footer
-			if (bandName === 'header') {
-				band.elem.find('.title p').text('Header : ' + Object.keys(this.mainQuery.group)[0]);
-			} else if (bandName === 'footer') {
-				band.elem.find('.title p').text('Footer : ' + Object.keys(this.mainQuery.group)[0]);
+			if (this.mainQuery !== null) {
+				if (bandName === 'header') {
+					band.elem.find('.title p').text('Header : ' + Object.keys(this.mainQuery.group)[0]);
+				} else if (bandName === 'footer') {
+					band.elem.find('.title p').text('Footer : ' + Object.keys(this.mainQuery.group)[0]);
+				}
 			}
 			
 			var area = band.elem.find('.area');

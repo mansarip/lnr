@@ -1,7 +1,7 @@
 function Band(source) {
 
 	this.elem = null; //jquery object
-	this.height = 100;
+	this.height = 50;
 	this.width = designer.details.default.bandWidth[designer.details.app.format.paper][designer.details.app.format.orientation];
 	this.title = source.title;
 	this.minHeight = null;
