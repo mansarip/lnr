@@ -2710,6 +2710,15 @@ function Designer() {
 	};
 
 	Designer.prototype.PreviewRecords = function(detail) {
+		// cek ada tak variable dalam query
+		var variableExists = false;
+		var variables = this.GetVariablesFromString(detail.query);
+
+		for (var key in variables) {
+			var v = variables[key];
+		}
+
+
 		var windows = new dhtmlXWindows();
 		windows.attachViewportTo('app');
 
@@ -2727,6 +2736,29 @@ function Designer() {
 			query : detail.query,
 			max : detail.maxpreview
 		});
+	};
+
+	Designer.prototype.GetVariablesFromString = function(string) {
+		var pattern = {
+			post : {regex : '{POST\\|', plain : '{POST|', variable : []},
+			get : {regex : '{GET\\|', plain : '{GET|', variable : []},
+			session : {regex : '{SESSION\\|', plain : '{SESSION|', variable : []}
+		};
+
+		for (var key in pattern) {
+			var regexp = new RegExp(pattern[key].regex, 'g');
+			var match = [];
+
+			while ((match = regexp.exec(string)) !== null) {
+				var stringMod = string.substr(match.index);
+				var closingIndex = stringMod.search('}');
+				var wrapper = stringMod.substr(0, closingIndex); // eg: "{POST|Example" <-- tanpa curly bracket hujung
+				var result = wrapper.replace(pattern[key].plain,'');
+				pattern[key].variable.push(result);
+			}
+		}
+
+		return pattern;
 	};
 
 	Designer.prototype.InitWorkspace = function() {
