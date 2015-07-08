@@ -4093,15 +4093,16 @@ function Designer() {
 	};
 
 	Designer.prototype.DeleteElement = function(){
+		var band = this.currentSelectedElement.parentBand;
+
 		// buang elem view
-		this.currentSelectedElement.elem.hide();		
+		this.currentSelectedElement.elem.hide();
 
 		// buang dari tree structure
 		this.tree.structure.deleteItem(this.currentSelectedElement.id);
 
 		// buang dari parent children
 		var index = this.currentSelectedElement.elem.attr('data-index');
-		//delete this.currentSelectedElement.parentBand.element[index];
 		this.currentSelectedElement.parentBand.element[index].deleted = true;
 
 		// save history
@@ -4115,6 +4116,9 @@ function Designer() {
 
 		// resetkan current selected element
 		this.currentSelectedElement = null;
+
+		// update min height
+		this.UpdateBandMinHeight(band);
 	};
 
 	Designer.prototype.SaveHistory = function(detail) {
