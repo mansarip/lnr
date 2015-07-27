@@ -2715,9 +2715,26 @@ function Designer() {
 		var variables = this.GetVariablesFromString(detail.query);
 
 		for (var key in variables) {
-			var v = variables[key];
+			var param = variables[key];
+			if (param.variable.length > 0) {
+				variableExists = true;
+				break;
+			}
 		}
 
+		// jika ada variable (param), keluar satu popup untuk prompt value
+		if (variableExists) {
+			this.ShowParameterPrompt({
+				query:detail.query
+			});
+		} else {
+			this.ShowPreviewRecords();
+		}
+
+		return false;
+
+
+		//console.log(detail.query);
 
 		var windows = new dhtmlXWindows();
 		windows.attachViewportTo('app');
@@ -2731,11 +2748,35 @@ function Designer() {
 		});
 		previewWin.button('park').hide();
 		previewWin.setText('Preview Records');
-		previewWin.attachURL(this.phpPath + 'designer.previewrecords.php', null, {
-			connection : JSON.stringify(designer.details.app.connection[detail.connection]),
-			query : detail.query,
-			max : detail.maxpreview
+
+		/*// jika ada variable (param), keluar satu popup untuk prompt value
+		if (variableExists) {
+			
+		}
+		// jika tiada variables terus papar preview records
+		else {
+			previewWin.attachURL(this.phpPath + 'designer.previewrecords.php', null, {
+				connection : JSON.stringify(designer.details.app.connection[detail.connection]),
+				query : detail.query,
+				max : detail.maxpreview
+			});
+		}*/
+	};
+
+	Designer.prototype.ShowParameterPrompt = function(data) {
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var parameterPromptWin = windows.createWindow({
+			id:"parameterPromptWin",
+			width:600,
+			height:400,
+			center:true,
+			modal:true
 		});
+		parameterPromptWin.button('park').hide();
+		parameterPromptWin.setText('Parameters');
+		parameterPromptWin.attachHTMLString(designer.LoadView('parameterPrompt'));
 	};
 
 	Designer.prototype.GetVariablesFromString = function(string) {
