@@ -2710,6 +2710,20 @@ function Designer() {
 	};
 
 	Designer.prototype.PreviewRecords = function(detail) {
+		// dhtmlx windows object
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var previewWin = windows.createWindow({
+			id:"dataSource",
+			width:600,
+			height:400,
+			center:true,
+			modal:true
+		});
+		previewWin.button('park').hide();
+		previewWin.setText('Preview Records');
+
 		// jadikan empty string (clear balik kalau dah ada sebelum ni)
 		this.previewRecordsParameterForm = '';
 
@@ -2735,7 +2749,9 @@ function Designer() {
 
 						// jika parameter source type sama dengan type
 						if (this.details.app.parameter[paramName].sourceType === type) {
-							console.log('aaaaaawewew');
+							var pattern = '{'+ type.toUpperCase() +'\\|'+ paramName +'}';
+							var regex = new RegExp(pattern, 'g');
+							detail.query = detail.query.replace(regex, this.details.app.parameter[paramName].temporaryValue);
 						}
 					}
 
@@ -2747,6 +2763,18 @@ function Designer() {
 				}
 
 			}
+		}
+
+		// jika tiada variables terus papar preview records
+		if (!variableExists) {
+			previewWin.attachURL(this.phpPath + 'designer.previewrecords.php', null, {
+				connection : JSON.stringify(designer.details.app.connection[detail.connection]),
+				query : detail.query,
+				max : detail.maxpreview
+			});
+
+			// terminate
+			return true;
 		}
 
 		// jika ada variable, dan ada variable (parameter) yang belum define
@@ -2766,46 +2794,17 @@ function Designer() {
 			return false;
 		}
 
-
-		return false;
-
-		// jika ada variable (param), keluar satu popup untuk prompt value
-		if (variableExists) {
-			this.ShowParameterPrompt({
-				query:detail.query
-			});
-		} else {
-			this.ShowPreviewRecords();
-		}
-
-
-		//console.log(detail.query);
-
-		var windows = new dhtmlXWindows();
-		windows.attachViewportTo('app');
-
-		var previewWin = windows.createWindow({
-			id:"dataSource",
-			width:600,
-			height:400,
-			center:true,
-			modal:true
-		});
-		previewWin.button('park').hide();
-		previewWin.setText('Preview Records');
-
-		/*// jika ada variable (param), keluar satu popup untuk prompt value
-		if (variableExists) {
-			
-		}
-		// jika tiada variables terus papar preview records
+		// papar records
 		else {
 			previewWin.attachURL(this.phpPath + 'designer.previewrecords.php', null, {
 				connection : JSON.stringify(designer.details.app.connection[detail.connection]),
 				query : detail.query,
 				max : detail.maxpreview
 			});
-		}*/
+		}
+
+		// terminate
+		return true;
 	};
 
 	Designer.prototype.GetVariablesFromString = function(string) {
