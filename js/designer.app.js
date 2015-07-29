@@ -737,7 +737,7 @@ function Designer() {
 
 		// grid init
 		this.parameterListGrid = layout.cells('b').attachGrid();
-		this.parameterListGrid.setHeader("Name, Default Value, Data Type, Source, Action");
+		this.parameterListGrid.setHeader("Name, Temporary Value, Data Type, Source, Action");
 		this.parameterListGrid.setInitWidths("120,120,90,90,90");
 		this.parameterListGrid.setColTypes("ed,ed,coro,coro,img");
 
@@ -761,7 +761,7 @@ function Designer() {
 					id:key,
 					data:[
 						key,
-						designer.details.app.parameter[key].defaultValue,
+						designer.details.app.parameter[key].temporaryValue,
 						designer.details.app.parameter[key].dataType,
 						designer.details.app.parameter[key].sourceType,
 						'../img/icons/cross.png^Remove^javascript:designer.PromptRemoveParameter();'
@@ -777,7 +777,7 @@ function Designer() {
 		$(layout.base).find('input.reset').click(function(){
 			var paramAddNew = $('#parameterAddNew');
 			var inputParamName = paramAddNew.find('input.paramName');
-			var inputParamDefaultValue = paramAddNew.find('input.defaultValue');
+			var inputParamTemporaryValue = paramAddNew.find('input.temporaryValue');
 			var inputParamDataType = paramAddNew.find('select.dataType');
 			var inputParamSourceType = paramAddNew.find('select.sourceType');
 
@@ -786,7 +786,7 @@ function Designer() {
 
 			// clear form
 			inputParamName.val('').focus();
-			inputParamDefaultValue.val('');
+			inputParamTemporaryValue.val('');
 			inputParamDataType.val('string');
 			inputParamSourceType.val('get');
 		});
@@ -796,12 +796,12 @@ function Designer() {
 			// dapatkan value
 			var paramAddNew = $('#parameterAddNew');
 			var inputParamName = paramAddNew.find('input.paramName');
-			var inputParamDefaultValue = paramAddNew.find('input.defaultValue');
+			var inputParamTemporaryValue = paramAddNew.find('input.temporaryValue');
 			var inputParamDataType = paramAddNew.find('select.dataType');
 			var inputParamSourceType = paramAddNew.find('select.sourceType');
 
 			var paramName = inputParamName.val();
-			var paramDefaultValue = inputParamDefaultValue.val();
+			var paramTemporaryValue = inputParamTemporaryValue.val();
 			var paramDataType = inputParamDataType.val();
 			var paramSourceType = inputParamSourceType.val();
 
@@ -824,25 +824,25 @@ function Designer() {
 				});
 				return false;
 			}
-			// jika data type number, tapi default value bukan number
-			else if (paramDataType === 'number' && isNaN(Number(paramDefaultValue))) {
+			// jika data type number, tapi temporary value bukan number
+			else if (paramDataType === 'number' && isNaN(Number(paramTemporaryValue))) {
 				dhtmlx.alert({
 					title:'Error',
 					style:"alert-info",
-					text:'<img src="'+ designer.icon.error +'"/><br/>Default value is not a number'
+					text:'<img src="'+ designer.icon.error +'"/><br/>Temporary value is not a number'
 				});
 				return false;
 			}
-			else if (paramDataType === 'number' && paramDefaultValue === '') {
-				paramDefaultValue = 0;
+			else if (paramDataType === 'number' && paramTemporaryValue === '') {
+				paramTemporaryValue = 0;
 			}
 
 			// tambah pada list
-			designer.parameterListGrid.addRow(paramName, paramName + ',' + paramDefaultValue + ',' + paramDataType + ',' + paramSourceType + ',' + '../img/icons/cross.png^Remove^javascript:designer.PromptRemoveParameter();');
+			designer.parameterListGrid.addRow(paramName, paramName + ',' + paramTemporaryValue + ',' + paramDataType + ',' + paramSourceType + ',' + '../img/icons/cross.png^Remove^javascript:designer.PromptRemoveParameter();');
 
 			// clear form
 			inputParamName.val('').focus();
-			inputParamDefaultValue.val('');
+			inputParamTemporaryValue.val('');
 			inputParamDataType.val('string');
 			inputParamSourceType.val('get');
 
@@ -850,7 +850,7 @@ function Designer() {
 
 			designer.details.app.parameter[paramName] = {
 				name : paramName,
-				defaultValue : paramDefaultValue,
+				temporaryValue : paramTemporaryValue,
 				dataType : paramDataType,
 				sourceType : paramSourceType
 			}
@@ -898,24 +898,24 @@ function Designer() {
 
 				}
 
-				// edit default value
+				// edit temporary value
 				else if (cellIndex === 1) {
 
 					// jika data type number, tapi user edit value jadikan selain number
 					if (designer.details.app.parameter[rowId].dataType === 'number' && isNaN(Number(newValue))) {
 						
-						var oldValue = designer.details.app.parameter[rowId].defaultValue;
+						var oldValue = designer.details.app.parameter[rowId].temporaryValue;
 						designer.parameterListGrid.cellById(rowId, cellIndex).setValue(oldValue);
 
 						dhtmlx.alert({
 							title:'Error',
 							style:"alert-info",
-							text:'<img src="'+ designer.icon.error +'"/><br/>Default value is not a number'
+							text:'<img src="'+ designer.icon.error +'"/><br/>Temporary value is not a number'
 						});
 						return false;
 					}
 
-					designer.details.app.parameter[rowId].defaultValue = newValue;
+					designer.details.app.parameter[rowId].temporaryValue = newValue;
 				}
 
 				// edit data type
@@ -2710,17 +2710,64 @@ function Designer() {
 	};
 
 	Designer.prototype.PreviewRecords = function(detail) {
+		// jadikan empty string (clear balik kalau dah ada sebelum ni)
+		this.previewRecordsParameterForm = '';
+
 		// cek ada tak variable dalam query
 		var variableExists = false;
+		var undefinedParameter = false;
+		var undefinedParameterHTML = "<img src='../img/icons/exclamation.png'/><br/>Undefined parameter key(s) :<br/>";
 		var variables = this.GetVariablesFromString(detail.query);
 
-		for (var key in variables) {
-			var param = variables[key];
+		// loop type (post, get, session, dll)
+		for (var type in variables) {
+			var param = variables[type];
+
+			// jika dalam type tu ada variable
 			if (param.variable.length > 0) {
 				variableExists = true;
-				break;
+				
+				for (var v=0; v < param.variable.length; v++) {
+					var paramName = param.variable[v];
+
+					// jika ada parameter (object wujud, bukan undefined)
+					if (this.details.app.parameter[paramName] !== undefined) {
+
+						// jika parameter source type sama dengan type
+						if (this.details.app.parameter[paramName].sourceType === type) {
+							console.log('aaaaaawewew');
+						}
+					}
+
+					// jika parameter tak wujud lagi
+					else {
+						undefinedParameter = true;
+						undefinedParameterHTML += '[' + type.toUpperCase() + '] ' + paramName + '<br/>';
+					}
+				}
+
 			}
 		}
+
+		// jika ada variable, dan ada variable (parameter) yang belum define
+		if (variableExists && undefinedParameter) {
+			dhtmlx.confirm({
+				title:'Parameter',
+				style:'confirm-info',
+				text: undefinedParameterHTML + '<p>Please define the parameters before executing the query. Click OK to open Parameter window or click Cancel to go back.</p>',
+				callback : function(answer){
+					if (answer === true) {
+						designer.OpenParameterWindow();
+					}
+				}
+			});
+
+			// terminate process
+			return false;
+		}
+
+
+		return false;
 
 		// jika ada variable (param), keluar satu popup untuk prompt value
 		if (variableExists) {
@@ -2730,8 +2777,6 @@ function Designer() {
 		} else {
 			this.ShowPreviewRecords();
 		}
-
-		return false;
 
 
 		//console.log(detail.query);
@@ -2761,22 +2806,6 @@ function Designer() {
 				max : detail.maxpreview
 			});
 		}*/
-	};
-
-	Designer.prototype.ShowParameterPrompt = function(data) {
-		var windows = new dhtmlXWindows();
-		windows.attachViewportTo('app');
-
-		var parameterPromptWin = windows.createWindow({
-			id:"parameterPromptWin",
-			width:600,
-			height:400,
-			center:true,
-			modal:true
-		});
-		parameterPromptWin.button('park').hide();
-		parameterPromptWin.setText('Parameters');
-		parameterPromptWin.attachHTMLString(designer.LoadView('parameterPrompt'));
 	};
 
 	Designer.prototype.GetVariablesFromString = function(string) {
@@ -3741,6 +3770,9 @@ function Designer() {
 			}
 		}
 
+		// data > parameter
+		this.details.report.data.parameter = $.extend(true, {}, this.details.app.parameter);
+
 		// layout > general
 		this.details.report.layout.general.unit = 'mm';
 		this.details.report.layout.general.format = designer.details.app.format.paper;
@@ -3920,6 +3952,7 @@ function Designer() {
 	};
 
 	Designer.prototype.ApplyLoadedData = function(source) {
+		console.log(source);
 		// reset details
 		this.details = {};
 		this.InitDetails();
@@ -3955,6 +3988,8 @@ function Designer() {
 			if (source.data.query[dataSourceName].main) this.mainQuery = this.details.app.dataSource[dataSourceName];
 			this.tree.data.insertNewItem(1, '1:::' + dataSourceName, dataSourceName, null, 'document.png', 'document.png', 'document.png');
 		}
+
+		// parameter
 
 		// apply group name pada tree structure
 		if (this.mainQuery) {
@@ -4462,6 +4497,11 @@ function Designer() {
 				queryName : this.mainQuery.name
 			};
 			return designer._ReplaceVariableView(designer.view[viewId], data);
+
+		} else if (viewId === 'parameterPrompt') {
+			var data = {
+
+			};
 
 		} else {
 			return designer.view[viewId];
