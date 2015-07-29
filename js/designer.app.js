@@ -3952,12 +3952,11 @@ function Designer() {
 	};
 
 	Designer.prototype.ApplyLoadedData = function(source) {
-		console.log(source);
 		// reset details
 		this.details = {};
 		this.InitDetails();
 
-		// preferences
+		// preferencesMargin
 		this.details.app.general.author = source.general.author;
 		this.details.app.general.reportTitle = source.general.name;
 		this.details.app.format.orientation = source.layout.general.orientation;
@@ -3990,6 +3989,7 @@ function Designer() {
 		}
 
 		// parameter
+		this.details.app.parameter = source.data.parameter;
 
 		// apply group name pada tree structure
 		if (this.mainQuery) {
