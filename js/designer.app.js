@@ -2478,6 +2478,7 @@ function Designer() {
 								}
 
 								// ajax untuk dapatkan column
+								console.log(detail);
 								$.ajax({
 									url:designer.phpPath + 'designer.fetchcolumn.php',
 									type:'post',
@@ -2709,29 +2710,13 @@ function Designer() {
 		});
 	};
 
-	Designer.prototype.PreviewRecords = function(detail) {
-		// dhtmlx windows object
-		var windows = new dhtmlXWindows();
-		windows.attachViewportTo('app');
-
-		var previewWin = windows.createWindow({
-			id:"dataSource",
-			width:600,
-			height:400,
-			center:true,
-			modal:true
-		});
-		previewWin.button('park').hide();
-		previewWin.setText('Preview Records');
-
-		// jadikan empty string (clear balik kalau dah ada sebelum ni)
-		this.previewRecordsParameterForm = '';
-
+	Designer.prototype.ReplaceVariableInQueryWithParameterValue = function(query) {
 		// cek ada tak variable dalam query
 		var variableExists = false;
 		var undefinedParameter = false;
 		var undefinedParameterHTML = "<img src='../img/icons/exclamation.png'/><br/>Undefined parameter key(s) :<br/>";
-		var variables = this.GetVariablesFromString(detail.query);
+		var variables = this.GetVariablesFromString(query);
+		var originalQuery = query;
 
 		// loop type (post, get, session, dll)
 		for (var type in variables) {
@@ -2751,7 +2736,7 @@ function Designer() {
 						if (this.details.app.parameter[paramName].sourceType === type) {
 							var pattern = '{'+ type.toUpperCase() +'\\|'+ paramName +'}';
 							var regex = new RegExp(pattern, 'g');
-							detail.query = detail.query.replace(regex, this.details.app.parameter[paramName].temporaryValue);
+							query = query.replace(regex, this.details.app.parameter[paramName].temporaryValue);
 						}
 					}
 
@@ -2765,24 +2750,25 @@ function Designer() {
 			}
 		}
 
-		// jika tiada variables terus papar preview records
-		if (!variableExists) {
-			previewWin.attachURL(this.phpPath + 'designer.previewrecords.php', null, {
-				connection : JSON.stringify(designer.details.app.connection[detail.connection]),
-				query : detail.query,
-				max : detail.maxpreview
-			});
+		return {
+			variableExists : variableExists,
+			undefinedParameter : undefinedParameter,
+			undefinedParameterHTML : undefinedParameterHTML,
+			variables : variables,
+			originalQuery : originalQuery,
+			modifiedQuery : query
+		};
+	};
 
-			// terminate
-			return true;
-		}
+	Designer.prototype.PreviewRecords = function(detail) {
+		var replaceProcess = this.ReplaceVariableInQueryWithParameterValue(detail.query);
 
-		// jika ada variable, dan ada variable (parameter) yang belum define
-		if (variableExists && undefinedParameter) {
+		// jika ada variable parameter, tapi belum define
+		if (replaceProcess.variableExists && replaceProcess.undefinedParameter) {
 			dhtmlx.confirm({
 				title:'Parameter',
 				style:'confirm-info',
-				text: undefinedParameterHTML + '<p>Please define the parameters before executing the query. Click OK to open Parameter window or click Cancel to go back.</p>',
+				text: replaceProcess.undefinedParameterHTML + '<p>Please define the parameters before executing the query. Click OK to open Parameter window or click Cancel to go back.</p>',
 				callback : function(answer){
 					if (answer === true) {
 						designer.OpenParameterWindow();
@@ -2794,14 +2780,26 @@ function Designer() {
 			return false;
 		}
 
-		// papar records
-		else {
-			previewWin.attachURL(this.phpPath + 'designer.previewrecords.php', null, {
-				connection : JSON.stringify(designer.details.app.connection[detail.connection]),
-				query : detail.query,
-				max : detail.maxpreview
-			});
-		}
+		// dhtmlx windows object
+		var windows = new dhtmlXWindows();
+		windows.attachViewportTo('app');
+
+		var previewWin = windows.createWindow({
+			id:"dataSource",
+			width:600,
+			height:400,
+			center:true,
+			modal:true
+		});
+		previewWin.button('park').hide();
+		previewWin.setText('Preview Records');
+
+		// papar result
+		previewWin.attachURL(this.phpPath + 'designer.previewrecords.php', null, {
+			connection : JSON.stringify(designer.details.app.connection[detail.connection]),
+			query : replaceProcess.modifiedQuery,
+			max : detail.maxpreview
+		});
 
 		// terminate
 		return true;
