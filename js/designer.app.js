@@ -2273,6 +2273,9 @@ function Designer() {
 				return false;
 			}
 
+			// tambah replace process setting dalam detail
+			detail.replaceProcess = designer.ReplaceVariableInQueryWithParameterValue(detail.query);
+
 			// add mode *datasource
 			if (mode === 'add') {
 				// jika nama dah ada
@@ -2478,7 +2481,6 @@ function Designer() {
 								}
 
 								// ajax untuk dapatkan column
-								console.log(detail);
 								$.ajax({
 									url:designer.phpPath + 'designer.fetchcolumn.php',
 									type:'post',

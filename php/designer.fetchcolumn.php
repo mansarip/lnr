@@ -15,12 +15,24 @@ if (isset($_SESSION['logged']) && $_SESSION['logged']) {
 	
 	$conn = new Connection($connection);
 	$conn->Connect();
+
+	// jika query tiada variable parameter
+	if (!$detail['replaceProcess']['variableExists']) {
+		$sql = $detail['query'];
+	}
+	// jika query ada variable parameter
+	// tak boleh guna original query sebab akan keluar error
+	else {
+		$sql = $detail['replaceProcess']['modifiedQuery'];
+	}
+
 	$query = array(
 			'connection' => $conn,
-			'sql' => $detail['query'],
+			'sql' => $sql,
 			'active' => true
 		);
 	$query = new Query($query);
+
 	$column = $query->FetchColumn();
 
 	echo json_encode($column);
